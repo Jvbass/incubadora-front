@@ -1,0 +1,112 @@
+import { Routes, Route } from "react-router-dom";
+
+// Importamos nuestros componentes de ayuda para el enrutamiento
+import ProtectedRoute from "./ProtectedRoute";
+import RoleBasedRedirect from "./RoleBasedRedirect";
+
+// --- Importamos los componentes de las PÁGINAS ---
+// (Crearemos estos componentes placeholder en el siguiente paso)
+import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
+import DeveloperDashboard from "../pages/dashboard/DeveloperDashboard";
+import NotFound from "../pages/NotFound";
+import PublicRoute from "./PublicRoute";
+import HomePage from "../pages/HomePage";
+import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
+import CreateProject from "../pages/dashboard/CreateProject";
+
+const AppRouter = () => {
+  return (
+    <Routes>
+      {/* RUTAS PÚBLICAS (AHORA PROTEGIDAS PARA USUARIOS LOGUEADOS) */}
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <RegisterPage />
+          </PublicRoute>
+        }
+      />
+
+      {/* RUTA DE ENTRADA PARA USUARIOS AUTENTICADOS */}
+      {/* Esta ruta está protegida. Si el usuario está logueado, renderiza RoleBasedRedirect,
+          que a su vez lo envía al dashboard correcto. */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <RoleBasedRedirect />
+          </ProtectedRoute>
+        }
+      />
+      {/* RUTAS DE DASHBOARDS PROTEGIDAS */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <DeveloperDashboard />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <HomePage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/createproject"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <CreateProject />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+       <Route
+        path="/mentor"
+        element={
+          <ProtectedRoute>
+            <MentorDashboard />
+          </ProtectedRoute>
+        }
+      />
+       <Route
+        path="/recruiter"
+        element={
+          <ProtectedRoute>
+            <RecruiterDashboard />
+          </ProtectedRoute>
+        }
+      /> */}
+
+      {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
+export default AppRouter;
