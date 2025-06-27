@@ -1,22 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
-import App from './App.tsx';
-import { AuthProvider } from './contexts/AuthContext.tsx';
-import './index.css';
+import App from "./App.tsx";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    {/* Envolvemos la app con el Router para habilitar el enrutamiento */}
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       {/* Envolvemos con el AuthProvider para que toda la app tenga acceso al contexto */}
       <AuthProvider>
         <App />
-        {/* El componente Toaster renderizará las notificaciones */}
-        <Toaster position="top-right" reverseOrder={false} />
+        <Toaster position="bottom-right" reverseOrder={false} />
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 );

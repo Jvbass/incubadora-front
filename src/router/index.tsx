@@ -13,7 +13,9 @@ import NotFound from "../pages/NotFound";
 import PublicRoute from "./PublicRoute";
 import HomePage from "../pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
-import CreateProject from "../pages/dashboard/CreateProject";
+import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
+
+
 
 const AppRouter = () => {
   return (
@@ -69,11 +71,11 @@ const AppRouter = () => {
         }
       />
       <Route
-        path="/createproject"
+        path="/create-project"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
-              <CreateProject />
+              <CreateProjectPage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

@@ -1,5 +1,3 @@
-// src/components/layout/Navbar.tsx
-
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -7,12 +5,12 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md position-fixed top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Lado Izquierdo: Logo/Nombre de la App */}
           <div className="flex-shrink-0">
-            <Link to="/" className="text-2xl font-bold text-indigo-600">
+            <Link to="/home" className="text-2xl font-bold text-indigo-600">
               Incubadora.dev
             </Link>
           </div>
@@ -20,12 +18,12 @@ const Navbar = () => {
           {/* Lado Derecho: Información del Usuario y Logout */}
           <div className="flex items-center">
             <div className="mr-4 text-right">
-              <Link to="/dashboard">
+              <Link to="/home">
                 <p className="text-sm font-medium text-gray-800">Explorar</p>
               </Link>
             </div>
             <div className="mr-4 text-right">
-              <Link to="/createproject">
+              <Link to="/create-project">
                 <p className="text-sm font-medium text-gray-800">Crear</p>
               </Link>
             </div>

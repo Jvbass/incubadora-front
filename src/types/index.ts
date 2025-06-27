@@ -44,15 +44,14 @@ export interface ListProjects {
   developmentProgress: number;
 }
 
-export interface CreateData {
+export interface ProjectFormInput {
   title: string;
   description: string;
   repositoryUrl: string;
   projectUrl: string;
-  developerUsername: string;
-  technologies: string; // Se manejará como string separado por comas para simplicidad en el UI
-  tools: string; // Ídem para tools
-  status: "Planificado" | "En Progreso" | "Completado";
+  technologyIds: number[];
+  toolIds: number[];
+  status: 'pending' | 'published' | 'archived';
   isCollaborative: boolean;
-  developmentProgress: string; // El input range devuelve un string
+  developmentProgress: number;
 }
