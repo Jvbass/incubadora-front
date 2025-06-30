@@ -1,13 +1,13 @@
 import apiService from './apiService';
-import type { DashboardData, ListProjects, ProjectFormInput } from '../types'; // Asumiendo que tienes estos tipos
+import type { UserData, ListProjects, ProjectFormInput } from '../types'; // Asumiendo que tienes estos tipos
 
 /**
  * todas las funciones que llaman a la API
  */
 
-// Obtiene la información para el dashboard del usuario logeado
-export const fetchDashboardData = async (): Promise<DashboardData> => {
-  const { data } = await apiService.get<DashboardData>('/dashboard');
+// Obtiene la información del usuario logeado
+export const fetchUserData = async (): Promise<UserData> => {
+  const { data } = await apiService.get<UserData>('/dashboard');
   return data;
 };
 

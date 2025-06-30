@@ -1,14 +1,16 @@
 export const availableTechnologies = [
-    { id: 1, name: 'JavaScript' }, { id: 2, name: 'Java' }, { id: 3, name: 'SQL' },
-    { id: 4, name: 'Python' }, { id: 5, name: 'C#' }, { id: 6, name: 'PHP' },
-    { id: 7, name: 'TypeScript' }, { id: 8, name: 'Swift' }, { id: 9, name: 'Kotlin' },
-    { id: 10, name: 'Go' }, { id: 11, name: 'Ruby' }, { id: 12, name: 'Rust' },
-    { id: 13, name: 'HTML5' }, { id: 14, name: 'CSS3' }
-  ];
-  
-  export const availableTools = [
-    { id: 1, name: 'Git' }, { id: 2, name: 'Postman' }, { id: 3, name: 'Docker' },
-    { id: 4, name: 'Kubernetes' }, { id: 5, name: 'Jira' }, { id: 6, name: 'Confluence' },
-    { id: 7, name: 'Slack' }
-  ];
-  
+  { id: 1, name: "JavaScript" },
+  { id: 2, name: "Java" },
+  { id: 3, name: "SQL" },
+  { id: 4, name: "Python" },
+  { id: 5, name: "C#" },
+  { id: 6, name: "PHP" },
+  { id: 7, name: "TypeScript" },
+  { id: 8, name: "Swift" },
+  { id: 9, name: "Kotlin" },
+  { id: 10, name: "Go" },
+  { id: 11, name: "Ruby" },
+  { id: 12, name: "Rust" },
+  { id: 13, name: "HTML5" },
+  { id: 14, name: "CSS3" },
+];

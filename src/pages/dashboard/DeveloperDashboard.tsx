@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 // Importamos la función de fetch que acabamos de crear
-import { fetchDashboardData } from "../../api/queries";
+import { fetchUserData } from "../../api/queries";
 
 const DeveloperDashboard = () => {
   // Usamos el hook useQuery.
   const { data, isLoading, isError, error } = useQuery({
     // queryKey: Clave única para esta consulta. React Query la usa para cachear.
-    queryKey: ["dashboardData"],
+    queryKey: ["userData"],
     // queryFn: La función asíncrona que obtiene los datos.
-    queryFn: fetchDashboardData,
+    queryFn: fetchUserData,
     // staleTime: Le decimos a React Query que no considere estos datos "obsoletos"
     // durante 5 minutos. No habrá llamadas de red innecesarias en ese tiempo.
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 60,
   });
 
   // El renderizado ahora es mucho más declarativo
@@ -57,14 +57,7 @@ const DeveloperDashboard = () => {
     );
   };
 
-  return (
-    <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {renderContent()}
-        {/* Aquí podrías añadir otro componente para la lista de proyectos */}
-      </div>
-    </>
-  );
+  return <div className="p-6">{renderContent()}</div>;
 };
 
 export default DeveloperDashboard;

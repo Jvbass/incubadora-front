@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { createProject } from "../../../api/queries";
 import {
   availableTechnologies,
-  availableTools,
 } from "../../../utils/data/createProjectData";
 import type { ProjectFormInput } from "../../../types";
 
@@ -21,7 +20,6 @@ const ProjectForm = () => {
       isCollaborative: false,
       developmentProgress: 10,
       technologyIds: [],
-      toolIds: [],
     },
   });
 
@@ -41,11 +39,10 @@ const ProjectForm = () => {
   });
 
   const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
-    // React Hook Form nos da los IDs como strings, los convertimos a números
+    // convertimos los IDs a números
     const formattedData = {
       ...data,
       technologyIds: data.technologyIds.map((id) => Number(id)),
-      toolIds: data.toolIds.map((id) => Number(id)),
     };
     mutate(formattedData);
   };
@@ -58,7 +55,6 @@ const ProjectForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded-lg shadow-md space-y-8"
       >
-        {/* SECCIÓN 1 */}
         <section>
           <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">
             Información General
@@ -69,7 +65,7 @@ const ProjectForm = () => {
                 htmlFor="title"
                 className="block text-sm font-medium text-gray-700"
               >
-                Título del Proyecto
+                Título del Proyecto <span className=" text-xs ">*</span>
               </label>
               <input
                 type="text"
@@ -94,7 +90,7 @@ const ProjectForm = () => {
                 htmlFor="description"
                 className="block text-sm font-medium text-gray-700"
               >
-                Descripción
+                Descripción <span className=" text-xs ">*</span>
               </label>
               <textarea
                 id="description"
@@ -124,12 +120,14 @@ const ProjectForm = () => {
                   URL del Repositorio
                 </label>
                 <input
+                  placeholder="https://github.com/username/project"
                   type="url"
                   id="repositoryUrl"
                   {...register("repositoryUrl", {
                     pattern: {
                       value: urlPattern,
-                      message: "Por favor, ingresa una URL válida",
+                      message:
+                        "La url debe contener el protocolo https://, http:// o ftp://",
                     },
                   })}
                   className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
@@ -148,6 +146,7 @@ const ProjectForm = () => {
                   URL del Proyecto Desplegado
                 </label>
                 <input
+                  placeholder="https://username.github.io/project"
                   type="url"
                   id="projectUrl"
                   {...register("projectUrl", {
@@ -176,7 +175,7 @@ const ProjectForm = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tecnologías Utilizadas
+                Tecnologías Utilizadas <span className=" text-xs ">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                 {availableTechnologies.map((tech) => (
@@ -204,41 +203,11 @@ const ProjectForm = () => {
                 </p>
               )}
             </div>
-            <div className="space-y-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Herramientas
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {availableTools.map((tool) => (
-                  <label
-                    key={tool.id}
-                    className="flex items-center space-x-2 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      value={tool.id}
-                      {...register("toolIds", {
-                        validate: (value) =>
-                          value.length > 0 ||
-                          "Debes seleccionar al menos una herramienta",
-                      })}
-                      className="rounded border-gray-300 text-blue-500 shadow-sm focus:ring-blue-500"
-                    />
-                    <span>{tool.name}</span>
-                  </label>
-                ))}
-              </div>
-              {errors.toolIds && (
-                <p className="text-xs text-red-600 mt-2">
-                  {errors.toolIds.message}
-                </p>
-              )}
-            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-7">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Estado del Proyecto
+                Estado del Proyecto <span className=" text-xs ">*</span>
               </label>
               <select
                 id="status"
@@ -246,11 +215,11 @@ const ProjectForm = () => {
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               >
                 <option value="pending">Borrador</option>
-                <option value="published">Publicado</option>
-                <option value="archived">Archivado</option>
+                <option value="published">Publicar</option>
+                <option value="archived">Archivar</option>
               </select>
             </div>
-            <div className="flex items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
               <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
@@ -258,6 +227,14 @@ const ProjectForm = () => {
                   className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                 />
                 <span>Busco colaboradores</span>
+              </label>
+              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register("isCollaborative")}
+                  className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+                />
+                <span>Busco mentor</span>
               </label>
             </div>
           </div>

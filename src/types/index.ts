@@ -24,7 +24,7 @@ export interface RegisterRequest {
   lastName: string;
 }
 
-export interface DashboardData {
+export interface UserData {
   username: string;
   email: string;
   firstName: string;
@@ -38,7 +38,6 @@ export interface ListProjects {
   developerUsername: string;
   createdAt: string;
   technologyNames: string[];
-  toolNames: string[];
   status: string;
   isCollaborative: boolean;
   developmentProgress: number;
@@ -50,8 +49,7 @@ export interface ProjectFormInput {
   repositoryUrl: string;
   projectUrl: string;
   technologyIds: number[];
-  toolIds: number[];
-  status: 'pending' | 'published' | 'archived';
+  status: "pending" | "published" | "archived";
   isCollaborative: boolean;
   developmentProgress: number;
 }
