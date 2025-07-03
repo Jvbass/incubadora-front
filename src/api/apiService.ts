@@ -1,16 +1,14 @@
-
-import axios from 'axios';
-import toast from 'react-hot-toast';
-
+import axios from "axios";
+import toast from "react-hot-toast";
 
 // 1. CREACIÓN DE LA INSTANCIA DE AXIOS
 // Creamos una instancia de Axios con una configuración base.
 // La baseURL corresponde a la ruta base de nuestra API en el backend de Spring Boot.
 // Esto evita que tengamos que escribir 'http://localhost:8080/api' en cada llamada.
 const apiService = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: "http://localhost:8080/api",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -21,7 +19,7 @@ const apiService = axios.create({
 apiService.interceptors.request.use(
   (config) => {
     // Antes de enviar la petición, intentamos obtener el token del localStorage.
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
 
     // Si existe un token...
     if (token) {
@@ -57,17 +55,19 @@ apiService.interceptors.response.use(
       // Si el error es 401 (Unauthorized) o 403 (Forbidden), significa que la sesión
       // no es válida (token expirado, permisos insuficientes, etc.).
       if (status === 401 || status === 403) {
-        toast.error('Tu sesión ha expirado o no tienes permisos. Por favor, inicia sesión de nuevo.');
-        
+        toast.error(
+          "Tu sesión ha expirado o no tienes permisos. Por favor, inicia sesión de nuevo."
+        );
+
         // La mejor práctica es forzar el cierre de sesión.
         // Como no podemos llamar al hook `useAuth` aquí, eliminamos el token directamente
         // y recargamos la página. El AuthProvider se encargará del resto.
-        localStorage.removeItem('authToken');
-        window.location.href = '/login'; // Forzamos la redirección
+        localStorage.removeItem("authToken");
+        window.location.href = "/login"; // Forzamos la redirección
       }
     }
-    
-    // Para cualquier otro error, simplemente lo propagamos para que el 
+
+    // Para cualquier otro error, simplemente lo propagamos para que el
     // bloque catch del componente que hizo la llamada lo pueda manejar.
     return Promise.reject(error);
   }

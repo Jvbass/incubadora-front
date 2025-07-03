@@ -32,14 +32,15 @@ export interface UserData {
   role: string;
 }
 
-export interface ListProjects {
+export interface ListProjects { // Renombrado para mayor claridad
   id: number;
   title: string;
   developerUsername: string;
   createdAt: string;
-  technologyNames: string[];
-  status: string;
+  technologies: Technology[]; 
   isCollaborative: boolean;
+  needMentoring: boolean;
+  status: string;
   developmentProgress: number;
 }
 
@@ -51,5 +52,12 @@ export interface ProjectFormInput {
   technologyIds: number[];
   status: "pending" | "published" | "archived";
   isCollaborative: boolean;
+  needMentoring: boolean;
   developmentProgress: number;
+}
+
+export interface Technology {
+  id: number;
+  name: string;
+  techColor: string;
 }

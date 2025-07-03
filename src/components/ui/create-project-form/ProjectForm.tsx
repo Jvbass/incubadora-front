@@ -1,14 +1,32 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { createProject } from "../../../api/queries";
-import {
-  availableTechnologies,
-} from "../../../utils/data/createProjectData";
+import { createProject, fetchTechnologies } from "../../../api/queries";
 import type { ProjectFormInput } from "../../../types";
+import { useMemo } from "react";
+import MultiSelect from "./MultiSelect";
 
 const ProjectForm = () => {
+  // --- 1. OBTENER DATOS DE TECNOLOGÍAS CON REACT QUERY ---
+  const { data: technologies, isLoading: isLoadingTechs } = useQuery({
+    queryKey: ["technologies"],
+    queryFn: fetchTechnologies,
+    staleTime: 1000 * 60 * 60, // Cachear por 1 hora
+    refetchOnWindowFocus: false, // Opcional: Evita re-fetch al cambiar de pestaña
+  });
+
+  // --- 2. FORMATEAR DATOS PARA REACT-SELECT ---
+  // Usamos useMemo para evitar que este cálculo se repita en cada render.
+  const technologyOptions = useMemo(() => {
+    return (
+      technologies?.map((tech) => ({
+        value: tech.id,
+        label: tech.name,
+      })) || []
+    );
+  }, [technologies]);
+
   const {
     register,
     handleSubmit,
@@ -18,6 +36,7 @@ const ProjectForm = () => {
     defaultValues: {
       status: "pending",
       isCollaborative: false,
+      needMentoring: false,
       developmentProgress: 10,
       technologyIds: [],
     },
@@ -38,13 +57,9 @@ const ProjectForm = () => {
     },
   });
 
+  // Ya no necesitamos formatear los IDs, el componente MultiSelect se encarga.
   const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
-    // convertimos los IDs a números
-    const formattedData = {
-      ...data,
-      technologyIds: data.technologyIds.map((id) => Number(id)),
-    };
-    mutate(formattedData);
+    mutate(data);
   };
 
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
@@ -175,28 +190,36 @@ const ProjectForm = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tecnologías Utilizadas <span className=" text-xs ">*</span>
+                Tecnologías Utilizadas{" "}
+                <span className=" text-xs ">
+                  * (Lenguajes, Frameworks, Herramientas)
+                </span>
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {availableTechnologies.map((tech) => (
-                  <label
-                    key={tech.id}
-                    className="flex items-center space-x-2 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      value={tech.id}
-                      {...register("technologyIds", {
-                        validate: (value) =>
-                          value.length > 0 ||
-                          "Debes seleccionar al menos una tecnología",
-                      })}
-                      className="rounded border-gray-300 text-blue-500 shadow-sm focus:ring-blue-500"
+              <div>
+                <Controller
+                  name="technologyIds"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      value.length > 0 ||
+                      "Debes seleccionar al menos una tecnología",
+                  }}
+                  render={({ field }) => (
+                    <MultiSelect
+                      field={field}
+                      options={technologyOptions}
+                      isLoading={isLoadingTechs}
+                      placeholder="Escribe para buscar tecnologías..."
                     />
-                    <span>{tech.name}</span>
-                  </label>
-                ))}
+                  )}
+                />
+                {errors.technologyIds && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.technologyIds.message}
+                  </p>
+                )}
               </div>
+
               {errors.technologyIds && (
                 <p className="text-xs text-red-600 mt-2">
                   {errors.technologyIds.message}
@@ -204,7 +227,7 @@ const ProjectForm = () => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-7">
+          <div className="grid grid-cols-1  gap-6 mt-7">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Estado del Proyecto <span className=" text-xs ">*</span>
@@ -219,7 +242,7 @@ const ProjectForm = () => {
                 <option value="archived">Archivar</option>
               </select>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
+            <div className="grid grid-cols-1 gap-6">
               <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
@@ -231,7 +254,7 @@ const ProjectForm = () => {
               <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register("isCollaborative")}
+                  {...register("needMentoring")}
                   className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                 />
                 <span>Busco mentor</span>

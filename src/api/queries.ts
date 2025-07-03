@@ -1,5 +1,5 @@
 import apiService from './apiService';
-import type { UserData, ListProjects, ProjectFormInput } from '../types'; // Asumiendo que tienes estos tipos
+import type { UserData, ListProjects, ProjectFormInput, Technology } from '../types'; // Asumiendo que tienes estos tipos
 
 /**
  * todas las funciones que llaman a la API
@@ -24,3 +24,19 @@ export const createProject = async (projectData: ProjectFormInput): Promise<Proj
   return data;
 };
 
+/**
+ * Obtiene la lista de todas las tecnologías disponibles.
+ */
+export const fetchTechnologies = async (): Promise<Technology[]> => {
+  const { data } = await apiService.get<Technology[]>('/technologies');
+  return data;
+};
+
+
+/**
+ * Obtiene la lista de proyectos del usuario autenticado.
+ */
+export const fetchMyProjects = async (): Promise<ListProjects[]> => {
+  const { data } = await apiService.get<ListProjects[]>('/projects/my-projects');
+  return data;
+};
