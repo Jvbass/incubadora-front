@@ -1,35 +1,20 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 
-import { useNavigate, Link } from "react-router-dom";
-import toast from "react-hot-toast";
-
-import { AxiosError } from "axios";
 import { useAuth } from "../../hooks/useAuth";
 import type { RegisterRequest } from "../../types";
+import { Link } from "react-router-dom";
 
 const RegisterPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<RegisterRequest>();
-  const { registerAndLogin } = useAuth();
-  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<RegisterRequest> = async (data) => {
-    try {
-      await registerAndLogin(data);
-      toast.success("¡Registro exitoso! Bienvenido.");
-      navigate("/"); // Redirige a la raíz para que RoleBasedRedirect haga su trabajo.
-    } catch (error) {
-      console.error(error);
-      let errorMessage = "Ocurrió un error inesperado.";
-      if (error instanceof AxiosError && error.response) {
-        // Asumiendo que el backend envía un campo 'message' en el cuerpo del error
-        errorMessage = error.response.data.message || "Error en el registro.";
-      }
-      toast.error(errorMessage);
-    }
+  const { registerAndLogin, isRegisteringAndLoggingIn } = useAuth();
+
+  const onSubmit: SubmitHandler<RegisterRequest> = (data) => {
+    registerAndLogin(data);
   };
 
   return (
@@ -145,10 +130,10 @@ const RegisterPage = () => {
           </div>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isRegisteringAndLoggingIn}
             className="w-full py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300"
           >
-            {isSubmitting ? "Registrando..." : "Registrarse"}
+            {isRegisteringAndLoggingIn ? "Registrando..." : "Registrarse"}
           </button>
         </form>
         <p className="text-sm text-center text-gray-600">

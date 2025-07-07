@@ -1,5 +1,3 @@
-// src/types/index.ts
-
 // Describe la estructura del payload decodificado del JWT que recibimos del backend.
 // El backend nos devuelve 'sub' (subject, que es el username) y 'role'.
 export interface DecodedToken {
@@ -9,8 +7,7 @@ export interface DecodedToken {
   exp: number;
 }
 
-// Representa al objeto de usuario que manejaremos en el frontend.
-// Lo simplificamos para tener solo la información que necesitamos directamente.
+
 export interface User {
   username: string;
   role: string;
@@ -22,6 +19,11 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
+}
+
+export interface LoginRequest {
+  username: string;
+  password: string;
 }
 
 export interface UserData {

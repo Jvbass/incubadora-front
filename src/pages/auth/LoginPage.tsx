@@ -1,9 +1,7 @@
 // src/pages/auth/Login.tsx
 
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 type LoginFormData = {
@@ -12,24 +10,11 @@ type LoginFormData = {
 }
 
 const LoginPage = () => {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormData>();
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
-
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    try {
-      await login(data);
-      toast.success('¡Bienvenido de nuevo!');
-      navigate(from, { replace: true }); // Redirige a la página original o a la raíz.
-    } catch (error) {
-      let errorMessage = 'Credenciales incorrectas o error en el servidor.';
-      if (error instanceof AxiosError && error.response) {
-        errorMessage = error.response.data.message || 'Error al iniciar sesión.';
-      }
-      toast.error(errorMessage);
-    }
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { login, isLoggingIn } = useAuth();
+  
+  const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+    login(data);
   };
 
   return (
@@ -63,10 +48,10 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isLoggingIn}
             className="w-full py-2 text-black bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-300"
           >
-            {isSubmitting ? 'Ingresando...' : 'Iniciar Sesión'}
+            {isLoggingIn ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </form>
          <p className="text-sm text-center text-gray-600">
