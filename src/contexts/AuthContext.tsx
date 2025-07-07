@@ -5,6 +5,7 @@ import type { User, RegisterRequest } from "../types";
 
 // Importamos el CONTEXTO desde nuestro archivo de hooks.
 import { AuthContext } from "../hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Tipos para las peticiones a la API.
 type LoginRequest = {
@@ -21,6 +22,9 @@ type AuthResponse = {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Estado para almacenar la información del usuario autenticado
   const [user, setUser] = useState<User | null>(null);
+
+  // Inicializamos el cliente de React Query
+  const queryClient = useQueryClient();
 
   // Estado para el token JWT, inicializado desde localStorage si existe
   const [token, setToken] = useState<string | null>(
@@ -124,6 +128,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Resetea los estados de autenticación
     setUser(null);
     setToken(null);
+    // Limpia toda la caché de React Query
+    queryClient.clear();
   };
 
   // Objeto con los valores y funciones que estarán disponibles para los componentes hijos

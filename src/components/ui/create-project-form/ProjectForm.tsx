@@ -49,6 +49,7 @@ const ProjectForm = () => {
     mutationFn: createProject,
     onSuccess: (data) => {
       toast.success(`Proyecto "${data.title}" creado exitosamente!`);
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       navigate("/dashboard");
     },
