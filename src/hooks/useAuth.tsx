@@ -48,7 +48,7 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: ["userData"] });
 
       toast.success("¡Bienvenido de nuevo!");
-      navigate("/dashboard"); // O a la ruta que corresponda.
+      navigate("/"); // O a la ruta que corresponda.
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Credenciales incorrectas.");
@@ -71,7 +71,7 @@ export const useAuth = () => {
       localStorage.setItem('authToken', data.token);
       queryClient.invalidateQueries({ queryKey: ['userData'] });
       toast.success('¡Registro completado! Bienvenido.');
-      navigate('/dashboard'); // Redirige al dashboard directamente.
+      navigate('/'); // Redirige al home directamente.
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || 'Ocurrió un error durante el registro.');
