@@ -3,6 +3,7 @@ import { fetchMyProjects } from "../../../api/queries";
 import type { ListProjects } from "../../../types";
 import Loading from "../ux/Loading";
 import { Link } from "react-router-dom";
+import { Suspense } from "react";
 
 const MyProjectsList = () => {
   // Usamos una clave única ['myProjects'] para esta consulta
@@ -49,9 +50,12 @@ const MyProjectsList = () => {
 
   return (
     <div className="space-y-4">
+
+      <Suspense fallback={<Loading message="proyectos" />}>
       {projects.map((project) => (
         <div key={project.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex justify-between items-center">
           
+
           {/* Información del Proyecto */}
           <div>
             <h4 className="font-bold text-gray-800">{project.title}</h4>
@@ -67,6 +71,7 @@ const MyProjectsList = () => {
               ))}
             </div>
           </div>
+
 
           {/* Estado y Acciones */}
           <div className="text-right">
@@ -84,6 +89,7 @@ const MyProjectsList = () => {
 
         </div>
       ))}
+      </Suspense>
     </div>
   );
 };
