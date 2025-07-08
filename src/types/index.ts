@@ -34,7 +34,7 @@ export interface UserData {
   role: string;
 }
 
-export interface ListProjects { // Renombrado para mayor claridad
+export interface ListProjects { 
   id: number;
   title: string;
   developerUsername: string;

@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 // Importamos la función de fetch que acabamos de crear
-import { fetchUserData } from "../../api/queries";
+import { fetchMyProjects, fetchUserData } from "../../api/queries";
 import Loading from "../../components/ui/ux/Loading";
-import MyProjectsList from "../../components/ui/dashboard/MyProjectsList";
+
 import { Link } from "react-router-dom";
+import { ProjectCard } from "../../components/ui/card/ProjectCard";
+import type { ListProjects } from "../../types";
 
 const DeveloperDashboard = () => {
   // Usamos el hook useQuery.
@@ -16,6 +18,16 @@ const DeveloperDashboard = () => {
     // durante 5 minutos. No habrá llamadas de red innecesarias en ese tiempo.
     staleTime: 1000 * 60 * 60,
   });
+
+   const {
+      data: projects,
+
+    } = useQuery<ListProjects[]>({
+      queryKey: ["myProjects"],
+      queryFn: fetchMyProjects,
+      staleTime: 1000 * 60 * 60,
+      refetchOnWindowFocus: false,
+    });
 
   /** renderizado declarativo */
   const renderContent = () => {
@@ -82,7 +94,17 @@ const DeveloperDashboard = () => {
         </div>
         
         {/* --- 2. RENDERIZAR EL NUEVO COMPONENTE --- */}
-        <MyProjectsList />
+        <ul className="space-y-4 mt-4">
+        {projects?.map((project) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            variant="compact"
+            onEdit={() => null}    // <--- Pasamos la función de editar
+            onDelete={() => null} // <--- Pasamos la función de borrar
+          />
+        ))}
+      </ul>
       </div>
       </div>
     );
