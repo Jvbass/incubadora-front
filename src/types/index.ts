@@ -58,6 +58,35 @@ export interface ProjectFormInput {
   developmentProgress: number;
 }
 
+export interface ProjectDetail {
+  title: string;
+  description: string;
+  repositoryUrl: string;
+  projectUrl: string;
+  createdAt: string;
+  developerUsername: string;
+  technologies: Technology[];
+  status: string;
+  isCollaborative: boolean;
+  needMentoring: boolean;
+  developmentProgress: number;
+}
+
+/*
+    private Integer id;
+    private String title;
+    private String description;
+    private String repositoryUrl;
+    private String projectUrl;
+    private Timestamp createdAt;
+    private String developerUsername;
+    private Set<TechnologyDto> technologies;
+    private String status;
+    private Boolean isCollaborative;
+    private Boolean needMentoring = false;
+    private Byte developmentProgress;
+*/
+
 export interface Technology {
   id: number;
   name: string;

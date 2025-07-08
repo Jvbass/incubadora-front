@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 // Importamos la función de fetch que acabamos de crear
 import { fetchMyProjects, fetchUserData } from "../../api/queries";
-import Loading from "../../components/ui/ux/Loading";
+import Loading from "../../components/ux/Loading";
 
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../../components/ui/card/ProjectCard";
@@ -93,7 +93,6 @@ const DeveloperDashboard = () => {
           </Link>
         </div>
         
-        {/* --- 2. RENDERIZAR EL NUEVO COMPONENTE --- */}
         <ul className="space-y-4 mt-4">
         {projects?.map((project) => (
           <ProjectCard

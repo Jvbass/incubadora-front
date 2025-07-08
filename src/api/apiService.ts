@@ -75,5 +75,4 @@ apiService.interceptors.response.use(
 
 // 4. EXPORTACIÓN
 // Exportamos la instancia configurada para poder usarla en cualquier parte
-// de nuestra aplicación (ej. en el AuthContext, en las páginas de dashboard, etc.).
 export default apiService;

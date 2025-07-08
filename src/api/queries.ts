@@ -6,6 +6,7 @@ import type {
   Technology,
   LoginRequest,
   RegisterRequest,
+  ProjectDetail,
 } from "../types";
 
 /**
@@ -77,5 +78,13 @@ export const fetchMyProjects = async (): Promise<ListProjects[]> => {
   const { data } = await apiService.get<ListProjects[]>(
     "/projects/my-projects"
   );
+  return data;
+};
+
+/**
+* Obtiene los detalles completos de un proyecto por su ID.
+*/
+export const fetchProjectById = async (projectId: string): Promise<ProjectDetail> => {
+  const { data } = await apiService.get<ProjectDetail>(`/projects/${projectId}`);
   return data;
 };
