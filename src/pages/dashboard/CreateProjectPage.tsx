@@ -1,5 +1,5 @@
-import ProjectForm from "../../components/ui/create-project-form/ProjectForm";
-import ProjectInfoPanel from "../../components/ui/create-project-form/ProjectInfoPanel";
+import ProjectForm from "../../components/ui/project-form/ProjectForm";
+import ProjectInfoPanel from "../../components/ui/project-form/ProjectInfoPanel";
 
 const CreateProjectPage = () => {
   return (

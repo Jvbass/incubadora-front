@@ -31,6 +31,7 @@ const ProjectForm = () => {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormInput>({
     defaultValues: {
@@ -41,6 +42,23 @@ const ProjectForm = () => {
       technologyIds: [],
     },
   });
+
+  const MAX_DESCRIPTION_LENGTH = 2000; // Usamos el nuevo límite que necesitas
+  const descriptionValue = watch("description") || "";
+  const currentLength = descriptionValue.length;
+
+  const getCounterColor = () => {
+    const usagePercentage = currentLength / MAX_DESCRIPTION_LENGTH;
+    if (usagePercentage >= 1) {
+      return "text-red-600";
+    }
+    if (usagePercentage >= 0.9) {
+      return "text-lime-500";
+    }
+    return "text-gray-400";
+  };
+
+  const counterColorClass = getCounterColor();
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -102,24 +120,35 @@ const ProjectForm = () => {
               )}
             </div>
             <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Descripción <span className=" text-xs ">*</span>
-              </label>
+              <div className="flex justify-between items-center">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Descripción <span className="text-xs">*</span>
+                </label>
+                {/* Usamos la clase de color dinámica que calculamos antes */}
+                <span
+                  className={`text-xs font-medium transition-colors ${counterColorClass}`}
+                >
+                  {MAX_DESCRIPTION_LENGTH - currentLength} caracteres restantes
+                </span>
+              </div>
               <textarea
                 id="description"
+                // ¡Clave! Añadimos el atributo nativo maxLength para detener la escritura.
+                maxLength={MAX_DESCRIPTION_LENGTH}
                 {...register("description", {
                   required: "La descripción es obligatoria",
                   maxLength: {
-                    value: 500,
-                    message:
-                      "La descripción no puede exceder los 500 caracteres",
+                    value: MAX_DESCRIPTION_LENGTH,
+                    message: `La descripción no puede exceder los ${MAX_DESCRIPTION_LENGTH} caracteres`,
                   },
+                  // Ya no es necesario el `onChange` aquí. ¡El código queda más limpio!
                 })}
-                rows={4}
+                rows={10}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                placeholder="Describe los objetivos, funcionalidades y el estado actual de tu proyecto..."
               ></textarea>
               {errors.description && (
                 <p className="text-xs text-red-600 mt-1">

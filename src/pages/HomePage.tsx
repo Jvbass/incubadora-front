@@ -5,7 +5,7 @@ import Loading from "../components/ux/Loading";
 import { ProjectCard } from "../components/ui/card/ProjectCard";
 import { useState } from "react";
 import ProjectDetailModal from "../components/ui/modal/ProjectDetailModal";
-import "../index.css"
+import "../index.css";
 
 const HomePage = () => {
   const [selectedProject, setSelectedProject] = useState<ListProjects | null>(
