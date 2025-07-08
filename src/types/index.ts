@@ -59,6 +59,7 @@ export interface ProjectFormInput {
 }
 
 export interface ProjectDetail {
+  id: number;
   title: string;
   description: string;
   repositoryUrl: string;

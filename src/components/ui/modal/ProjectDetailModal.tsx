@@ -26,6 +26,19 @@ const ProjectDetailModal = ({
     refetchOnWindowFocus: false,
   });
 
+  const formatedDate = (date: string) => {
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString();
+  };
+
+  const formatedBoolanColaborativeData = (isCollaborative: boolean) => {
+    return isCollaborative ? "Sí" : "No";
+  };
+
+  const formatedBoolanMentoringData = (needMentoring: boolean) => {
+    return needMentoring ? "Sí" : "No";
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -65,6 +78,20 @@ const ProjectDetailModal = ({
               <p className="text-sm text-gray-400 mb-4">
                 por {project.developerUsername}
               </p>
+              <p className="text-sm text-gray-400 mb-4">
+                {project.repositoryUrl}
+              </p>
+              <p className="text-sm text-gray-400 mb-4">
+                {formatedBoolanMentoringData(project.needMentoring)}
+              </p>
+              <p className="text-sm text-gray-400 mb-4">
+                {formatedBoolanColaborativeData(project.isCollaborative)}
+              </p>
+              <p className="text-sm text-gray-400 mb-4">
+                {project.developmentProgress}%
+              </p>
+              <p className="text-sm text-gray-400 mb-4">{formatedDate(project.createdAt)}</p>
+
               <div className="flex flex-wrap gap-2 mb-6">
                 {project.technologies.map((tech) => (
                   <span

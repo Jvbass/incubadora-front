@@ -41,7 +41,7 @@ const HomePage = () => {
     if (isError) {
       return (
         <div className="p-8 h-screen w-max text-center font-bold">
-          Error al cargar lsita de proyectos: {error.message}
+          Error al cargar lista de proyectos: {error.message}
         </div>
       );
     }

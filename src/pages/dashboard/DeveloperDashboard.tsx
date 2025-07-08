@@ -6,28 +6,37 @@ import Loading from "../../components/ux/Loading";
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../../components/ui/card/ProjectCard";
 import type { ListProjects } from "../../types";
+import { useState } from "react";
+import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
 
 const DeveloperDashboard = () => {
-  // Usamos el hook useQuery.
+  const [selectedProject, setSelectedProject] = useState<ListProjects | null>(
+    null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleProjectClick = (project: ListProjects) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
+  };
+
   const { data, isLoading, isError, error } = useQuery({
-    // queryKey: Clave única para esta consulta. React Query la usa para cachear.
     queryKey: ["userData"],
-    // queryFn: La función asíncrona que obtiene los datos.
     queryFn: fetchUserData,
-    // staleTime: Le decimos a React Query que no considere estos datos "obsoletos"
-    // durante 5 minutos. No habrá llamadas de red innecesarias en ese tiempo.
     staleTime: 1000 * 60 * 60,
   });
 
-   const {
-      data: projects,
-
-    } = useQuery<ListProjects[]>({
-      queryKey: ["myProjects"],
-      queryFn: fetchMyProjects,
-      staleTime: 1000 * 60 * 60,
-      refetchOnWindowFocus: false,
-    });
+  const { data: projects } = useQuery<ListProjects[]>({
+    queryKey: ["myProjects"],
+    queryFn: fetchMyProjects,
+    staleTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+  });
 
   /** renderizado declarativo */
   const renderContent = () => {
@@ -83,28 +92,41 @@ const DeveloperDashboard = () => {
           </p>
         </div>
         <div className="p-6 bg-white rounded-lg shadow-md">
-        <div className="flex justify-between items-center border-b pb-2 mb-4">
-          <h2 className="text-2xl font-semibold">Mis Proyectos</h2>
-          <Link 
-            to="/create-project" 
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-          >
-            + Crear Proyecto
-          </Link>
+          <div className="flex justify-between items-center border-b pb-2 mb-4">
+            <h2 className="text-2xl font-semibold">Mis Proyectos</h2>
+            <Link
+              to="/create-project"
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+            >
+              + Crear Proyecto
+            </Link>
+          </div>
+
+          <ul className="space-y-4 mt-4">
+            {projects?.map((project) => (
+              <div
+                key={project.id}
+                onClick={() => handleProjectClick(project)}
+                className="cursor-pointer hover:opacity-90 transition-opacity"
+              >
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  variant="compact"
+                  onEdit={() => null} // <--- Pasamos la función de editar
+                  onDelete={() => null} // <--- Pasamos la función de borrar
+                />
+              </div>
+            ))}
+          </ul>
         </div>
-        
-        <ul className="space-y-4 mt-4">
-        {projects?.map((project) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            variant="compact"
-            onEdit={() => null}    // <--- Pasamos la función de editar
-            onDelete={() => null} // <--- Pasamos la función de borrar
+        {selectedProject && (
+          <ProjectDetailModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            projectId={selectedProject.id.toString()}
           />
-        ))}
-      </ul>
-      </div>
+        )}
       </div>
     );
   };

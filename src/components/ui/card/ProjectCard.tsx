@@ -21,11 +21,11 @@ export const ProjectCard = ({
   };
 
   const formatedBoolanColaborativeData = (isCollaborative: boolean) => {
-    return isCollaborative ? "Sí" : "No";
+    return isCollaborative ? "Colaborativo" : "No colaborativo";
   };
 
   const formatedBoolanMentoringData = (needMentoring: boolean) => {
-    return needMentoring ? "Sí" : "No";
+    return needMentoring ? "Busca mentoría" : "No busca mentoría";
   };
 
   // Vista Detallada para el HomePage ---
@@ -48,14 +48,12 @@ export const ProjectCard = ({
             <span>{formatedDate(project.createdAt)}</span>
           </div>
           <div>
-            <span className="font-semibold text-gray-600">Colaborativo: </span>
-            <span>
-              {formatedBoolanColaborativeData(project.isCollaborative)}
+            <span className="font-semibold text-gray-600">Proyecto {formatedBoolanColaborativeData(project.isCollaborative)}
             </span>
           </div>
           <div>
-            <span className="font-semibold text-gray-600">Mentoría: </span>
-            <span>{formatedBoolanMentoringData(project.needMentoring)}</span>
+            <span className="font-semibold text-gray-600">
+           {formatedBoolanMentoringData(project.needMentoring)}</span>
           </div>
         </div>
 
