@@ -73,23 +73,14 @@ export interface ProjectDetail {
   developmentProgress: number;
 }
 
-/*
-    private Integer id;
-    private String title;
-    private String description;
-    private String repositoryUrl;
-    private String projectUrl;
-    private Timestamp createdAt;
-    private String developerUsername;
-    private Set<TechnologyDto> technologies;
-    private String status;
-    private Boolean isCollaborative;
-    private Boolean needMentoring = false;
-    private Byte developmentProgress;
-*/
-
 export interface Technology {
   id: number;
   name: string;
   techColor: string;
+}
+
+export interface ProjectModalProps {
+  projectId: string | null;
+  isOpen: boolean;
+  onClose: () => void;
 }

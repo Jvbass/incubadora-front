@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjectById } from "../../../api/queries";
 import Loading from "../../ux/Loading";
+import { useEffect } from "react";
+import type { ProjectModalProps } from "../../../types";
 
-interface ProjectDetailModalProps {
-  projectId: string | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
+
 
 const ProjectDetailModal = ({
   projectId,
   isOpen,
   onClose,
-}: ProjectDetailModalProps) => {
+}: ProjectModalProps) => {
+
+
   const {
     data: project,
     isLoading,
@@ -25,6 +25,20 @@ const ProjectDetailModal = ({
     staleTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  //  useEffect para controlar el scroll ---
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    // Función de limpieza para restaurar el scroll si el componente se desmonta
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
 
   const formatedDate = (date: string) => {
     const dateObj = new Date(date);
@@ -42,55 +56,81 @@ const ProjectDetailModal = ({
   if (!isOpen) return null;
 
   return (
-    // Backdrop semitransparente
+    // Backdrop semitransparente clickeable para cerrar
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-xs transition-opacity duration-500"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm transition-opacity duration-300"
     >
-      {/* Contenedor del Modal */}
       <div
-        onClick={(e) => e.stopPropagation()} // Evita que el clic en el modal cierre el backdrop
-        className="relative w-11/12 max-w-3xl rounded-lg bg-gray-800 text-white shadow-2xl transform transition-all duration-500 ease-in-out scale-95 opacity-0 animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+        className="relative flex flex-col w-11/12 rounded-lg bg-gray-800 text-white shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-scale-in max-h-[95vh] max-w-[90vw]"
       >
-        {/* Botón para cerrar */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white cursor-pointer"
-        >
-          <span className="text-2xl">X</span>
-        </button>
+        {/* Header del Modal */}
+        <div className="flex-shrink-0 p-4 border-b border-gray-700 flex justify-between items-start">
+          <h2 className="text-3xl font-bold text-cyan-400">
+            {project?.title || "Cargando..."}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white cursor-pointer text-2xl"
+          >
+            &times; {/* x para cerrar */}
+          </button>
+        </div>
 
-        {/* Contenido del Modal */}
-        <div className="p-8">
+        <div className="flex-grow p-6 overflow-y-auto">
           {isLoading && (
             <div className="flex justify-center p-10">
               <Loading message="Cargando proyecto..." />
             </div>
           )}
           {isError && (
-            <div className="text-red-500">Error: {error.message}</div>
+            <div className="text-red-500">Error: {error?.message}</div>
           )}
           {project && (
             <div>
-              <h2 className="text-3xl font-bold text-cyan-400 mb-2">
-                {project.title}
-              </h2>
               <p className="text-sm text-gray-400 mb-4">
                 por {project.developerUsername}
               </p>
-              <p className="text-sm text-gray-400 mb-4">
-                {project.repositoryUrl}
-              </p>
-              <p className="text-sm text-gray-400 mb-4">
-                {formatedBoolanMentoringData(project.needMentoring)}
-              </p>
-              <p className="text-sm text-gray-400 mb-4">
-                {formatedBoolanColaborativeData(project.isCollaborative)}
-              </p>
-              <p className="text-sm text-gray-400 mb-4">
-                {project.developmentProgress}%
-              </p>
-              <p className="text-sm text-gray-400 mb-4">{formatedDate(project.createdAt)}</p>
+              <a
+                href={project.repositoryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-cyan-400 hover:underline mb-4 block"
+              >
+                Ver Repositorio
+              </a>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <span className="font-semibold block text-gray-500">
+                    Busca Mentor
+                  </span>
+                  <span>
+                    {formatedBoolanMentoringData(project.needMentoring)}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-semibold block text-gray-500">
+                    Es Colaborativo
+                  </span>
+                  <span>
+                    {formatedBoolanColaborativeData(project.isCollaborative)}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-semibold block text-gray-500">
+                    Progreso
+                  </span>
+                  <span>{project.developmentProgress}%</span>
+                </div>
+                <div>
+                  <span className="font-semibold block text-gray-500">
+                    Creado
+                  </span>
+                  <span>{formatedDate(project.createdAt)}</span>
+                </div>
+              </div>
 
               <div className="flex flex-wrap gap-2 mb-6">
                 {project.technologies.map((tech) => (
@@ -102,10 +142,13 @@ const ProjectDetailModal = ({
                   </span>
                 ))}
               </div>
-              <p className="text-gray-300 whitespace-pre-wrap">
+
+              <h3 className="font-semibold text-lg text-gray-300 mb-2">
+                Descripción
+              </h3>
+              <p className="text-gray-300 whitespace-pre-wrap text-base">
                 {project.description}
               </p>
-              {/* Aquí podrías añadir enlaces al repo, etc. */}
             </div>
           )}
         </div>
