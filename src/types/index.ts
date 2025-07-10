@@ -1,12 +1,12 @@
-// Describe la estructura del payload decodificado del JWT que recibimos del backend.
-// El backend nos devuelve 'sub' (subject, que es el username) y 'role'.
+/*===================================================
+* auth & user
+===================================================*/
 export interface DecodedToken {
   sub: string;
   role: string;
   iat: number;
   exp: number;
 }
-
 
 export interface User {
   username: string;
@@ -34,12 +34,15 @@ export interface UserData {
   role: string;
 }
 
-export interface ListProjects { 
+/*===================================================
+* projects
+===================================================*/
+export interface ListProjects {
   id: number;
   title: string;
   developerUsername: string;
   createdAt: string;
-  technologies: Technology[]; 
+  technologies: Technology[];
   isCollaborative: boolean;
   needMentoring: boolean;
   status: string;
@@ -73,14 +76,15 @@ export interface ProjectDetail {
   developmentProgress: number;
 }
 
+export interface ProjectModalProps {
+  projectId: string | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 export interface Technology {
   id: number;
   name: string;
   techColor: string;
 }
 
-export interface ProjectModalProps {
-  projectId: string | null;
-  isOpen: boolean;
-  onClose: () => void;
-}

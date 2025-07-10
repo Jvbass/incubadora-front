@@ -82,17 +82,27 @@ export const fetchMyProjects = async (): Promise<ListProjects[]> => {
 };
 
 /**
-* Obtiene los detalles completos de un proyecto por su ID.
-*/
-export const fetchProjectById = async (projectId: string): Promise<ProjectDetail> => {
-  const { data } = await apiService.get<ProjectDetail>(`/projects/${projectId}`);
+ * Obtiene los detalles completos de un proyecto por su ID.
+ */
+export const fetchProjectById = async (
+  projectId: string
+): Promise<ProjectDetail> => {
+  const { data } = await apiService.get<ProjectDetail>(
+    `/projects/${projectId}`
+  );
   return data;
 };
 
 /**
  * Actualiza un proyecto por su ID.
  */
-export const updateProjectById = async (projectId: string, projectData: ProjectFormInput): Promise<ProjectFormInput> => {
-  const { data } = await apiService.put<ProjectFormInput>(`/projects/${projectId}`, projectData);
+export const updateProjectById = async (
+  projectId: string,
+  projectData: ProjectFormInput
+): Promise<ProjectFormInput> => {
+  const { data } = await apiService.put<ProjectFormInput>(
+    `/projects/${projectId}`,
+    projectData
+  );
   return data;
 };

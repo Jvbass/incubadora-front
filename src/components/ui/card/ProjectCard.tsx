@@ -4,6 +4,7 @@ interface ProjectCardProps {
   project: ListProjects;
   variant: "full" | "compact";
 
+  onView?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
@@ -11,9 +12,12 @@ interface ProjectCardProps {
 export const ProjectCard = ({
   project,
   variant,
+  onView,
   onEdit,
   onDelete,
 }: ProjectCardProps) => {
+
+  
   // Formateo de fechas y booleanos
   const formatedDate = (date: string) => {
     const dateObj = new Date(date);
@@ -116,8 +120,8 @@ export const ProjectCard = ({
             {/* El botón solo se renderiza si la función onEdit fue pasada como prop */}
             {onEdit && (
               <button
-                onClick={() => null}
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                onClick={() => onEdit(project.id.toString())}
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer"
               >
                 Editar
               </button>
@@ -126,9 +130,17 @@ export const ProjectCard = ({
             {onDelete && (
               <button
                 onClick={() => null}
-                className="text-sm font-medium text-red-600 hover:text-red-800"
+                className="text-sm font-medium text-red-600 hover:text-red-800 cursor-pointer"
               >
                 Borrar
+              </button>
+            )}
+            {onView && (
+              <button
+                onClick={() => onView(project.id.toString())}
+                className="text-sm font-medium text-red-600 hover:text-red-800 cursor-pointer"
+              >
+                Ver
               </button>
             )}
           </div>

@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import MultiSelect from "./MultiSelect";
 
 const ProjectForm = () => {
-  // --- 1. OBTENER DATOS DE TECNOLOGÍAS CON REACT QUERY ---
+  // OBTENER DATOS DE TECNOLOGÍAS CON REACT QUERY ---
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
     queryFn: fetchTechnologies,
@@ -16,7 +16,7 @@ const ProjectForm = () => {
     refetchOnWindowFocus: false, // Opcional: Evita re-fetch al cambiar de pestaña
   });
 
-  // --- 2. FORMATEAR DATOS PARA REACT-SELECT ---
+  // FORMATEAR DATOS PARA REACT-SELECT ---
   // Usamos useMemo para evitar que este cálculo se repita en cada render.
   const technologyOptions = useMemo(() => {
     return (
@@ -76,7 +76,6 @@ const ProjectForm = () => {
     },
   });
 
-  // Ya no necesitamos formatear los IDs, el componente MultiSelect se encarga.
   const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
     mutate(data);
   };
@@ -94,6 +93,7 @@ const ProjectForm = () => {
             Información General
           </h3>
           <div className="space-y-4">
+            {/* titulo */}
             <div>
               <label
                 htmlFor="title"
@@ -119,6 +119,8 @@ const ProjectForm = () => {
                 </p>
               )}
             </div>
+
+            {/* textarea de descripcion */}
             <div>
               <div className="flex justify-between items-center">
                 <label
@@ -127,7 +129,6 @@ const ProjectForm = () => {
                 >
                   Descripción <span className="text-xs">*</span>
                 </label>
-                {/* Usamos la clase de color dinámica que calculamos antes */}
                 <span
                   className={`text-xs font-medium transition-colors ${counterColorClass}`}
                 >
@@ -136,7 +137,7 @@ const ProjectForm = () => {
               </div>
               <textarea
                 id="description"
-                // ¡Clave! Añadimos el atributo nativo maxLength para detener la escritura.
+                //atributo nativo maxLength para detener la escritura.
                 maxLength={MAX_DESCRIPTION_LENGTH}
                 {...register("description", {
                   required: "La descripción es obligatoria",
@@ -144,7 +145,6 @@ const ProjectForm = () => {
                     value: MAX_DESCRIPTION_LENGTH,
                     message: `La descripción no puede exceder los ${MAX_DESCRIPTION_LENGTH} caracteres`,
                   },
-                  // Ya no es necesario el `onChange` aquí. ¡El código queda más limpio!
                 })}
                 rows={10}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
@@ -156,6 +156,8 @@ const ProjectForm = () => {
                 </p>
               )}
             </div>
+
+            {/* inputs para urls */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
@@ -217,6 +219,8 @@ const ProjectForm = () => {
           <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">
             Detalles Técnicos
           </h3>
+
+          {/* tecnologías */}
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -226,6 +230,9 @@ const ProjectForm = () => {
                 </span>
               </label>
               <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Tecnologías
+                </label>
                 <Controller
                   name="technologyIds"
                   control={control}
@@ -243,11 +250,6 @@ const ProjectForm = () => {
                     />
                   )}
                 />
-                {errors.technologyIds && (
-                  <p className="text-xs text-red-600 mt-1">
-                    {errors.technologyIds.message}
-                  </p>
-                )}
               </div>
 
               {errors.technologyIds && (
@@ -257,6 +259,8 @@ const ProjectForm = () => {
               )}
             </div>
           </div>
+
+          {/* checkbox para estado/mentoria/colaboradores */}
           <div className="grid grid-cols-1  gap-6 mt-7">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -272,7 +276,7 @@ const ProjectForm = () => {
                 <option value="archived">Archivar</option>
               </select>
             </div>
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
@@ -291,9 +295,11 @@ const ProjectForm = () => {
               </label>
             </div>
           </div>
+
+          {/* Progreso del desarrollo */}
           <div className="mt-7">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Progreso de Desarrollo:
+              Progreso del desarrollo:
               <Controller
                 name="developmentProgress"
                 control={control}
