@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { fetchUserData, loginUser, registerUser } from "../api/queries";
-import type { RegisterRequest, UserData } from "../types";
+import type { RegisterRequest, UserProfileResponse  } from "../types";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 
@@ -18,7 +18,7 @@ export const useAuth = () => {
     data: user,
     isLoading,
     isError,
-  } = useQuery<UserData | null>({
+  } = useQuery<UserProfileResponse  | null>({
     queryKey: ["userData"],
     queryFn: async () => {
       // Si no hay token, no intentamos hacer la petición.

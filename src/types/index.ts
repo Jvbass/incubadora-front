@@ -26,7 +26,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface UserData {
+export interface UserProfileResponse  {
   username: string;
   email: string;
   firstName: string;
@@ -37,7 +37,7 @@ export interface UserData {
 /*===================================================
 * projects
 ===================================================*/
-export interface ListProjects {
+export interface ProjectSummary {
   id: number;
   title: string;
   developerUsername: string;
@@ -61,7 +61,7 @@ export interface ProjectFormInput {
   developmentProgress: number;
 }
 
-export interface ProjectDetail {
+export interface ProjectDetailResponse {
   id: number;
   title: string;
   description: string;

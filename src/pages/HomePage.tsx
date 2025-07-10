@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjects } from "../api/queries";
-import type { ListProjects } from "../types";
+import type { ProjectSummary } from "../types";
 import Loading from "../components/ux/Loading";
 import { ProjectCard } from "../components/ui/card/ProjectCard";
 import { useState } from "react";
@@ -8,18 +8,18 @@ import ProjectDetailModal from "../components/ui/modal/ProjectDetailModal";
 import "../index.css";
 
 const HomePage = () => {
-  const [selectedProject, setSelectedProject] = useState<ListProjects | null>(
+  const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery<ListProjects[]>({
+  const { data, isLoading, isError, error } = useQuery<ProjectSummary[]>({
     queryKey: ["projects"],
     queryFn: fetchProjects,
     staleTime: 1000 * 60 * 60,
   });
 
-  const handleProjectClick = (project: ListProjects) => {
+  const handleProjectClick = (project: ProjectSummary) => {
     setSelectedProject(project);
     setIsModalOpen(true);
   };

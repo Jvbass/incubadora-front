@@ -1,7 +1,7 @@
-import type { ListProjects } from "../../../types";
+import type { ProjectSummary } from "../../../types";
 
 interface ProjectCardProps {
-  project: ListProjects;
+  project: ProjectSummary;
   variant: "full" | "compact";
 
   onView?: (id: string) => void;
