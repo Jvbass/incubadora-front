@@ -3,16 +3,13 @@ import { fetchProjectById } from "../../../api/queries";
 import Loading from "../../ux/Loading";
 import { useEffect } from "react";
 import type { ProjectModalProps } from "../../../types";
-
-
+import { Link } from "react-router-dom";
 
 const ProjectDetailModal = ({
   projectId,
   isOpen,
   onClose,
 }: ProjectModalProps) => {
-
-
   const {
     data: project,
     isLoading,
@@ -92,14 +89,26 @@ const ProjectDetailModal = ({
               <p className="text-sm text-gray-400 mb-4">
                 por {project.developerUsername}
               </p>
-              <a
-                href={project.repositoryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-cyan-400 hover:underline mb-4 block"
-              >
-                Ver Repositorio
-              </a>
+              <div className="flex mb-4">
+                <a
+                  href={project.repositoryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-cyan-400 hover:underline  "
+                >
+                  Ver Repositorio
+                </a>
+              </div>
+              <div className="flex mb-4">
+                <a
+                  href={project.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-cyan-400 hover:underline  "
+                >
+                  Ver Proyecto Desplegado
+                </a>
+              </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div>
@@ -146,9 +155,17 @@ const ProjectDetailModal = ({
               <h3 className="font-semibold text-lg text-gray-300 mb-2">
                 Descripción
               </h3>
-              <p className="text-gray-300 whitespace-pre-wrap text-base">
+              <p className="text-gray-300 whitespace-pre-wrap text-base break-words">
                 {project.description}
               </p>
+              <div className="flex justify-end mt-4">
+                <Link
+                  to={`/feedback/${project.id}`}
+                  className="px-4 py-2 bg-cyan-500 text-white rounded-md hover:bg-cyan-600"
+                >
+                  dar Feedback
+                </Link>
+              </div>
             </div>
           )}
         </div>

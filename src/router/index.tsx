@@ -15,8 +15,6 @@ import HomePage from "../pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
 
-
-
 const AppRouter = () => {
   return (
     <Routes>
@@ -80,30 +78,6 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-      {/* <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-       <Route
-        path="/mentor"
-        element={
-          <ProtectedRoute>
-            <MentorDashboard />
-          </ProtectedRoute>
-        }
-      />
-       <Route
-        path="/recruiter"
-        element={
-          <ProtectedRoute>
-            <RecruiterDashboard />
-          </ProtectedRoute>
-        }
-      /> */}
 
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />

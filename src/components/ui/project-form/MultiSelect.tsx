@@ -1,5 +1,3 @@
-// src/components/common/MultiSelect.tsx
-
 import Select from "react-select";
 import type { ControllerRenderProps } from "react-hook-form";
 
@@ -22,9 +20,6 @@ const MultiSelect = ({
   placeholder,
   isLoading,
 }: MultiSelectProps) => {
-  // `react-select` trabaja con objetos {value, label}.
-  // `react-hook-form` nos da un array de IDs (números).
-  // Necesitamos convertir el valor del formulario al formato que react-select entiende.
   const currentValue = options.filter((option) =>
     field.value?.includes(option.value)
   );
@@ -37,14 +32,13 @@ const MultiSelect = ({
       options={options}
       isLoading={isLoading}
       placeholder={placeholder || "Selecciona..."}
-      // Al cambiar, convertimos de vuelta el array de objetos al array de IDs
-      // que react-hook-form espera.
       onChange={(selectedOptions) => {
         field.onChange(
           selectedOptions ? selectedOptions.map((option) => option.value) : []
         );
       }}
-      // Estilos para que se parezca a los otros inputs de Tailwind
+
+      // Estilizando el select
       styles={{
         control: (base) => ({
           ...base,
@@ -52,6 +46,18 @@ const MultiSelect = ({
           boxShadow: "none",
           "&:hover": {
             borderColor: "#a5b4fc", // focus:border-indigo-500
+          },
+        }),
+        option: (base, { isFocused, isSelected }) => ({
+          ...base,
+          color: "#000000", // text-gray-200
+          backgroundColor: isSelected
+            ? "#4f46e5" // indigo-600 para la opción seleccionada
+            : isFocused
+            ? "#a5b4fc" // bg-gray-700 para la opción con hover/focus
+            : "transparent", // Fondo transparente por defecto
+          "&:active": {
+            backgroundColor: "#4338ca", // indigo-700
           },
         }),
       }}

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-// Importamos la función de fetch que acabamos de crear
 import { fetchMyProjects, fetchUserData } from "../../api/queries";
 import Loading from "../../components/ux/Loading";
 
@@ -8,21 +7,27 @@ import { ProjectCard } from "../../components/ui/card/ProjectCard";
 import type { ListProjects } from "../../types";
 import { useState } from "react";
 import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
+import ProjectEditModal from "../../components/ui/modal/ProjectEditModal";
 
 const DeveloperDashboard = () => {
-  const [selectedProject, setSelectedProject] = useState<ListProjects | null>(
-    null
-  );
+  const [viewingProjectId, setViewingProjectId] = useState<string | null>(null);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProjectClick = (project: ListProjects) => {
-    setSelectedProject(project);
+  const handleProjectView = (projectId: string) => {
+    setViewingProjectId(projectId);
+    setIsModalOpen(true);
+  };
+
+  const handleProjectEdit = (projectId: string) => {
+    setEditingProjectId(projectId);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedProject(null);
+    setViewingProjectId(null);
+    setEditingProjectId(null);
   };
 
   const { data, isLoading, isError, error } = useQuery({
@@ -104,27 +109,33 @@ const DeveloperDashboard = () => {
 
           <ul className="space-y-4 mt-4">
             {projects?.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => handleProjectClick(project)}
-                className="cursor-pointer hover:opacity-90 transition-opacity"
-              >
+              <li key={project.id}>
                 <ProjectCard
                   key={project.id}
                   project={project}
                   variant="compact"
-                  onEdit={() => null} // <--- Pasamos la función de editar
-                  onDelete={() => null} // <--- Pasamos la función de borrar
+                  onEdit={handleProjectEdit} // <--- Pasamos la función de editar
+                  onDelete={(id) => console.log(`Borrar proyecto ${id}`)} // <--- Pasamos la función de borrar
+                  onView={handleProjectView} // <--- Pasamos la función de ver
                 />
-              </div>
+              </li>
             ))}
           </ul>
         </div>
-        {selectedProject && (
+        
+        {/* renderizando los modals */}
+        {viewingProjectId && (
           <ProjectDetailModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            projectId={selectedProject.id.toString()}
+            projectId={viewingProjectId}
+          />
+        )}
+        {editingProjectId && (
+          <ProjectEditModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            projectId={editingProjectId}
           />
         )}
       </div>
