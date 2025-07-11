@@ -142,7 +142,7 @@ const DeveloperDashboard = () => {
     );
   };
 
-  return <div className="p-6">{renderContent()}</div>;
+  return <div className="min-h-screen bg-gray-50 p-6">{renderContent()}</div>;
 };
 
 export default DeveloperDashboard;
