@@ -4,7 +4,7 @@ import Loading from "../../components/ux/Loading";
 
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../../components/ui/card/ProjectCard";
-import type { ListProjects } from "../../types";
+import type { ProjectSummary } from "../../types";
 import { useState } from "react";
 import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
 import ProjectEditModal from "../../components/ui/modal/ProjectEditModal";
@@ -36,7 +36,7 @@ const DeveloperDashboard = () => {
     staleTime: 1000 * 60 * 60,
   });
 
-  const { data: projects } = useQuery<ListProjects[]>({
+  const { data: projects } = useQuery<ProjectSummary[]>({
     queryKey: ["myProjects"],
     queryFn: fetchMyProjects,
     staleTime: 1000 * 60 * 60,
@@ -142,7 +142,7 @@ const DeveloperDashboard = () => {
     );
   };
 
-  return <div className="p-6">{renderContent()}</div>;
+  return <div className="min-h-screen bg-gray-50 p-6">{renderContent()}</div>;
 };
 
 export default DeveloperDashboard;

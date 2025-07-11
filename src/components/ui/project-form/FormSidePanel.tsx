@@ -1,4 +1,4 @@
-const ProjectInfoPanel = () => {
+const FormSidePanel = () => {
   return (
     <aside className="md:col-span-1">
       <div className="p-6 bg-white rounded-lg shadow-md sticky top-24">
@@ -22,4 +22,4 @@ const ProjectInfoPanel = () => {
   );
 };
 
-export default ProjectInfoPanel;
+export default FormSidePanel;

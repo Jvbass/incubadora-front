@@ -14,6 +14,7 @@ import PublicRoute from "./PublicRoute";
 import HomePage from "../pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
+import ProjectDetailPage from "../pages/ProjectDetailPage";
 
 const AppRouter = () => {
   return (
@@ -79,6 +80,18 @@ const AppRouter = () => {
         }
       />
 
+      <Route
+      path="/project/:projectId"
+      element={
+        <ProtectedRoute>
+          <AuthenticatedLayout>
+            <ProjectDetailPage/>
+          </AuthenticatedLayout>
+        </ProtectedRoute>
+      }
+    />
+
+    
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />
     </Routes>

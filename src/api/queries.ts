@@ -1,12 +1,14 @@
 import apiService from "./apiService";
 import type {
-  UserData,
-  ListProjects,
+  UserProfileResponse,
+  ProjectSummary,
   ProjectFormInput,
   Technology,
   LoginRequest,
   RegisterRequest,
-  ProjectDetail,
+  ProjectDetailResponse,
+  FeedbackResponse,
+  FeedbackRequest,
 } from "../types";
 
 /**
@@ -27,25 +29,28 @@ export const loginUser = async (
  */
 export const registerUser = async (
   userData: RegisterRequest
-): Promise<UserData> => {
-  const { data } = await apiService.post<UserData>("/auth/register", userData);
+): Promise<UserProfileResponse> => {
+  const { data } = await apiService.post<UserProfileResponse>(
+    "/auth/register",
+    userData
+  );
   return data;
 };
 
 /**
  * Obtiene la información del usuario logeado.
  */
-export const fetchUserData = async (): Promise<UserData> => {
-  const { data } = await apiService.get<UserData>("/dashboard");
+export const fetchUserData = async (): Promise<UserProfileResponse> => {
+  const { data } = await apiService.get<UserProfileResponse>("/dashboard");
   return data;
 };
 
 /**
  * Obtiene la lista de todos los proyectos.
  */
-export const fetchProjects = async (): Promise<ListProjects[]> => {
-  // El backend devuelve un ListProjects para la lista
-  const { data } = await apiService.get<ListProjects[]>("/projects");
+export const fetchProjects = async (): Promise<ProjectSummary[]> => {
+  // El backend devuelve un ProjectSummary para la lista
+  const { data } = await apiService.get<ProjectSummary[]>("/projects");
   return data;
 };
 
@@ -74,8 +79,8 @@ export const fetchTechnologies = async (): Promise<Technology[]> => {
 /**
  * Obtiene la lista de proyectos del usuario autenticado.
  */
-export const fetchMyProjects = async (): Promise<ListProjects[]> => {
-  const { data } = await apiService.get<ListProjects[]>(
+export const fetchMyProjects = async (): Promise<ProjectSummary[]> => {
+  const { data } = await apiService.get<ProjectSummary[]>(
     "/projects/my-projects"
   );
   return data;
@@ -86,8 +91,8 @@ export const fetchMyProjects = async (): Promise<ListProjects[]> => {
  */
 export const fetchProjectById = async (
   projectId: string
-): Promise<ProjectDetail> => {
-  const { data } = await apiService.get<ProjectDetail>(
+): Promise<ProjectDetailResponse> => {
+  const { data } = await apiService.get<ProjectDetailResponse>(
     `/projects/${projectId}`
   );
   return data;
@@ -103,6 +108,35 @@ export const updateProjectById = async (
   const { data } = await apiService.put<ProjectFormInput>(
     `/projects/${projectId}`,
     projectData
+  );
+  return data;
+};
+
+/**
+ * Obtiene en una lista todos los feedbacks para un proyecto específico.
+ */
+export const fetchFeedbackForProject = async (
+  projectId: string
+): Promise<FeedbackResponse[]> => {
+  const { data } = await apiService.get<FeedbackResponse[]>(
+    `/projects/${projectId}/feedback`
+  );
+  return data;
+};
+
+/**
+ * Envía un nuevo feedback para un proyecto.
+ */
+export const createFeedbackForProject = async ({
+  projectId,
+  feedbackData,
+}: {
+  projectId: string;
+  feedbackData: FeedbackRequest;
+}): Promise<FeedbackResponse> => {
+  const { data } = await apiService.post<FeedbackResponse>(
+    `/projects/${projectId}/feedback`,
+    feedbackData
   );
   return data;
 };
