@@ -1,34 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom"; // Importamos Link para la navegación
 import { fetchProjects } from "../api/queries";
 import type { ProjectSummary } from "../types";
 import Loading from "../components/ux/Loading";
 import { ProjectCard } from "../components/ui/card/ProjectCard";
-import { useState } from "react";
-import ProjectDetailModal from "../components/ui/modal/ProjectDetailModal";
 import "../index.css";
 
 const HomePage = () => {
-  const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(
-    null
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  // Query para obtener la lista de todos los proyectos
   const { data, isLoading, isError, error } = useQuery<ProjectSummary[]>({
     queryKey: ["projects"],
     queryFn: fetchProjects,
-    staleTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 60, // Cache de 1 hora
   });
 
-  const handleProjectClick = (project: ProjectSummary) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedProject(null);
-  };
-
+  // Función para renderizar el contenido principal de la página
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -40,15 +26,15 @@ const HomePage = () => {
 
     if (isError) {
       return (
-        <div className="p-8 h-screen w-max text-center font-bold">
+        <div className="p-8 h-screen w-full text-center font-bold">
           Error al cargar lista de proyectos: {error.message}
         </div>
       );
     }
 
-    if (!data) {
+    if (!data || data.length === 0) {
       return (
-        <div className="p-8 h-screen w-max text-center font-bold">
+        <div className="p-8 h-screen w-full text-center font-bold">
           No se encontraron proyectos
         </div>
       );
@@ -57,37 +43,32 @@ const HomePage = () => {
     return (
       <div className="p-8 max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Lista de proyectos</h1>
+          <h1 className="text-3xl font-bold">Explora Proyectos</h1>
         </div>
         <div className="mt-6">
           <ul className="space-y-4 mt-4">
             {data?.map((project) => (
-              <div
+              // Envolvemos cada ProjectCard con un Link que dirige a la página de detalles
+              <Link
+                to={`/project/${project.id}`}
                 key={project.id}
-                onClick={() => handleProjectClick(project)}
-                className="cursor-pointer hover:opacity-90 transition-opacity"
+                className="block hover:opacity-90 transition-opacity" // 'block' para que el enlace ocupe todo el espacio de la tarjeta
               >
                 <ProjectCard
                   key={project.id}
                   project={project}
                   variant="full"
                 />
-              </div>
+              </Link>
             ))}
           </ul>
         </div>
-        {selectedProject && (
-          <ProjectDetailModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            projectId={selectedProject.id.toString()}
-          />
-        )}
+        {/* Ya no se necesita el modal aquí */}
       </div>
     );
   };
 
-  return <div className="p-6">{renderContent()}</div>;
+  return <div className="p-6 bg-gray-50 min-h-screen">{renderContent()}</div>;
 };
 
 export default HomePage;

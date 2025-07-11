@@ -26,7 +26,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface UserProfileResponse  {
+export interface UserProfileResponse {
   username: string;
   email: string;
   firstName: string;
@@ -88,3 +88,21 @@ export interface Technology {
   techColor: string;
 }
 
+/*===================================================
+ * feedback
+ *===================================================*/
+export interface FeedbackResponse {
+  id: number;
+  description: string;
+  rating: number;
+  author: string;
+  authorId: number;
+  projectId: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface FeedbackRequest {
+  description: string;
+  rating: number;
+}

@@ -1,12 +1,14 @@
 import apiService from "./apiService";
 import type {
-  UserProfileResponse ,
+  UserProfileResponse,
   ProjectSummary,
   ProjectFormInput,
   Technology,
   LoginRequest,
   RegisterRequest,
   ProjectDetailResponse,
+  FeedbackResponse,
+  FeedbackRequest,
 } from "../types";
 
 /**
@@ -27,16 +29,19 @@ export const loginUser = async (
  */
 export const registerUser = async (
   userData: RegisterRequest
-): Promise<UserProfileResponse > => {
-  const { data } = await apiService.post<UserProfileResponse >("/auth/register", userData);
+): Promise<UserProfileResponse> => {
+  const { data } = await apiService.post<UserProfileResponse>(
+    "/auth/register",
+    userData
+  );
   return data;
 };
 
 /**
  * Obtiene la información del usuario logeado.
  */
-export const fetchUserData = async (): Promise<UserProfileResponse > => {
-  const { data } = await apiService.get<UserProfileResponse >("/dashboard");
+export const fetchUserData = async (): Promise<UserProfileResponse> => {
+  const { data } = await apiService.get<UserProfileResponse>("/dashboard");
   return data;
 };
 
@@ -103,6 +108,35 @@ export const updateProjectById = async (
   const { data } = await apiService.put<ProjectFormInput>(
     `/projects/${projectId}`,
     projectData
+  );
+  return data;
+};
+
+/**
+ * Obtiene en una lista todos los feedbacks para un proyecto específico.
+ */
+export const fetchFeedbackForProject = async (
+  projectId: string
+): Promise<FeedbackResponse[]> => {
+  const { data } = await apiService.get<FeedbackResponse[]>(
+    `/projects/${projectId}/feedback`
+  );
+  return data;
+};
+
+/**
+ * Envía un nuevo feedback para un proyecto.
+ */
+export const createFeedbackForProject = async ({
+  projectId,
+  feedbackData,
+}: {
+  projectId: string;
+  feedbackData: FeedbackRequest;
+}): Promise<FeedbackResponse> => {
+  const { data } = await apiService.post<FeedbackResponse>(
+    `/projects/${projectId}/feedback`,
+    feedbackData
   );
   return data;
 };
