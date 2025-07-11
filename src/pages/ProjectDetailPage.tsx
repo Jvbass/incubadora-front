@@ -8,7 +8,7 @@ import { ProjectMainContent } from "../components/ui/project-detail/ProjectMainC
 import Loading from "../components/ux/Loading";
 import { FeedbackCard } from "../components/ui/card/FeedbackCard";
 import { FeedbackForm } from "../components/ui/feedback-form/FeedbackForm";
-import { ProjectSidebar } from "../components/ui/project-detail/ProjectSideBar";
+import { ProjectSidePanel } from "../components/ui/project-detail/ProjectSidePanel";
 
 const ProjectDetailPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -88,7 +88,7 @@ const ProjectDetailPage = () => {
           </main>
 
           {/* --- Columna Derecha (Sidebar) --- */}
-          <ProjectSidebar project={project} feedbackList={feedbackList} />
+          <ProjectSidePanel project={project} feedbackList={feedbackList} />
         </div>
       </div>
     </div>

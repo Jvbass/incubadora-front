@@ -20,7 +20,7 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
     formState: { errors, isSubmitting },
   } = useForm<FeedbackRequest>({
     defaultValues: {
-      description: "",
+      feedbackDescription: "",
       rating: 5, // Valor inicial del slider
     },
   });
@@ -29,11 +29,12 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
     mutationFn: (feedbackData: FeedbackRequest) =>
       createFeedbackForProject({ projectId, feedbackData }),
     onSuccess: () => {
-      toast.success("¡Gracias por tu feedback! Tu cohete ha despegado.");
+      toast.success("¡Gracias por tu feedback!.");
       queryClient.invalidateQueries({ queryKey: ["feedback", projectId] });
       reset();
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.log(error);
       toast.error(
         error.response?.data?.message || "No se pudo enviar el feedback."
       );
@@ -53,7 +54,7 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
           <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">
             Deja tu Feedback
           </h3>
-          <div className="space-y-6">
+          <div className="space-y-3">
             {/* Campo de Calificación */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -76,14 +77,14 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
             {/* Campo de Descripción */}
             <div>
               <label
-                htmlFor="description"
+                htmlFor="feedbackDescription"
                 className="block text-sm font-medium text-gray-700"
               >
                 Descripción <span className="text-xs">*</span>
               </label>
               <textarea
-                id="description"
-                {...register("description", {
+                id="feedbackDescription"
+                {...register("feedbackDescription", {
                   required: "La descripción es obligatoria.",
                   minLength: {
                     value: 10,
@@ -98,9 +99,9 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
                 placeholder="¿Qué te pareció el proyecto? ¿Qué podría mejorar?"
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
-              {errors.description && (
+              {errors.feedbackDescription && (
                 <p className="text-xs text-red-600 mt-1">
-                  {errors.description.message}
+                  {errors.feedbackDescription.message}
                 </p>
               )}
             </div>

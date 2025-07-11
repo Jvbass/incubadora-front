@@ -93,7 +93,7 @@ export interface Technology {
  *===================================================*/
 export interface FeedbackResponse {
   id: number;
-  description: string;
+  feedbackDescription: string;
   rating: number;
   author: string;
   authorId: number;
@@ -103,6 +103,6 @@ export interface FeedbackResponse {
 }
 
 export interface FeedbackRequest {
-  description: string;
+  feedbackDescription: string;
   rating: number;
 }

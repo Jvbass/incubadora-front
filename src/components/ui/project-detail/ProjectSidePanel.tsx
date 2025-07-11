@@ -7,7 +7,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 
-interface ProjectSidebarProps {
+interface ProjectSidePanelProps {
   project: ProjectDetailResponse;
   feedbackList: FeedbackResponse[] | undefined;
 }
@@ -31,10 +31,10 @@ const InfoRow = ({
   </div>
 );
 
-export const ProjectSidebar = ({
+export const ProjectSidePanel = ({
   project,
   feedbackList,
-}: ProjectSidebarProps) => {
+}: ProjectSidePanelProps) => {
   // Calculamos el rating promedio
   const averageRating =
     feedbackList && feedbackList.length > 0
@@ -45,8 +45,8 @@ export const ProjectSidebar = ({
       : "N/A";
 
   return (
-    <aside className="sticky top-8">
-      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6">
+    <aside className=" top-8">
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-8">
         <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-3">
           Detalles
         </h3>

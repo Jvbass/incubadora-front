@@ -1,6 +1,5 @@
 import type { FeedbackResponse } from "../../../types";
 
-
 // Un pequeño componente para mostrar la calificación de forma visual y numérica
 const RatingDisplay = ({ rating }: { rating: number }) => {
   const percentage = (rating / 10) * 100;
@@ -23,11 +22,14 @@ interface FeedbackCardProps {
 
 export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   // Formateamos la fecha para que sea más legible
-  const formattedDate = new Date(feedback.createdAt).toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = new Date(feedback.createdAt).toLocaleDateString(
+    "es-ES",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   return (
     <article className="bg-white p-5 rounded-lg shadow-md border border-gray-200">
@@ -45,9 +47,7 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
 
       {/* Cuerpo de la tarjeta con la descripción y la calificación */}
       <div className="space-y-4">
-        <p className="text-gray-700 leading-relaxed">
-          {feedback.description}
-        </p>
+        <p className="text-gray-700 leading-relaxed">{feedback.feedbackDescription}</p>
         <RatingDisplay rating={feedback.rating} />
       </div>
     </article>
