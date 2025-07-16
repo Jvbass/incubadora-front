@@ -4,9 +4,9 @@ interface ProjectCardProps {
   project: ProjectSummary;
   variant: "full" | "compact";
 
-  onView?: (id: string) => void;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  onView?: (slug: string) => void;
+  onEdit?: (slug: string) => void;
+  onDelete?: (slug: string) => void;
 }
 
 export const ProjectCard = ({
@@ -120,7 +120,7 @@ export const ProjectCard = ({
             {/* El botón solo se renderiza si la función onEdit fue pasada como prop */}
             {onEdit && (
               <button
-                onClick={() => onEdit(project.id.toString())}
+                onClick={() => onEdit(project.slug)}
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer"
               >
                 Editar
@@ -137,7 +137,7 @@ export const ProjectCard = ({
             )}
             {onView && (
               <button
-                onClick={() => onView(project.id.toString())}
+                onClick={() => onView(project.slug)}
                 className="text-sm font-medium text-red-600 hover:text-red-800 cursor-pointer"
               >
                 Ver

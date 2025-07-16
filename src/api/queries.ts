@@ -87,26 +87,26 @@ export const fetchMyProjects = async (): Promise<ProjectSummary[]> => {
 };
 
 /**
- * Obtiene los detalles completos de un proyecto por su ID.
+ * Obtiene los detalles completos de un proyecto por su slug.
  */
 export const fetchProjectById = async (
-  projectId: string
+  projectSlug: string
 ): Promise<ProjectDetailResponse> => {
   const { data } = await apiService.get<ProjectDetailResponse>(
-    `/projects/${projectId}`
+    `/projects/${projectSlug}`
   );
   return data;
 };
 
 /**
- * Actualiza un proyecto por su ID.
+ * Actualiza un proyecto por su slug.
  */
 export const updateProjectById = async (
-  projectId: string,
+  projectSlug: string,
   projectData: ProjectFormInput
 ): Promise<ProjectFormInput> => {
   const { data } = await apiService.put<ProjectFormInput>(
-    `/projects/${projectId}`,
+    `/projects/${projectSlug}`,
     projectData
   );
   return data;
@@ -116,10 +116,10 @@ export const updateProjectById = async (
  * Obtiene en una lista todos los feedbacks para un proyecto específico.
  */
 export const fetchFeedbackForProject = async (
-  projectId: string
+  projectSlug: string
 ): Promise<FeedbackResponse[]> => {
   const { data } = await apiService.get<FeedbackResponse[]>(
-    `/projects/${projectId}/feedback`
+    `/projects/${projectSlug}/feedback`
   );
   return data;
 };
@@ -128,14 +128,14 @@ export const fetchFeedbackForProject = async (
  * Envía un nuevo feedback para un proyecto.
  */
 export const createFeedbackForProject = async ({
-  projectId,
+  projectSlug,
   feedbackData,
 }: {
-  projectId: string;
+  projectSlug: string;
   feedbackData: FeedbackRequest;
 }): Promise<FeedbackResponse> => {
   const { data } = await apiService.post<FeedbackResponse>(
-    `/projects/${projectId}/feedback`,
+    `/projects/${projectSlug}/feedback`,
     feedbackData
   );
   return data;

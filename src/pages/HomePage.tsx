@@ -50,7 +50,7 @@ const HomePage = () => {
             {data?.map((project) => (
               // Envolvemos cada ProjectCard con un Link que dirige a la página de detalles
               <Link
-                to={`/project/${project.id}`}
+                to={`/project/${project.slug}`}
                 key={project.id}
                 className="block hover:opacity-90 transition-opacity" // 'block' para que el enlace ocupe todo el espacio de la tarjeta
               >

@@ -81,17 +81,16 @@ const AppRouter = () => {
       />
 
       <Route
-      path="/project/:projectId"
-      element={
-        <ProtectedRoute>
-          <AuthenticatedLayout>
-            <ProjectDetailPage/>
-          </AuthenticatedLayout>
-        </ProtectedRoute>
-      }
-    />
+        path="/project/:projectSlug"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <ProjectDetailPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
 
-    
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />
     </Routes>

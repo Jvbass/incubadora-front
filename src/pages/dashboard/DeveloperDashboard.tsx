@@ -10,24 +10,28 @@ import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
 import ProjectEditModal from "../../components/ui/modal/ProjectEditModal";
 
 const DeveloperDashboard = () => {
-  const [viewingProjectId, setViewingProjectId] = useState<string | null>(null);
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>(
+    null
+  );
+  const [editingProjectSlug, setEditingProjectSlug] = useState<string | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProjectView = (projectId: string) => {
-    setViewingProjectId(projectId);
+  const handleProjectView = (projectSlug: string) => {
+    setViewingProjectSlug(projectSlug);
     setIsModalOpen(true);
   };
 
-  const handleProjectEdit = (projectId: string) => {
-    setEditingProjectId(projectId);
+  const handleProjectEdit = (projectSlug: string) => {
+    setEditingProjectSlug(projectSlug);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setViewingProjectId(null);
-    setEditingProjectId(null);
+    setViewingProjectSlug(null);
+    setEditingProjectSlug(null);
   };
 
   const { data, isLoading, isError, error } = useQuery({
@@ -82,7 +86,7 @@ const DeveloperDashboard = () => {
         <h2 className="text-2xl font-semibold border-b pb-2">
           Información de tu Perfil
         </h2>
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
           <p>
             <strong>Usuario:</strong> {data.username}
           </p>
@@ -93,7 +97,7 @@ const DeveloperDashboard = () => {
             <strong>Nombre:</strong> {data.firstName}
           </p>
           <p>
-            <strong>Apellido:</strong> {data.lastName}
+            <strong>ApellSlugo:</strong> {data.lastName}
           </p>
         </div>
         <div className="p-6 bg-white rounded-lg shadow-md">
@@ -109,33 +113,33 @@ const DeveloperDashboard = () => {
 
           <ul className="space-y-4 mt-4">
             {projects?.map((project) => (
-              <li key={project.id}>
+              <li key={project.slug}>
                 <ProjectCard
-                  key={project.id}
+                  key={project.slug}
                   project={project}
                   variant="compact"
                   onEdit={handleProjectEdit} // <--- Pasamos la función de editar
-                  onDelete={(id) => console.log(`Borrar proyecto ${id}`)} // <--- Pasamos la función de borrar
+                  onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
                   onView={handleProjectView} // <--- Pasamos la función de ver
                 />
               </li>
             ))}
           </ul>
         </div>
-        
+
         {/* renderizando los modals */}
-        {viewingProjectId && (
+        {viewingProjectSlug && (
           <ProjectDetailModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            projectId={viewingProjectId}
+            projectSlug={viewingProjectSlug}
           />
         )}
-        {editingProjectId && (
+        {editingProjectSlug && (
           <ProjectEditModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            projectId={editingProjectId}
+            projectSlug={editingProjectSlug}
           />
         )}
       </div>

@@ -6,7 +6,7 @@ import type { ProjectModalProps } from "../../../types";
 import { Link } from "react-router-dom";
 
 const ProjectDetailModal = ({
-  projectId,
+  projectSlug,
   isOpen,
   onClose,
 }: ProjectModalProps) => {
@@ -16,9 +16,9 @@ const ProjectDetailModal = ({
     isError,
     error,
   } = useQuery({
-    queryKey: ["projectDetail", projectId],
-    queryFn: () => fetchProjectById(projectId!),
-    enabled: !!projectId,
+    queryKey: ["projectDetail", projectSlug],
+    queryFn: () => fetchProjectById(projectSlug!),
+    enabled: !!projectSlug,
     staleTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
