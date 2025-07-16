@@ -39,6 +39,7 @@ export interface UserProfileResponse {
 ===================================================*/
 export interface ProjectSummary {
   id: number;
+  slug: string;
   title: string;
   developerUsername: string;
   createdAt: string;
@@ -63,6 +64,7 @@ export interface ProjectFormInput {
 
 export interface ProjectDetailResponse {
   id: number;
+  slug: string;
   title: string;
   description: string;
   repositoryUrl: string;
@@ -77,7 +79,7 @@ export interface ProjectDetailResponse {
 }
 
 export interface ProjectModalProps {
-  projectId: string | null;
+  projectSlug: string | null;
   isOpen: boolean;
   onClose: () => void;
 }

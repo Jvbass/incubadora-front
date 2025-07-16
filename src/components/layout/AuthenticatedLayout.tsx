@@ -1,5 +1,3 @@
-// src/components/layout/AuthenticatedLayout.tsx
-
 import React from 'react';
 import Navbar from './Navbar';
 

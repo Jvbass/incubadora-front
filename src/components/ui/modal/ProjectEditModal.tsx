@@ -12,7 +12,7 @@ import MultiSelect from "../project-form/MultiSelect";
 import Loading from "../../ux/Loading";
 
 const ProjectEditModal = ({
-  projectId,
+  projectSlug,
   isOpen,
   onClose,
 }: ProjectModalProps) => {
@@ -20,9 +20,9 @@ const ProjectEditModal = ({
 
   // Fetcheamos los datos del proyecto a editar para mostrarlos en los inputs
   const { data: projectData, isLoading: isLoadingProject } = useQuery({
-    queryKey: ["projectDetail", projectId],
-    queryFn: () => fetchProjectById(projectId!),
-    enabled: !!projectId,
+    queryKey: ["projectDetail", projectSlug],
+    queryFn: () => fetchProjectById(projectSlug!),
+    enabled: !!projectSlug,
     staleTime: 60 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
@@ -72,13 +72,16 @@ const ProjectEditModal = ({
 
   // mutation para enviar la actualización a la API
   const updateMutation = useMutation({
-    mutationFn: (data: ProjectFormInput) => updateProjectById(projectId!, data),
+    mutationFn: (data: ProjectFormInput) =>
+      updateProjectById(projectSlug!, data),
     onSuccess: (updatedProject) => {
       toast.success(`Proyecto "${updatedProject.title}" actualizado.`);
       // Invalidamos las queries para refrescar los datos en toda la app
       queryClient.invalidateQueries({ queryKey: ["myProjects"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      queryClient.invalidateQueries({ queryKey: ["projectDetail", projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetail", projectSlug],
+      });
       onClose(); // Cerramos el modal
     },
     onError: (error) => {

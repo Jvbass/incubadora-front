@@ -6,10 +6,10 @@ import type { FeedbackRequest } from "../../../types";
 import { RocketSlider } from "../../ux/RocketSlider";
 
 interface FeedbackFormProps {
-  projectId: string;
+  projectSlug: string;
 }
 
-export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
+export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
   const queryClient = useQueryClient();
 
   const {
@@ -27,10 +27,10 @@ export const FeedbackForm = ({ projectId }: FeedbackFormProps) => {
 
   const mutation = useMutation({
     mutationFn: (feedbackData: FeedbackRequest) =>
-      createFeedbackForProject({ projectId, feedbackData }),
+      createFeedbackForProject({ projectSlug , feedbackData }),
     onSuccess: () => {
       toast.success("¡Gracias por tu feedback!.");
-      queryClient.invalidateQueries({ queryKey: ["feedback", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["feedback", projectSlug ] });
       reset();
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {

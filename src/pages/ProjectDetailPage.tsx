@@ -11,7 +11,7 @@ import { FeedbackForm } from "../components/ui/feedback-form/FeedbackForm";
 import { ProjectSidePanel } from "../components/ui/project-detail/ProjectSidePanel";
 
 const ProjectDetailPage = () => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { projectSlug } = useParams<{ projectSlug: string }>();
 
   // Query para obtener los detalles del proyecto
   const {
@@ -19,9 +19,9 @@ const ProjectDetailPage = () => {
     isLoading: isLoadingProject,
     isError: isErrorProject,
   } = useQuery({
-    queryKey: ["projectDetail", projectId],
-    queryFn: () => fetchProjectById(projectId!),
-    enabled: !!projectId, // La query solo se ejecuta si projectId existe
+    queryKey: ["projectDetail", projectSlug ],
+    queryFn: () => fetchProjectById(projectSlug !),
+    enabled: !!projectSlug , // La query solo se ejecuta si projectSlug  existe
   });
 
   // Query para obtener la lista de feedbacks
@@ -29,9 +29,9 @@ const ProjectDetailPage = () => {
     data: feedbackList,
     isLoading: isLoadingFeedback,
   } = useQuery({
-    queryKey: ["feedback", projectId],
-    queryFn: () => fetchFeedbackForProject(projectId!),
-    enabled: !!projectId,
+    queryKey: ["feedback", projectSlug ],
+    queryFn: () => fetchFeedbackForProject(projectSlug !),
+    enabled: !!projectSlug ,
   });
 
   // --- Renderizado ---
@@ -63,7 +63,7 @@ const ProjectDetailPage = () => {
           {/* --- Columna Izquierda (Contenido Principal) --- */}
           <main className="lg:col-span-2 space-y-12">
             <ProjectMainContent project={project} />
-            <FeedbackForm projectId={projectId!} />
+            <FeedbackForm projectSlug ={projectSlug !} />
 
             {/* Lista de Feedbacks */}
             <section className="space-y-6">
