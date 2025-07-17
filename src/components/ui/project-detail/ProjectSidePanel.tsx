@@ -5,6 +5,7 @@ import {
   Github,
   Users,
   Lightbulb,
+  TrendingUp,
 } from "lucide-react";
 
 interface ProjectSidePanelProps {
@@ -67,6 +68,11 @@ export const ProjectSidePanel = ({
             icon={<Lightbulb size={16} />}
             label="Busca Mentor"
             value={project.needMentoring ? "Sí" : "No"}
+          />
+          <InfoRow
+            icon={<TrendingUp size={16} />}
+            label="Progreso"
+            value={project.developmentProgress + "%"}
           />
         </div>
 

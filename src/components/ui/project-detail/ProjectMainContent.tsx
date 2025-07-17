@@ -12,7 +12,7 @@ export const ProjectMainContent = ({ project }: ProjectMainContentProps) => {
         {project.title}
       </h1>
       <p className="mt-2 text-lg text-gray-500">
-        Creado por{" "}
+        Creado por
         <span className="font-semibold text-gray-700">
           {project.developerUsername}
         </span>

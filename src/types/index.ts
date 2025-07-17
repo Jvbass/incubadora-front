@@ -108,3 +108,24 @@ export interface FeedbackRequest {
   feedbackDescription: string;
   rating: number;
 }
+
+
+/*===================================================
+ * comments
+ *===================================================*/
+export interface CommentAuthor {
+  username: string;
+}
+
+export interface CommentResponse {
+  id: number;
+  content: string;
+  author: CommentAuthor;
+  createdAt: string;
+  replies: CommentResponse[]; 
+}
+
+export interface CommentRequest {
+  content: string;
+  parentCommentId?: number;
+}
