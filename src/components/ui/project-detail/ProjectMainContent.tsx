@@ -1,6 +1,5 @@
 import type { ProjectDetailResponse } from "../../../types";
 
-
 interface ProjectMainContentProps {
   project: ProjectDetailResponse;
 }
@@ -14,7 +13,7 @@ export const ProjectMainContent = ({ project }: ProjectMainContentProps) => {
       <p className="mt-2 text-lg text-gray-500">
         Creado por
         <span className="font-semibold text-gray-700">
-          {project.developerUsername}
+          {" " + project.developerUsername}
         </span>
       </p>
 
