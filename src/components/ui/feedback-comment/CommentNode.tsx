@@ -21,7 +21,6 @@ export const CommentNode = ({
   isSubmitting,
   level,
 }: CommentNodeProps) => {
-  
   const hasReplies = comment.replies && comment.replies.length > 0;
 
   const isReplying = activeReplyId === comment.id;
@@ -42,7 +41,6 @@ export const CommentNode = ({
         <div className="mt-2">
           <CommentForm
             onSubmit={onSubmitReply}
-            onCancel={onCancelReply}
             isSubmitting={isSubmitting}
             initialContent={`@${comment.author.username} `}
           />
