@@ -7,6 +7,7 @@ import {
   Lightbulb,
   TrendingUp,
 } from "lucide-react";
+import { useProjectRating } from "../../../hooks/useProjectRating";
 
 interface ProjectSidePanelProps {
   project: ProjectDetailResponse;
@@ -36,14 +37,7 @@ export const ProjectSidePanel = ({
   project,
   feedbackList,
 }: ProjectSidePanelProps) => {
-  // Calculamos el rating promedio
-  const averageRating =
-    feedbackList && feedbackList.length > 0
-      ? (
-          feedbackList.reduce((acc, f) => acc + f.rating, 0) /
-          feedbackList.length
-        ).toFixed(1)
-      : "N/A";
+  const { averageRatingFormatted } = useProjectRating(feedbackList);
 
   return (
     <aside className=" top-8">
@@ -57,7 +51,7 @@ export const ProjectSidePanel = ({
           <InfoRow
             icon={<Star size={16} />}
             label="Rating Promedio"
-            value={averageRating}
+            value={averageRatingFormatted}
           />
           <InfoRow
             icon={<Users size={16} />}

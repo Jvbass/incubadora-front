@@ -43,7 +43,7 @@ export const RocketSlider = ({
         max={max}
         step={step}
         {...field}
-        onChange={(e) => field.onChange(parseInt(e.target.value, 10))} // Aseguramos que el valor sea numérico
+        onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
         className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
       />
       <div className="text-center mt-3">

@@ -62,7 +62,7 @@ const ProjectDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* --- Columna Izquierda (Contenido Principal) --- */}
           <main className="lg:col-span-2 space-y-12">
-            <ProjectMainContent project={project} />
+            <ProjectMainContent project={project} feedbackList={feedbackList} />
             <FeedbackForm projectSlug={projectSlug!} />
 
             {/* Lista de Feedbacks */}
