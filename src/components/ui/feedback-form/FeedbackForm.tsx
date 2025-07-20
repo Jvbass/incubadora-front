@@ -21,7 +21,7 @@ export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
   } = useForm<FeedbackRequest>({
     defaultValues: {
       feedbackDescription: "",
-      rating: 5, // Valor inicial del slider
+      rating: 3, // valor inicial
     },
   });
 
@@ -68,7 +68,7 @@ export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
                     field={field}
                     control={control}
                     min={1}
-                    max={10}
+                    max={5}
                   />
                 )}
               />

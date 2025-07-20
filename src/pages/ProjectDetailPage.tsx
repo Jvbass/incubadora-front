@@ -19,19 +19,16 @@ const ProjectDetailPage = () => {
     isLoading: isLoadingProject,
     isError: isErrorProject,
   } = useQuery({
-    queryKey: ["projectDetail", projectSlug ],
-    queryFn: () => fetchProjectById(projectSlug !),
-    enabled: !!projectSlug , // La query solo se ejecuta si projectSlug  existe
+    queryKey: ["projectDetail", projectSlug],
+    queryFn: () => fetchProjectById(projectSlug!),
+    enabled: !!projectSlug, // La query solo se ejecuta si projectSlug  existe
   });
 
   // Query para obtener la lista de feedbacks
-  const {
-    data: feedbackList,
-    isLoading: isLoadingFeedback,
-  } = useQuery({
-    queryKey: ["feedback", projectSlug ],
-    queryFn: () => fetchFeedbackForProject(projectSlug !),
-    enabled: !!projectSlug ,
+  const { data: feedbackList, isLoading: isLoadingFeedback } = useQuery({
+    queryKey: ["feedback", projectSlug],
+    queryFn: () => fetchFeedbackForProject(projectSlug!),
+    enabled: !!projectSlug,
   });
 
   // --- Renderizado ---
@@ -49,7 +46,10 @@ const ProjectDetailPage = () => {
       <div className="text-center mt-20 text-red-600">
         <h2 className="text-2xl font-bold">Error</h2>
         <p>No se pudo encontrar el proyecto.</p>
-        <Link to="/" className="text-blue-600 hover:underline mt-4 inline-block">
+        <Link
+          to="/"
+          className="text-blue-600 hover:underline mt-4 inline-block"
+        >
           Volver a la página principal
         </Link>
       </div>
@@ -62,8 +62,8 @@ const ProjectDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* --- Columna Izquierda (Contenido Principal) --- */}
           <main className="lg:col-span-2 space-y-12">
-            <ProjectMainContent project={project} />
-            <FeedbackForm projectSlug ={projectSlug !} />
+            <ProjectMainContent project={project} feedbackList={feedbackList} />
+            <FeedbackForm projectSlug={projectSlug!} />
 
             {/* Lista de Feedbacks */}
             <section className="space-y-6">
