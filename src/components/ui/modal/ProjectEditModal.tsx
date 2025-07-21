@@ -70,7 +70,7 @@ const ProjectEditModal = ({
     }
   }, [projectData, reset]);
 
-  // mutation para enviar la actualización a la API
+  // mutation actualizar el proyecto
   const updateMutation = useMutation({
     mutationFn: (data: ProjectFormInput) =>
       updateProjectById(projectSlug!, data),
@@ -182,7 +182,7 @@ const ProjectEditModal = ({
                       field={field}
                       options={technologyOptions}
                       isLoading={isLoadingTechs}
-                      placeholder="Escribe para buscar tecnologías..."
+                      placeholder="Escribe para buscar las tecnologías..."
                     />
                   )}
                 />

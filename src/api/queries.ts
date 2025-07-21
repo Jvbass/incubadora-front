@@ -11,10 +11,8 @@ import type {
   FeedbackRequest,
   CommentRequest,
   CommentResponse,
+  Notification,
 } from "../types";
-
-
-
 
 /**=========================================
  *  USER QUERIES
@@ -58,10 +56,6 @@ export const fetchUserData = async (): Promise<UserProfileResponse> => {
   const { data } = await apiService.get<UserProfileResponse>("/dashboard");
   return data;
 };
-
-
-
-
 
 /**=========================================
  *  PROJECTS QUERIES
@@ -142,10 +136,6 @@ export const updateProjectById = async (
   return data;
 };
 
-
-
-
-
 /**=========================================
  *  FEEDBACK QUERIES
  *=========================================*/
@@ -182,7 +172,6 @@ export const createFeedbackForProject = async ({
   return data;
 };
 
-
 /**
  * Actualiza un feedback existente por su ID.
  * @param feedbackId ID del feedback a actualizar.
@@ -209,8 +198,6 @@ export const updateFeedback = async ({
 export const deleteFeedback = async (feedbackId: number): Promise<void> => {
   await apiService.delete(`/feedback/${feedbackId}`);
 };
-
-
 
 /**=========================================
  *  COMMENTS QUERIES
@@ -272,4 +259,39 @@ export const updateComment = async ({
  */
 export const deleteComment = async (commentId: number): Promise<void> => {
   await apiService.delete(`/comments/${commentId}`);
+};
+
+/**=========================================
+ *  NOTIFICATION QUERIES
+ *=========================================*/
+/**
+ * Obtiene todas las notificaciones del usuario autenticado.
+ * @returns lista de notificaciones
+ */
+export const fetchNotifications = async (): Promise<Notification[]> => {
+  const { data } = await apiService.get<Notification[]>("/notifications");
+  return data;
+};
+
+/**
+ * Marca una notificación específica como leída.
+ * @param notificationId - El ID de la notificación a marcar.
+ */
+export const markNotificationAsRead = async (
+  notificationId: number
+): Promise<Notification> => {
+  const { data } = await apiService.patch<Notification>(
+    `/notifications/${notificationId}/read`
+  );
+  return data;
+};
+
+/**
+ * Marca todas las notificaciones del usuario como leídas.
+ */
+export const markAllNotificationsAsRead = async (): Promise<Notification[]> => {
+  const { data } = await apiService.post<Notification[]>(
+    "/notifications/read-all"
+  );
+  return data;
 };
