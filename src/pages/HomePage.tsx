@@ -52,7 +52,7 @@ const HomePage = () => {
               <Link
                 to={`/project/${project.slug}`}
                 key={project.id}
-                className="block hover:opacity-90 transition-opacity" // 'block' para que el enlace ocupe todo el espacio de la tarjeta
+                className="block  transition-opacity" // 'block' para que el enlace ocupe todo el espacio de la tarjeta
               >
                 <ProjectCard
                   key={project.id}

@@ -21,8 +21,8 @@ const NotificationDropdown = ({
   });
 
   return (
-    <div className="absolute right-0 mt-2 w-80 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none " >
-      <div className="flex justify-between items-center px-4 py-2 border-b">
+    <div className="absolute right-0 mt-2 w-80 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-gray-300 ring-opacity-5 focus:outline-none z-40">
+      <div className="flex justify-between items-center px-4 py-2">
         <h3 className="text-lg font-bold text-gray-900">Notificaciones</h3>
         <button
           onClick={() => mutate()}
