@@ -12,7 +12,7 @@ const NotificationBell = () => {
   const { data: notifications } = useQuery({
     queryKey: ["notifications"],
     queryFn: fetchNotifications,
-    refetchInterval: 60000, // 60 segundos
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
   });
 

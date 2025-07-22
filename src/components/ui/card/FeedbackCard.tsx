@@ -37,6 +37,8 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   } = useQuery<CommentResponse[]>({
     queryKey: ["comments", feedback.id],
     queryFn: () => fetchCommentsForFeedback(feedback.id),
+    enabled: commentsVisible, // Only fetch comments when commentsVisible is true
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   // Calculate total comment count (including replies)

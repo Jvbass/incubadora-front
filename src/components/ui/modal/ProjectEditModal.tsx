@@ -23,7 +23,7 @@ const ProjectEditModal = ({
     queryKey: ["projectDetail", projectSlug],
     queryFn: () => fetchProjectById(projectSlug!),
     enabled: !!projectSlug,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
   });
 
@@ -31,7 +31,7 @@ const ProjectEditModal = ({
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
     queryFn: fetchTechnologies,
-    staleTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 5,
   });
 
   const technologyOptions = useMemo(

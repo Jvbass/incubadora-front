@@ -32,6 +32,9 @@ export const CommentThread = ({
     queryKey: ["comments", feedbackId],
     queryFn: () => fetchCommentsForFeedback(feedbackId),
     enabled: !propComments, // Only fetch if comments aren't provided as props
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false, // No refetch on window focus
+    retry: false, // No retry on failure
   });
 
   // Use prop values if available, otherwise use fetched values
