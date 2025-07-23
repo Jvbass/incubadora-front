@@ -25,8 +25,14 @@ export const useAuth = () => {
       if (!localStorage.getItem("authToken")) {
         return null;
       }
-      // La petición se hará con el token gracias a tu interceptor de axios.
-      return await fetchUserData();
+      try {
+        // La petición se hará con el token gracias a tu interceptor de axios.
+        return await fetchUserData();
+      } catch (error) {
+        // Si hay error de autenticación, limpiamos el token y devolvemos null
+        localStorage.removeItem("authToken");
+        return null;
+      }
     },
     // Queremos que los datos del usuario se mantengan "frescos" durante toda la sesión
     // y solo se actualicen si nosotros lo indicamos (ej. al hacer login).

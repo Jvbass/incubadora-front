@@ -27,7 +27,7 @@ const NotificationItem = ({ notification, onClose }: NotificationItemProps) => {
     e.preventDefault();
     onClose(); // Cierra el dropdown inmediatamente
 
-    // Si la notificación no está leída, la marca como tal antes de navegar
+    // Si el read esta en falso, la marca como true con el metodo markNotificationAsRead
     if (!notification.read) {
       await mutateAsync(notification.id);
     }

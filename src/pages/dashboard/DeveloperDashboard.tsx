@@ -82,25 +82,28 @@ const DeveloperDashboard = () => {
     }
 
     return (
-      <div className="p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold border-b pb-2">
-          Información de tu Perfil
-        </h2>
-        <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
-          <p>
-            <strong>Usuario:</strong> {data.username}
-          </p>
-          <p>
-            <strong>Email:</strong> {data.email}
-          </p>
-          <p>
-            <strong>Nombre:</strong> {data.firstName}
-          </p>
-          <p>
-            <strong>ApellSlugo:</strong> {data.lastName}
-          </p>
+      <>
+        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
+          <h2 className="text-2xl font-semibold border-b pb-2">
+            Información de tu Perfil
+          </h2>
+          <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
+            <p>
+              <strong>Usuario:</strong> {data.username}
+            </p>
+            <p>
+              <strong>Email:</strong> {data.email}
+            </p>
+            <p>
+              <strong>Nombre:</strong> {data.firstName}
+            </p>
+            <p>
+              <strong>Apellido:</strong> {data.lastName}
+            </p>
+          </div>
         </div>
-        <div className="p-6 bg-white rounded-lg shadow-md">
+
+        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
           <div className="flex justify-between items-center border-b pb-2 mb-4">
             <h2 className="text-2xl font-semibold">Mis Proyectos</h2>
             <Link
@@ -142,7 +145,25 @@ const DeveloperDashboard = () => {
             projectSlug={editingProjectSlug}
           />
         )}
-      </div>
+
+        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
+          <h2 className="text-2xl font-semibold border-b pb-2">Feedbacks</h2>
+          <div className="col-span-2 mt-4 grid grid-cols-2 md:grid-cols-2 gap-4">
+            <div>
+              <h3> Feedbacks Recibidos</h3>
+            </div>
+            <div>
+              <h3>Feedbacks Enviados</h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
+          <h2 className="text-2xl font-semibold border-b pb-2">
+            Reconocimientos/Kudos
+          </h2>
+        </div>
+      </>
     );
   };
 

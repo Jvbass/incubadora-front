@@ -37,16 +37,10 @@ const AppRouter = () => {
         }
       />
 
-      {/* RUTA DE ENTRADA PARA USUARIOS AUTENTICADOS */}
-      {/* Esta ruta está protegida. Si el usuario está logueado, renderiza RoleBasedRedirect,
-          que a su vez lo envía al dashboard correcto. */}
+      {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
       <Route
         path="/"
-        element={
-          <ProtectedRoute>
-            <RoleBasedRedirect />
-          </ProtectedRoute>
-        }
+        element={<RoleBasedRedirect />}
       />
       {/* RUTAS DE DASHBOARDS PROTEGIDAS */}
       <Route
