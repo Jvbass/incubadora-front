@@ -37,6 +37,8 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   } = useQuery<CommentResponse[]>({
     queryKey: ["comments", feedback.id],
     queryFn: () => fetchCommentsForFeedback(feedback.id),
+    enabled: commentsVisible, // Only fetch comments when commentsVisible is true
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   // Calculate total comment count (including replies)
@@ -59,7 +61,10 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   );
 
   return (
-    <article className="bg-white p-5 rounded-lg shadow-md border border-gray-200 transition-all duration-300 ">
+    <article
+      id={`feedback-${feedback.id}`}
+      className="bg-white p-5 rounded-lg shadow-md border border-gray-200 transition-all duration-300 "
+    >
       {/* Encabezado de la tarjeta con autor y fecha */}
       <header className="flex items-center justify-between mb-4 border-b border-gray-200 pb-3">
         <div className="flex items-center gap-3">

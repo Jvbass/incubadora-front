@@ -21,7 +21,8 @@ const ProjectDetailPage = () => {
   } = useQuery({
     queryKey: ["projectDetail", projectSlug],
     queryFn: () => fetchProjectById(projectSlug!),
-    enabled: !!projectSlug, // La query solo se ejecuta si projectSlug  existe
+    enabled: !!projectSlug,
+    staleTime: 1000 * 60 * 5,
   });
 
   // Query para obtener la lista de feedbacks
@@ -29,6 +30,7 @@ const ProjectDetailPage = () => {
     queryKey: ["feedback", projectSlug],
     queryFn: () => fetchFeedbackForProject(projectSlug!),
     enabled: !!projectSlug,
+    staleTime: 1000 * 60 * 5,
   });
 
   // --- Renderizado ---

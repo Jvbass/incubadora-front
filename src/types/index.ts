@@ -109,7 +109,6 @@ export interface FeedbackRequest {
   rating: number;
 }
 
-
 /*===================================================
  * comments
  *===================================================*/
@@ -122,10 +121,23 @@ export interface CommentResponse {
   content: string;
   author: CommentAuthor;
   createdAt: string;
-  replies: CommentResponse[]; 
+  replies: CommentResponse[];
 }
 
 export interface CommentRequest {
   content: string;
   parentCommentId?: number;
+}
+
+/*===================================================
+ * Notifications
+ *===================================================*/
+export interface Notification {
+  id: number;
+  notificationType: string;
+  message: string;
+  link: string;
+  createdAt: string;
+  timeAgo: string;
+  read: boolean;
 }

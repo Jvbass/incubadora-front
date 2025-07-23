@@ -27,17 +27,16 @@ export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
 
   const mutation = useMutation({
     mutationFn: (feedbackData: FeedbackRequest) =>
-      createFeedbackForProject({ projectSlug , feedbackData }),
+      createFeedbackForProject({ projectSlug, feedbackData }),
     onSuccess: () => {
       toast.success("¡Gracias por tu feedback!.");
-      queryClient.invalidateQueries({ queryKey: ["feedback", projectSlug ] });
+      queryClient.invalidateQueries({ queryKey: ["feedback", projectSlug] });
       reset();
     },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.log(error);
-      toast.error(
-        error.response?.data?.message || "No se pudo enviar el feedback."
-      );
+    onError: (error: any) => {
+      const errorMessage = "No se pudo enviar tu feedback.";
+
+      toast.error(errorMessage);
     },
   });
 

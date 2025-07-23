@@ -50,20 +50,31 @@ apiService.interceptors.response.use(
   (error) => {
     // Verificamos si el error tiene un objeto de respuesta (es un error de API, no de red).
     if (error.response) {
-      const { status } = error.response;
+      const { status, data } = error.response;
 
-      // Si el error es 401 (Unauthorized) o 403 (Forbidden), significa que la sesión
-      // no es válida (token expirado, permisos insuficientes, etc.).
-      if (status === 401 || status === 403) {
+      // Solo redirigir al login en casos específicos de autenticación
+      if (status === 401) {
         toast.error(
-          "Tu sesión ha expirado o no tienes permisos. Por favor, inicia sesión de nuevo."
+          "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
         );
-
-        // La mejor práctica es forzar el cierre de sesión.
-        // Como no podemos llamar al hook `useAuth` aquí, eliminamos el token directamente
-        // y recargamos la página. El AuthProvider se encargará del resto.
         localStorage.removeItem("authToken");
-        window.location.href = "/login"; // Forzamos la redirección
+        window.location.href = "/login";
+      } else if (status === 403) {
+        // Para 403, solo redirigir si es un error de autenticación real
+        // No si es un error de negocio (como "no puedes dar feedback a tu propio proyecto")
+        const isAuthError = data?.message?.includes("token") || 
+                           data?.message?.includes("sesión") ||
+                           data?.message?.includes("autenticación") ||
+                           data?.message?.includes("permisos insuficientes");
+        
+        if (isAuthError) {
+          toast.error(
+            "No tienes permisos suficientes. Por favor, inicia sesión de nuevo."
+          );
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
+        }
+        // Si no es un error de autenticación, dejamos que el componente lo maneje
       }
     }
 

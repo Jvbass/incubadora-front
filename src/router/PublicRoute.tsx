@@ -11,7 +11,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
   // Igual que en ProtectedRoute, esperamos si la autenticación está en proceso.
   if (isLoading) {
-    return <div>Verificando autenticación...</div>;
+    return <div>Cargando...</div>;
   }
 
   // Si el usuario SÍ está autenticado, no debe ver esta página (ej. Login).
