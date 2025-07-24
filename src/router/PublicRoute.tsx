@@ -2,12 +2,15 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthZustand } from '../hooks/useAuthZustand';
 
-// Este componente es el opuesto a ProtectedRoute.
+/**
+* Componente que envuelve las rutas públicas.
+* Redirige a los usuarios autenticados al home si intentan acceder a una ruta pública. (login/register)
+*/
 // Envuelve las rutas que solo deben ser visibles para usuarios NO autenticados.
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthZustand();
 
   // Igual que en ProtectedRoute, esperamos si la autenticación está en proceso.
   if (isLoading) {

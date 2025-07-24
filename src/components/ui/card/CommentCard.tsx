@@ -1,6 +1,6 @@
 import { Edit, MessageSquare, Trash2 } from "lucide-react";
-import { useAuth } from "../../../hooks/useAuth";
 import type { CommentResponse } from "../../../types";
+import { useAuthZustand } from "../../../hooks/useAuthZustand";
 
 interface CommentCardProps {
   comment: CommentResponse;
@@ -11,7 +11,7 @@ interface CommentCardProps {
 }
 
 export const CommentCard = ({ comment, onReply }: CommentCardProps) => {
-  const { user } = useAuth();
+  const { user } = useAuthZustand();
 
   const isOwner = user?.username === comment.author.username;
 

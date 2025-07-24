@@ -1,8 +1,6 @@
-// src/pages/auth/Login.tsx
-
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthZustand } from '../../hooks/useAuthZustand';
 
 type LoginFormData = {
   username: string;
@@ -11,7 +9,7 @@ type LoginFormData = {
 
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
-  const { login, isLoggingIn } = useAuth();
+  const { login, isLoggingIn } = useAuthZustand();
   
   const onSubmit: SubmitHandler<LoginFormData> = (data) => {
     login(data);

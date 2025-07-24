@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuthZustand } from '../hooks/useAuthZustand';
 
 // Este componente envuelve las rutas que queremos proteger.
 // React.ReactNode es un tipo que representa cualquier tipo de contenido react válido.
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthZustand();
   const location = useLocation(); // Obtiene la ruta actual
 
   // Si aún estamos cargando y verificando el estado de autenticación,
