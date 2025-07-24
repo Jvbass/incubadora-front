@@ -30,7 +30,7 @@ const NotificationBell = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [dropdownRef]);
 
   return (
     <div className="relative" ref={dropdownRef}>

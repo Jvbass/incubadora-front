@@ -1,11 +1,10 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuthZustand } from "../hooks/useAuthZustand";
 
 // Este componente no renderiza UI. Su única función es redirigir.
 const RoleBasedRedirect = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuthZustand();
 
-  // Mientras se verifica la autenticación, mostramos un loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -22,9 +21,9 @@ const RoleBasedRedirect = () => {
   // Mapeo de roles a las rutas de sus dashboards.
   const roleToPathMap: { [key: string]: string } = {
     Desarrollador: "/home",
-    Administrador: "/admin",
-    Mentor: "/mentor",
-    Reclutador: "/recruiter",
+    // Administrador: "/admin",
+    // Mentor: "/mentor",
+    // Reclutador: "/recruiter",
   };
 
   // Obtenemos la ruta correspondiente al rol del usuario.

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import NotificationBell from "./NotificationBell"; // <-- 1. Importar
 import { CirclePlus } from "lucide-react";
+import { useAuthZustand } from "../../hooks/useAuthZustand";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthZustand();
 
   return (
     <nav className="bg-white shadow-md">
@@ -17,7 +17,6 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* ... otros links ... */}
             <Link
               to="/home"
               className="text-sm font-medium text-gray-400 cursor-not-allowed"
@@ -45,13 +44,15 @@ const Navbar = () => {
 
             <Link
               to="/create-project"
-              className="text-sm font-medium text-gray-800 hover:text-indigo-600 rounded-full border-1 p-2 flex items-center "
+              className="text-sm font-medium text-gray-800 hover:text-indigo-600 rounded-full border-1 px-2 py-1 flex items-center "
             >
               <CirclePlus className="mr-1" /> Crear
             </Link>
 
             {/* 2. Añadir el componente de notificación */}
             <NotificationBell />
+
+            
 
             <div className="h-8 border-l border-gray-300"></div>
 

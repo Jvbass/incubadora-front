@@ -3,14 +3,13 @@ import { Routes, Route } from "react-router-dom";
 // Importamos nuestros componentes de ayuda para el enrutamiento
 import ProtectedRoute from "./ProtectedRoute";
 import RoleBasedRedirect from "./RoleBasedRedirect";
+import PublicRoute from "./PublicRoute";
 
-// --- Importamos los componentes de las PÁGINAS ---
-// (Crearemos estos componentes placeholder en el siguiente paso)
+// Importamos las páginas que vamos a usar en nuestras rutas
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import DeveloperDashboard from "../pages/dashboard/DeveloperDashboard";
 import NotFound from "../pages/NotFound";
-import PublicRoute from "./PublicRoute";
 import HomePage from "../pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
@@ -19,7 +18,10 @@ import ProjectDetailPage from "../pages/ProjectDetailPage";
 const AppRouter = () => {
   return (
     <Routes>
-      {/* RUTAS PÚBLICAS (AHORA PROTEGIDAS PARA USUARIOS LOGUEADOS) */}
+      {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
+      <Route path="/" element={<RoleBasedRedirect />} />
+
+      {/* RUTAS PÚBLICAS (PROTEGIDAS PARA USUARIOS LOGUEADOS) */}
       <Route
         path="/login"
         element={
@@ -37,11 +39,6 @@ const AppRouter = () => {
         }
       />
 
-      {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
-      <Route
-        path="/"
-        element={<RoleBasedRedirect />}
-      />
       {/* RUTAS DE DASHBOARDS PROTEGIDAS */}
       <Route
         path="/dashboard"

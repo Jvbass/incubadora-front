@@ -1,8 +1,8 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 
-import { useAuth } from "../../hooks/useAuth";
 import type { RegisterRequest } from "../../types";
 import { Link } from "react-router-dom";
+import { useAuthZustand } from "../../hooks/useAuthZustand";
 
 const RegisterPage = () => {
   const {
@@ -11,7 +11,7 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm<RegisterRequest>();
 
-  const { registerAndLogin, isRegisteringAndLoggingIn } = useAuth();
+  const { registerAndLogin, isRegisteringAndLoggingIn } = useAuthZustand();
 
   const onSubmit: SubmitHandler<RegisterRequest> = (data) => {
     registerAndLogin(data);
