@@ -86,10 +86,11 @@ const ProjectForm = () => {
     <main className="md:col-span-2">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded-lg shadow-md space-y-8"
+        className="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg shadow-md space-y-8 border border-zinc-300 dark:border-slate-600
+"
       >
         <section>
-          <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">
+          <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700 dark:text-slate-100">
             Información General
           </h3>
           <div className="space-y-4">
@@ -303,7 +304,7 @@ const ProjectForm = () => {
               <Controller
                 name="developmentProgress"
                 control={control}
-                render={({ field: { value } }) => <span>{value}%</span>}
+                render={({ field: { value } }) => <span> {value}%</span>}
               />
             </label>
             <Controller

@@ -59,8 +59,8 @@ const ProjectDetailPage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+    <div className="p-8 mx-auto">
+      <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* --- Columna Izquierda (Contenido Principal) --- */}
           <main className="lg:col-span-2 space-y-12">

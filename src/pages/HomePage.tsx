@@ -26,7 +26,7 @@ const HomePage = () => {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="h-screen text-center flex items-center justify-center">
-          <Loading message="loading projects" />
+          <Loading message="proyectos" />
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ const HomePage = () => {
             <p className="text-gray-600 mb-4">
               We're having trouble loading the projects. Please try again later.
             </p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
@@ -67,32 +67,26 @@ const HomePage = () => {
     );
   }
 
-  // Success state with projects
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="p-8 max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Explore Projects</h1>
-        </div>
-        <ul className="space-y-4 mt-6">
-          {data.map((project) => (
-            <Link
-              to={`/project/${project.slug}`}
-              key={project.id}
-              className="block hover:opacity-90 transition-opacity"
-            >
-              <ProjectCard
-                project={project}
-                variant="full"
-              />
-            </Link>
-          ))}
-        </ul>
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+          Explore Projects
+        </h1>
       </div>
+      <ul className="space-y-4 mt-6">
+        {data.map((project) => (
+          <Link
+            to={`/project/${project.slug}`}
+            key={project.id}
+            className="block hover:opacity-90 transition-opacity"
+          >
+            <ProjectCard project={project} variant="full" />
+          </Link>
+        ))}
+      </ul>
     </div>
   );
-
-
 };
 
 export default HomePage;

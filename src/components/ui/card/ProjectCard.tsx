@@ -33,15 +33,15 @@ export const ProjectCard = React.memo(
     // Vista Detallada para el HomePage ---
     if (variant === "full") {
       return (
-        <li className="p-6 border border-gray-200 rounded-lg shadow-sm bg-white">
-          <h2 className="text-xl font-bold text-gray-800">{project.title}</h2>
+        <li className="p-6 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm bg-slate-100  dark:bg-gray-800">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-zinc-50 ">{project.title}</h3>
           <p className="text-sm text-gray-500 mb-4">
             Por {project.developerUsername}
           </p>
 
           <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
             <div>
-              <span className="font-semibold text-gray-600">Progreso: </span>
+              <span className="font-semibold text-gray-600 dark:text-zinc-50">Progreso: </span>
               <span>{project.developmentProgress}%</span>
             </div>
             <div>

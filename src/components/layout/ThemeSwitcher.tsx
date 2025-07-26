@@ -2,16 +2,9 @@ import { Moon, Sun, Laptop } from "lucide-react";
 import { useThemeStore } from "../../stores/themeStore";
 
 const icons = {
-  light: <Sun size={24} className="text-gray-800 dark:text-ui-off-white" />,
-  dark: (
-    <Moon size={24} className=" dark:text-amber-50 dark:text-ui-off-white" />
-  ),
-  system: (
-    <Laptop
-      size={24}
-      className="text-gray-800  dark:text-amber-50 dark:text-ui-off-white"
-    />
-  ),
+  light: <Sun size={24} />,
+  dark: <Moon size={24} />,
+  system: <Laptop size={24} />,
 };
 
 /**
@@ -35,7 +28,8 @@ export const ThemeSwitcher = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full  hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      className="relative rounded-full p-2 hover:bg-indigo-400 
+      focus:outline-none text-text-light dark:text-amber-50 hover:text-brand-900 cursor-pointer transition duration-300"
       aria-label={`Cambiar a tema ${theme === "light" ? "oscuro" : "claro"}`}
     >
       {icons[theme]}

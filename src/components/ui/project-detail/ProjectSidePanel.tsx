@@ -40,7 +40,7 @@ export const ProjectSidePanel = ({
   const { averageRatingFormatted } = useProjectRating(feedbackList);
 
   return (
-    <aside className=" top-8">
+    <aside>
       <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-8">
         <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-3">
           Detalles
