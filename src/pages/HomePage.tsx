@@ -39,10 +39,11 @@ const HomePage = () => {
         <div className="p-8 h-screen w-full text-center">
           <div className="max-w-md mx-auto">
             <h2 className="text-xl font-bold text-red-600 mb-4">
-              Unable to Load Projects
+              No se pueden cargar los proyectos
             </h2>
             <p className="text-gray-600 mb-4">
-              We're having trouble loading the projects. Please try again later.
+              Tenemos problemas para cargar los proyectos. Intenta denuevo más
+              tarde.
             </p>
             <button
               onClick={() => window.location.reload()}
@@ -61,7 +62,7 @@ const HomePage = () => {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="p-8 h-screen w-full text-center font-bold">
-          No projects found
+          No se encontraron proyectos para mostrar
         </div>
       </div>
     );
@@ -70,8 +71,8 @@ const HomePage = () => {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-          Explore Projects
+        <h1 className="text-3xl text-zinc-900 dark:text-zinc-50">
+          Últimos Proyectos
         </h1>
       </div>
       <ul className="space-y-4 mt-6">

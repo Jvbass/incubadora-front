@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import NotificationBell from "./NotificationBell"; // <-- 1. Importar
-import { Plus } from "lucide-react";
+import { Bookmark, Plus } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
@@ -48,7 +48,7 @@ const Navbar = () => {
 
             <Link
               to="/create-project"
-              className="text-sm font-bold text-cta-600 hover:text-text-light hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-300"
+              className="text-sm font-bold text-cta-600 hover:text-text-light shadow-lg hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-300"
             >
               <Plus className="mr-1" strokeWidth={2} /> Crear
             </Link>
@@ -58,6 +58,11 @@ const Navbar = () => {
 
             {/* Componente de cambio de tema */}
             <ThemeSwitcher />
+
+            {/* Proyectos guardados */}
+            <span className="text-gray-400">
+              <Bookmark className="cursor-not-allowed" />
+            </span>
 
             <div className="h-8 border-l border-divider"></div>
 

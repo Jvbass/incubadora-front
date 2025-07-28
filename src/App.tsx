@@ -6,7 +6,7 @@ function App() {
     <div>
       <ThemeApplier />
       {/* Aquí podrías añadir un layout general, como un Navbar o Footer si fuera necesario */}
-      <main className="min-h-screen bg-bg-light dark:bg-bg-dark">
+      <main className="min-h-screen bg-bg-soft dark:bg-bg-darker">
         <AppRouter />
       </main>
     </div>
