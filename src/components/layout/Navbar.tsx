@@ -9,12 +9,12 @@ const Navbar = () => {
 
   return (
     <nav className="bg-brand-600  dark:bg-brand-900 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Link
               to="/home"
-              className="text-2xl font-bold text-text-light hover:text-brand-900 dark:hover:text-brand-600 transition duration-300 "
+              className="text-2xl font-bold text-text-light hover:text-brand-900 dark:hover:text-brand-600 transition duration-200 "
             >
               Incubadora.dev
             </Link>
@@ -29,7 +29,7 @@ const Navbar = () => {
             </Link>
             <Link
               to="/home"
-              className="text-sm font-medium text-text-light dark:text-amber-50  hover:text-brand-900 dark:hover:text-brand-300 cursor-pointer transition duration-300"
+              className="text-sm font-medium text-text-light dark:text-amber-50  hover:text-brand-900 dark:hover:text-brand-300 cursor-pointer transition duration-200"
             >
               Proyectos
             </Link>
@@ -48,7 +48,7 @@ const Navbar = () => {
 
             <Link
               to="/create-project"
-              className="text-sm font-bold text-cta-600 hover:text-text-light shadow-lg hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-300"
+              className="text-sm font-bold text-cta-600 hover:text-text-light shadow-sm hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-200"
             >
               <Plus className="mr-1" strokeWidth={2} /> Crear
             </Link>
@@ -68,7 +68,7 @@ const Navbar = () => {
 
             {/* User Profile Dropdown */}
             <div className="relative group ">
-              <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-indigo-400  transition-colors duration-400  text-text-light hover:text-brand-900 ">
+              <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-indigo-400  transition-colors duration-200  text-text-light hover:text-brand-900 ">
                 {/* Avatar */}
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(

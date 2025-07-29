@@ -1,11 +1,11 @@
 const FormSidePanel = () => {
   return (
     <aside className="md:col-span-1">
-      <div className="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg shadow-md sticky top-24 border border-zinc-300 dark:border-slate-600">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-3 ">
+      <div className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md sticky top-24 border border-zinc-300 dark:border-slate-600">
+        <h2 className="text-2xl text-slate-800 dark:text-slate-100 font-semibold mb-3 ">
           Publica tu Proyecto
         </h2>
-        <p className="text-slate-600 dark:text-slate-200 mb-4 text-sm">
+        <p className="text-slate-600 dark:text-text-light mb-4 text-sm">
           Comparte tu trabajo con la comunidad. Un buen título y una descripción
           clara son la clave para atraer a otros desarrolladores, mentores o
           reclutadores.

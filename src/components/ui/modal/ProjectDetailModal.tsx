@@ -56,11 +56,11 @@ const ProjectDetailModal = ({
     // Backdrop semitransparente clickeable para cerrar
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm transition-opacity duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm transition-opacity duration-200"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col w-11/12 rounded-lg bg-gray-800 text-white shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 animate-scale-in max-h-[95vh] max-w-[90vw]"
+        className="relative flex flex-col w-11/12 rounded-lg bg-gray-800 text-white shadow-2xl transform transition-all duration-200 ease-in-out scale-95 opacity-0 animate-scale-in max-h-[95vh] max-w-[90vw]"
       >
         {/* Header del Modal */}
         <div className="flex-shrink-0 p-4 border-b border-gray-700 flex justify-between items-start">

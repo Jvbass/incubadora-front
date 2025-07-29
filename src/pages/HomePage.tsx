@@ -12,6 +12,7 @@ import type { ProjectSummary } from "../types";
 
 // Styles
 import "../index.css";
+import { ProyectHomeSide } from "../components/ui/project-home/ProjectHomeSide";
 
 const HomePage = () => {
   // Query to fetch all published projects for homepage display
@@ -69,23 +70,35 @@ const HomePage = () => {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl text-zinc-900 dark:text-zinc-50">
-          Últimos Proyectos
-        </h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-8">
+        <main className="lg:col-span-3 space-y-12">
+          <h1 className="text-2xl text-zinc-900 dark:text-zinc-50 mb-4 font-semibold">
+            Últimos Proyectos
+          </h1>
+          <ul className="space-y-4 ">
+            {data.map((project) => (
+              <Link
+                to={`/project/${project.slug}`}
+                key={project.id}
+                className="block hover:opacity-90 transition-opacity"
+              >
+                <ProjectCard project={project} variant="full" />
+              </Link>
+            ))}
+          </ul>
+          <div className="flex items-center justify-center mt-4 ">
+            <Link
+              to="/projects"
+              className="border border-border rounded-full p-1.5 w-full text-center text-text-soft dark:text-text-light
+              hover:text-brand-300 hover:border-brand-300  hover:bg-brand-100 ease-in transition-all duration-200 "
+            >
+              Cargar más
+            </Link>
+          </div>
+        </main>
+        <ProyectHomeSide />
       </div>
-      <ul className="space-y-4 mt-6">
-        {data.map((project) => (
-          <Link
-            to={`/project/${project.slug}`}
-            key={project.id}
-            className="block hover:opacity-90 transition-opacity"
-          >
-            <ProjectCard project={project} variant="full" />
-          </Link>
-        ))}
-      </ul>
     </div>
   );
 };

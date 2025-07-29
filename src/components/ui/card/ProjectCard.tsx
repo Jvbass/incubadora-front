@@ -21,7 +21,7 @@ export const ProjectCard = React.memo(
     // Vista Detallada para el HomePage ---
     if (variant === "full") {
       return (
-        <li className="flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600">
+        <li className="flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600">
           {/* 1. Avatar del Proyecto */}
           <img
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(

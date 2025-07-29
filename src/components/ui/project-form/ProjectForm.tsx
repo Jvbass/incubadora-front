@@ -86,11 +86,11 @@ const ProjectForm = () => {
     <main className="md:col-span-2">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-slate-100 dark:bg-slate-800 rounded-lg shadow-md space-y-8 border border-zinc-300 dark:border-slate-600
+        className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md space-y-8 border border-zinc-300 dark:border-slate-600
 "
       >
         <section>
-          <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700 dark:text-slate-100">
+          <h3 className="text-xl font-semibold border-b border-border pb-2 mb-4  dark:text-brand-100 text-text-main">
             Información General
           </h3>
           <div className="space-y-4">
@@ -98,7 +98,7 @@ const ProjectForm = () => {
             <div>
               <label
                 htmlFor="title"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium  dark:text-brand-100 text-text-main"
               >
                 Título del Proyecto <span className=" text-xs ">*</span>
               </label>
@@ -112,7 +112,7 @@ const ProjectForm = () => {
                     message: "El título no puede exceder los 255 caracteres",
                   },
                 })}
-                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
               {errors.title && (
                 <p className="text-xs text-red-600 mt-1">
@@ -126,7 +126,7 @@ const ProjectForm = () => {
               <div className="flex justify-between items-center">
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium  dark:text-brand-100 text-text-main"
                 >
                   Descripción <span className="text-xs">*</span>
                 </label>
@@ -148,7 +148,7 @@ const ProjectForm = () => {
                   },
                 })}
                 rows={10}
-                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm dark:placeholder:text-gray-400 dark:text-accent-100"
                 placeholder="Describe los objetivos, funcionalidades y el estado actual de tu proyecto..."
               ></textarea>
               {errors.description && (
@@ -163,7 +163,7 @@ const ProjectForm = () => {
               <div>
                 <label
                   htmlFor="repositoryUrl"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium  dark:text-brand-100 text-text-main"
                 >
                   URL del Repositorio
                 </label>
@@ -178,7 +178,7 @@ const ProjectForm = () => {
                         "La url debe contener el protocolo https://, http:// o ftp://",
                     },
                   })}
-                  className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                  className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 "
                 />
                 {errors.repositoryUrl && (
                   <p className="text-xs text-red-600 mt-1">
@@ -189,7 +189,7 @@ const ProjectForm = () => {
               <div>
                 <label
                   htmlFor="projectUrl"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium  dark:text-brand-100 text-text-main"
                 >
                   URL del Proyecto Desplegado
                 </label>
@@ -203,7 +203,7 @@ const ProjectForm = () => {
                       message: "Por favor, ingresa una URL válida",
                     },
                   })}
-                  className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                  className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 "
                 />
                 {errors.projectUrl && (
                   <p className="text-xs text-red-600 mt-1">
@@ -217,22 +217,19 @@ const ProjectForm = () => {
 
         {/* SECCIÓN 2 */}
         <section>
-          <h3 className="text-xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">
+          <h3 className="text-xl font-semibold border-b border-border pb-2 mb-4  dark:text-brand-100 text-text-main">
             Detalles Técnicos
           </h3>
 
           {/* tecnologías */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tecnologías Utilizadas{" "}
-                <span className=" text-xs ">
-                  * (Lenguajes, Frameworks, Herramientas)
-                </span>
-              </label>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium  dark:text-brand-100 text-text-main mb-1">
                   Tecnologías
+                  <span className=" text-xs ">
+                    * (Lenguajes, Frameworks, Herramientas)
+                  </span>
                 </label>
                 <Controller
                   name="technologyIds"
@@ -264,13 +261,13 @@ const ProjectForm = () => {
           {/* checkbox para estado/mentoria/colaboradores */}
           <div className="grid grid-cols-1  gap-6 mt-7">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium  dark:text-brand-100 text-text-main mb-2">
                 Estado del Proyecto <span className=" text-xs ">*</span>
               </label>
               <select
                 id="status"
                 {...register("status")}
-                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 dark:bg-bg-dark"
               >
                 <option value="pending">Borrador</option>
                 <option value="published">Publicar</option>
@@ -278,7 +275,7 @@ const ProjectForm = () => {
               </select>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
+              <label className="flex items-center space-x-2 text-sm font-medium  dark:text-brand-100 text-text-main cursor-pointer">
                 <input
                   type="checkbox"
                   {...register("isCollaborative")}
@@ -286,7 +283,7 @@ const ProjectForm = () => {
                 />
                 <span>Busco colaboradores</span>
               </label>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 cursor-pointer">
+              <label className="flex items-center space-x-2 text-sm font-medium  dark:text-brand-100  text-text-main cursor-pointer">
                 <input
                   type="checkbox"
                   {...register("needMentoring")}
@@ -299,7 +296,7 @@ const ProjectForm = () => {
 
           {/* Progreso del desarrollo */}
           <div className="mt-7">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium  dark:text-brand-100  text-text-main mb-2">
               Progreso del desarrollo:
               <Controller
                 name="developmentProgress"
