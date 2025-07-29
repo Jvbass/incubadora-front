@@ -12,6 +12,7 @@ import type { ProjectSummary } from "../types";
 
 // Styles
 import "../index.css";
+import { ProyectHomeSide } from "../components/ui/project-home/ProjectHomeSide";
 
 const HomePage = () => {
   // Query to fetch all published projects for homepage display
@@ -26,7 +27,7 @@ const HomePage = () => {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="h-screen text-center flex items-center justify-center">
-          <Loading message="loading projects" />
+          <Loading message="proyectos" />
         </div>
       </div>
     );
@@ -39,12 +40,13 @@ const HomePage = () => {
         <div className="p-8 h-screen w-full text-center">
           <div className="max-w-md mx-auto">
             <h2 className="text-xl font-bold text-red-600 mb-4">
-              Unable to Load Projects
+              No se pueden cargar los proyectos
             </h2>
             <p className="text-gray-600 mb-4">
-              We're having trouble loading the projects. Please try again later.
+              Tenemos problemas para cargar los proyectos. Intenta denuevo más
+              tarde.
             </p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
@@ -61,38 +63,44 @@ const HomePage = () => {
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="p-8 h-screen w-full text-center font-bold">
-          No projects found
+          No se encontraron proyectos para mostrar
         </div>
       </div>
     );
   }
 
-  // Success state with projects
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="p-8 max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Explore Projects</h1>
-        </div>
-        <ul className="space-y-4 mt-6">
-          {data.map((project) => (
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-8">
+        <main className="lg:col-span-3 space-y-12">
+          <h1 className="text-2xl text-zinc-900 dark:text-zinc-50 mb-4 font-semibold">
+            Últimos Proyectos
+          </h1>
+          <ul className="space-y-4 ">
+            {data.map((project) => (
+              <Link
+                to={`/project/${project.slug}`}
+                key={project.id}
+                className="block hover:opacity-90 transition-opacity"
+              >
+                <ProjectCard project={project} variant="full" />
+              </Link>
+            ))}
+          </ul>
+          <div className="flex items-center justify-center mt-4 ">
             <Link
-              to={`/project/${project.slug}`}
-              key={project.id}
-              className="block hover:opacity-90 transition-opacity"
+              to="/projects"
+              className="border border-border rounded-full p-1.5 w-full text-center text-text-soft dark:text-text-light
+              hover:text-brand-300 hover:border-brand-300  hover:bg-brand-100 ease-in transition-all duration-200 "
             >
-              <ProjectCard
-                project={project}
-                variant="full"
-              />
+              Cargar más
             </Link>
-          ))}
-        </ul>
+          </div>
+        </main>
+        <ProyectHomeSide />
       </div>
     </div>
   );
-
-
 };
 
 export default HomePage;

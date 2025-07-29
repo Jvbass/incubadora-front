@@ -1,6 +1,6 @@
 import type { ProjectDetailResponse, FeedbackResponse } from "../../../types";
 import { useProjectRating } from "../../../hooks/useProjectRating";
-import { StarRating } from "../StarRating";
+import { StarRating } from "../../ux/StarRating";
 
 interface ProjectMainContentProps {
   project: ProjectDetailResponse;

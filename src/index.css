@@ -1,17 +1,51 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* modal animation */
 @keyframes scale-in {
-    from {
-      transform: scale(0.95);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+  from {
+    transform: scale(0.95);
+    opacity: 0;
   }
-  .animate-scale-in {
-    animation: scale-in 0.2s ease-out forwards;
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
+}
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out forwards;
+}
+
+@theme {
+  /* Brand Primary - Azul profesional */
+  --color-brand-900: #1e3a8a; /* Fondo oscuro / texto principal en modo claro */
+  --color-brand-600: #2563eb; /* Navegación, botones primarios */
+  --color-brand-300: #3b82f6; /* Hover, subrayado enlaces */
+  --color-brand-100: #dbeafe; /* Fondo claro, tarjetas suaves */
+
+  /* Acción - Verde vibrante */
+  --color-accent-900: #15803d; /* Hover oscuro */
+  --color-accent-600: #22c55e; /* Botones de acción (OK, Confirmar) */
+  --color-accent-300: #4ade80; /* Interactivos, enlaces secundarios */
+  --color-accent-100: #dcfce7; /* Hover suave */
+
+  /* CTA - Naranja vibrante */
+  --color-cta-900: #c2410c; /* Hover oscuro fuerte (peligro, alta urgencia) */
+  --color-cta-600: #f97316; /* Botones CTA */
+  --color-cta-300: #fdba74; /* Hover sobre CTA */
+  --color-cta-100: #ffedd5; /* Fondos suaves de alerta */
+
+  /* Neutros */
+  --color-bg-light: #f9fafb; /* Fondo claro principal */
+  --color-bg-soft: #f3f4f6; /* Fondo de inputs, tarjetas secundarias */
+  --color-bg-dark: #1e293b; /* Fondo oscuro para tarjetas en modo dark */
+  --color-bg-darker: #0f172a; /* Fondo principal en modo oscuro */
+
+  --color-text-light: #f3f4f6; /* Texto claro en modo oscuro */
+  --color-text-main: #111827; /* Texto principal en modo claro */
+  --color-text-soft: #6b7280; /* Texto secundario, menos importante */
+
+  --color-border: #d1d5db; /* Bordes de inputs, cards (modo claro) */
+  --color-divider: #e5e7eb; /* Líneas separadoras, sutiles */
+}

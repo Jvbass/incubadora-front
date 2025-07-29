@@ -1,10 +1,12 @@
+import { ThemeApplier } from "./components/layout/ThemeApplier";
 import AppRouter from "./router";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
+      <ThemeApplier />
       {/* Aquí podrías añadir un layout general, como un Navbar o Footer si fuera necesario */}
-      <main>
+      <main className="min-h-screen bg-bg-soft dark:bg-bg-darker">
         <AppRouter />
       </main>
     </div>

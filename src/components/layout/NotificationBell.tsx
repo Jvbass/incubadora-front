@@ -36,7 +36,8 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-full p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none  cursor-pointer"
+        className="relative rounded-full p-2
+         text-text-light  dark:text-amber-50 hover:text-brand-900 hover:bg-indigo-400  focus:outline-none cursor-pointer transition duration-300"
       >
         <Bell size={24} />
         {unreadCount > 0 && (

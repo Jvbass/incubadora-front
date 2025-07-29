@@ -1,17 +1,21 @@
 import { Link } from "react-router-dom";
 import NotificationBell from "./NotificationBell"; // <-- 1. Importar
-import { CirclePlus } from "lucide-react";
+import { Bookmark, Plus } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
   const { user, logout } = useAuthZustand();
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-brand-600  dark:bg-brand-900 shadow-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <Link to="/home" className="text-2xl font-bold text-indigo-600">
+            <Link
+              to="/home"
+              className="text-2xl font-bold text-text-light hover:text-brand-900 dark:hover:text-brand-600 transition duration-200 "
+            >
               Incubadora.dev
             </Link>
           </div>
@@ -25,7 +29,7 @@ const Navbar = () => {
             </Link>
             <Link
               to="/home"
-              className="text-sm font-medium text-gray-800 hover:text-indigo-600"
+              className="text-sm font-medium text-text-light dark:text-amber-50  hover:text-brand-900 dark:hover:text-brand-300 cursor-pointer transition duration-200"
             >
               Proyectos
             </Link>
@@ -37,28 +41,34 @@ const Navbar = () => {
             </Link>
             <Link
               to="/home"
-              className="text-sm font-medium text-gray-400 cursor-not-allowed"
+              className="text-sm font-medium text-gray-400 cursor-not-allowed "
             >
               Blog
             </Link>
 
             <Link
               to="/create-project"
-              className="text-sm font-medium text-gray-800 hover:text-indigo-600 rounded-full border-1 px-2 py-1 flex items-center "
+              className="text-sm font-bold text-cta-600 hover:text-text-light shadow-sm hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-200"
             >
-              <CirclePlus className="mr-1" /> Crear
+              <Plus className="mr-1" strokeWidth={2} /> Crear
             </Link>
 
-            {/* 2. Añadir el componente de notificación */}
+            {/* Componente de notificación */}
             <NotificationBell />
 
-            
+            {/* Componente de cambio de tema */}
+            <ThemeSwitcher />
 
-            <div className="h-8 border-l border-gray-300"></div>
+            {/* Proyectos guardados */}
+            <span className="text-gray-400">
+              <Bookmark className="cursor-not-allowed" />
+            </span>
+
+            <div className="h-8 border-l border-divider"></div>
 
             {/* User Profile Dropdown */}
-            <div className="relative group">
-              <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <div className="relative group ">
+              <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-indigo-400  transition-colors duration-200  text-text-light hover:text-brand-900 ">
                 {/* Avatar */}
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -69,26 +79,24 @@ const Navbar = () => {
                 />
                 {/* User Info */}
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-800">
-                    {user?.username}
-                  </p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
+                  <p className="text-sm font-medium ">{user?.username}</p>
+                  <p className="text-xs text-brand-100">{user?.role}</p>
                 </div>
               </div>
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg  border-gray-200 invisible group-hover:opacity-100  group-hover:visible transition-all duration-200 z-50">
                 <div className="py-2">
                   <Link
                     to="/dashboard"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
                   >
                     Mi Espacio
                   </Link>
-                  <div className="border-t border-gray-100 my-1"></div>
+                  <div className="border-t border-brand-100 my-1"></div>
                   <button
                     onClick={logout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    className="block w-full text-left px-4 py-2 text-sm text-cta-600  transition-colors cursor-pointer hover:text-cta-900"
                   >
                     Cerrar Sesión
                   </button>
