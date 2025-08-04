@@ -83,11 +83,10 @@ const ProjectForm = () => {
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 
   return (
-    <main className="md:col-span-2">
+    <div className="md:col-span-3 ">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md space-y-8 border border-zinc-300 dark:border-slate-600
-"
+        className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md space-y-8 border border-zinc-300 dark:border-slate-600"
       >
         <section>
           <h3 className="text-xl font-semibold border-b border-border pb-2 mb-4  dark:text-brand-100 text-text-main">
@@ -331,7 +330,7 @@ const ProjectForm = () => {
           </button>
         </div>
       </form>
-    </main>
+    </div>
   );
 };
 

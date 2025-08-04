@@ -12,6 +12,8 @@ import type {
   CommentRequest,
   CommentResponse,
   Notification,
+  PagedResponse,
+  SortByType,
 } from "../types";
 
 /**=========================================
@@ -61,15 +63,41 @@ export const fetchUserData = async (): Promise<UserProfileResponse> => {
  *  PROJECTS QUERIES
  *=========================================*/
 
+// /**
+//  * Obtiene la lista de todos los proyectos.
+//  * @returns lista de proyectos
+//  */
+// export const fetchProjects = async (): Promise<ProjectSummary[]> => {
+//   // El backend devuelve un ProjectSummary para la lista
+//   const { data } = await apiService.get<ProjectSummary[]>("/projects");
+//   return data;
+// };
+
 /**
- * Obtiene la lista de todos los proyectos.
- * @returns lista de proyectos
+ * Obtiene una lista paginada de proyectos.
+ * @param page - El número de página a solicitar.
+ * @param size - El tamaño de la página.
+ * @returns Una promesa que resuelve a una respuesta paginada de ProjectSummary.
  */
-export const fetchProjects = async (): Promise<ProjectSummary[]> => {
-  // El backend devuelve un ProjectSummary para la lista
-  const { data } = await apiService.get<ProjectSummary[]>("/projects");
+interface FetchProjectsParams {
+  pageParam?: number;
+  sortBy: SortByType;
+}
+
+export const fetchProjects = async ({ pageParam = 0, sortBy }: FetchProjectsParams): Promise<PagedResponse<ProjectSummary>> => {
+  const { data } = await apiService.get<PagedResponse<ProjectSummary>>("/projects", {
+    params: {
+      page: pageParam,
+      size: 4, // Cargamos de a 4 proyectos
+      sortBy: sortBy,
+    },
+  });
   return data;
 };
+
+
+
+
 
 /**
  * Crea un nuevo proyecto.

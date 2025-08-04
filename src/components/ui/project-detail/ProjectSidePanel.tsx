@@ -27,9 +27,9 @@ const InfoRow = ({
   <div className="flex items-center justify-between text-sm">
     <div className="flex items-center gap-2 text-gray-600">
       {icon}
-      <span>{label}</span>
+      <span>{label}:</span>
     </div>
-    <span className="font-bold text-gray-800">{value}</span>
+    <span className="font-medium text-sm text-gray-800">{value}</span>
   </div>
 );
 
@@ -41,7 +41,7 @@ export const ProjectSidePanel = ({
 
   return (
     <aside>
-      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-8">
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-4">
         <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-3">
           Detalles
         </h3>
@@ -50,7 +50,7 @@ export const ProjectSidePanel = ({
         <div className="space-y-3">
           <InfoRow
             icon={<Star size={16} />}
-            label="Rating Promedio"
+            label="Rating"
             value={averageRatingFormatted}
           />
           <InfoRow

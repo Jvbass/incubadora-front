@@ -34,6 +34,17 @@ export interface UserProfileResponse {
   role: string;
 }
 
+export interface PagedResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
+
 /*===================================================
 * projects
 ===================================================*/

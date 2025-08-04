@@ -7,7 +7,7 @@ export const useProjectRating = (feedbackList?: FeedbackResponse[]) => {
       return {
         averageRating: 0,
         feedbackCount: 0,
-        averageRatingFormatted: 'N/A',
+        averageRatingFormatted: 'Sé el primero! 🧑‍🚀',
         starRating: 0, // For 1-5 star display
       };
     }
