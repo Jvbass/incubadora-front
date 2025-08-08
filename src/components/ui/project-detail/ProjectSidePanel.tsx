@@ -6,6 +6,7 @@ import {
   Users,
   Lightbulb,
   TrendingUp,
+  UserRound,
 } from "lucide-react";
 import { useProjectRating } from "../../../hooks/useProjectRating";
 
@@ -89,6 +90,15 @@ export const ProjectSidePanel = ({
           >
             <Github size={18} />
             Ver Repositorio
+          </a>
+          <a
+            href={project.repositoryUrl || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md bg-cta-600 text-white font-semibold hover:bg-cta-900 transition-colors"
+          >
+            <UserRound size={18} />
+            Desarrollador
           </a>
         </div>
       </div>
