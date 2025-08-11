@@ -26,6 +26,11 @@ export interface LoginRequest {
   password: string;
 }
 
+
+/*===================================================
+* profile
+===================================================*/
+
 export interface UserProfileResponse {
   username: string;
   email: string;
@@ -43,8 +48,6 @@ export interface PagedResponse<T> {
   last: boolean;
 }
 
-export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
-
 /*===================================================
 * projects
 ===================================================*/
@@ -60,6 +63,8 @@ export interface ProjectSummary {
   status: string;
   developmentProgress: number;
 }
+
+export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
 
 export interface ProjectFormInput {
   title: string;

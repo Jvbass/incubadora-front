@@ -6,10 +6,11 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
   const { user, logout } = useAuthZustand();
+  console.log("Navbar user:", user?.role);
 
   return (
     <nav className="bg-brand-600  dark:bg-brand-900 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+      <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 ">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Link
@@ -80,7 +81,12 @@ const Navbar = () => {
                 {/* User Info */}
                 <div className="text-right">
                   <p className="text-sm font-medium ">{user?.username}</p>
-                  <p className="text-xs text-brand-100">{user?.role}</p>
+                  {
+                    user?.role === "dev" && (
+                      <p className="text-xs text-brand-100">Dev</p>
+                    )
+                  }
+                  
                 </div>
               </div>
 
