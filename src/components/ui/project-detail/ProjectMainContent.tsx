@@ -1,6 +1,7 @@
 import type { ProjectDetailResponse, FeedbackResponse } from "../../../types";
 import { useProjectRating } from "../../../hooks/useProjectRating";
 import { StarRating } from "../../ux/StarRating";
+import { Link } from "react-router-dom";
 
 interface ProjectMainContentProps {
   project: ProjectDetailResponse;
@@ -34,10 +35,12 @@ export const ProjectMainContent = ({
           </h1>
 
           <p className="text-lg text-gray-500 mb-4">
-            Creado por
-            <span className="font-semibold text-gray-700">
-              {" " + project.developerUsername}
-            </span>
+            Creado por{" "}
+            <Link to="/home">
+              <span className="font-semibold text-gray-700 dark:text-brand-100 hover:text-blue-500 transition duration-200">
+                {project.developerUsername}
+              </span>
+            </Link>
           </p>
 
           {/* Rating and Reviews */}

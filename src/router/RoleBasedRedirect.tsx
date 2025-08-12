@@ -20,7 +20,7 @@ const RoleBasedRedirect = () => {
 
   // Mapeo de roles a las rutas de sus dashboards.
   const roleToPathMap: { [key: string]: string } = {
-    Desarrollador: "/home",
+    dev: "/home",
     // Administrador: "/admin",
     // Mentor: "/mentor",
     // Reclutador: "/recruiter",

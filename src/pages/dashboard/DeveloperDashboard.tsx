@@ -82,7 +82,7 @@ const DeveloperDashboard = () => {
     }
 
     return (
-      <>
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="p-6 bg-white rounded-lg shadow-md mb-5">
           <h2 className="text-2xl font-semibold border-b pb-2">
             Información de tu Perfil
@@ -163,7 +163,7 @@ const DeveloperDashboard = () => {
             Reconocimientos/Kudos
           </h2>
         </div>
-      </>
+      </div>
     );
   };
 
