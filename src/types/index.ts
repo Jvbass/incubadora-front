@@ -26,10 +26,27 @@ export interface LoginRequest {
   password: string;
 }
 
-
 /*===================================================
 * profile
 ===================================================*/
+
+export interface ProfileResponse {
+  slug: string;
+  firstName: string;
+  lastName: string;
+  headline: string;
+  bio: string;
+  email: string;
+  publicProfile: boolean;
+  techStack: TechStack[];
+  socialLinks: SocialLink[];
+  workExperiences: WorkExperience[];
+  languages: Language[];
+  certificates: Certificate[];
+  projects: ProjectSummary[];
+  kudosReceived: KudosReceived[];
+  feedbackGiven: FeedbackResponse[];
+}
 
 export interface UserProfileResponse {
   username: string;
@@ -39,13 +56,38 @@ export interface UserProfileResponse {
   role: string;
 }
 
-export interface PagedResponse<T> {
-  content: T[];
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  last: boolean;
+export interface TechStack {
+  id: number;
+  name: string;
+  techColor: string;
+}
+
+export interface SocialLink {
+  id: number;
+  platform: string;
+  url: string;
+}
+
+export interface WorkExperience {
+  id: number;
+  companyName: string;
+  position: string;
+  description: string;
+  startYear: number;
+  endYear?: number;
+}
+
+export interface Language {
+  id: number;
+  language: string;
+  proficiency: string;
+}
+
+export interface Certificate {
+  id: number;
+  name: string;
+  imageUrl: string;
+  certificateUrl: string;
 }
 
 /*===================================================
@@ -125,6 +167,17 @@ export interface FeedbackRequest {
   rating: number;
 }
 
+export interface KudosReceived {
+  id: number;
+  message: string;
+  isPublic: boolean;
+  createdAt: string;
+  senderUsername: string;
+  receiverUsername: string;
+  relatedProjectSlug: string;
+  relatedProjectTitle: string;
+}
+
 /*===================================================
  * comments
  *===================================================*/
@@ -156,4 +209,13 @@ export interface Notification {
   createdAt: string;
   timeAgo: string;
   read: boolean;
+}
+
+export interface PagedResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 }
