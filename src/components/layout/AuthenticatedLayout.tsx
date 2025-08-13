@@ -1,5 +1,5 @@
-import React from 'react';
-import Navbar from './Navbar';
+import React from "react";
+import Navbar from "./Navbar";
 
 // Este componente sirve como plantilla para todas las páginas que requieren autenticación.
 const AuthenticatedLayout = ({ children }: { children: React.ReactNode }) => {
@@ -7,9 +7,7 @@ const AuthenticatedLayout = ({ children }: { children: React.ReactNode }) => {
     <div>
       <Navbar />
       <main>
-        <div>
-          {children}
-        </div>
+        <div>{children}</div>
       </main>
     </div>
   );

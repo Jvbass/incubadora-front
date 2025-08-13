@@ -14,6 +14,8 @@ import type {
   Notification,
   PagedResponse,
   SortByType,
+  ProfileResponse,
+  ProfileUpdateRequest,
 } from "../types";
 
 /**=========================================
@@ -60,6 +62,34 @@ export const fetchUserData = async (): Promise<UserProfileResponse> => {
 };
 
 /**=========================================
+ * PROFILE QUERIES
+ *=========================================*/
+
+/**
+ * Obtiene el perfil del usuario autenticado.
+ * @returns El perfil completo del usuario.
+ */
+export const fetchUserProfile = async (): Promise<ProfileResponse> => {
+  const { data } = await apiService.get<ProfileResponse>("/me/profile");
+  return data;
+};
+
+/**
+ * Actualiza el perfil del usuario autenticado.
+ * @param profileData Los datos del perfil para actualizar.
+ * @returns El perfil actualizado.
+ */
+export const updateUserProfile = async (
+  profileData: ProfileUpdateRequest
+): Promise<ProfileResponse> => {
+  const { data } = await apiService.put<ProfileResponse>(
+    "/me/profile",
+    profileData
+  );
+  return data;
+};
+
+/**=========================================
  *  PROJECTS QUERIES
  *=========================================*/
 
@@ -67,11 +97,6 @@ export const fetchUserData = async (): Promise<UserProfileResponse> => {
 //  * Obtiene la lista de todos los proyectos.
 //  * @returns lista de proyectos
 //  */
-// export const fetchProjects = async (): Promise<ProjectSummary[]> => {
-//   // El backend devuelve un ProjectSummary para la lista
-//   const { data } = await apiService.get<ProjectSummary[]>("/projects");
-//   return data;
-// };
 
 /**
  * Obtiene una lista paginada de proyectos.
@@ -84,20 +109,22 @@ interface FetchProjectsParams {
   sortBy: SortByType;
 }
 
-export const fetchProjects = async ({ pageParam = 0, sortBy }: FetchProjectsParams): Promise<PagedResponse<ProjectSummary>> => {
-  const { data } = await apiService.get<PagedResponse<ProjectSummary>>("/projects", {
-    params: {
-      page: pageParam,
-      size: 4, // Cargamos de a 4 proyectos
-      sortBy: sortBy,
-    },
-  });
+export const fetchProjects = async ({
+  pageParam = 0,
+  sortBy,
+}: FetchProjectsParams): Promise<PagedResponse<ProjectSummary>> => {
+  const { data } = await apiService.get<PagedResponse<ProjectSummary>>(
+    "/projects",
+    {
+      params: {
+        page: pageParam,
+        size: 4, // Cargamos de a 4 proyectos
+        sortBy: sortBy,
+      },
+    }
+  );
   return data;
 };
-
-
-
-
 
 /**
  * Crea un nuevo proyecto.

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { jwtDecode } from "jwt-decode";
 import type { User, DecodedToken } from "../types";
+import { queryClient } from "../main";
 
 // Token storage key - consistent with apiService.ts
 const TOKEN_KEY = "authToken";
@@ -28,14 +29,14 @@ const getInitialState = () => {
       // Check if token is not expired
       if (decodedToken.exp * 1000 > Date.now()) {
         const user: User = {
-          username: decodedToken.sub, 
+          username: decodedToken.sub,
           role: decodedToken.role,
         };
-        return { 
-          token, 
-          user, 
-          isAuthenticated: true, 
-          isLoading: false 
+        return {
+          token,
+          user,
+          isAuthenticated: true,
+          isLoading: false,
         };
       } else {
         // Token expired, remove it
@@ -46,11 +47,11 @@ const getInitialState = () => {
       localStorage.removeItem(TOKEN_KEY);
     }
   }
-  return { 
-    token: null, 
-    user: null, 
-    isAuthenticated: false, 
-    isLoading: false 
+  return {
+    token: null,
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
   };
 };
 
@@ -72,31 +73,32 @@ export const useAuthStore = create<AuthState>((set) => ({
       };
 
       localStorage.setItem(TOKEN_KEY, token);
-      set({ 
-        token, 
-        user, 
-        isAuthenticated: true, 
-        isLoading: false 
+      set({
+        token,
+        user,
+        isAuthenticated: true,
+        isLoading: false,
       });
     } catch (error) {
       console.error("Failed to decode token during login:", error);
       localStorage.removeItem(TOKEN_KEY);
-      set({ 
-        token: null, 
-        user: null, 
-        isAuthenticated: false, 
-        isLoading: false 
+      set({
+        token: null,
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
       });
     }
   },
 
   logout: () => {
     localStorage.removeItem(TOKEN_KEY);
-    set({ 
-      token: null, 
-      user: null, 
-      isAuthenticated: false, 
-      isLoading: false 
+    queryClient.clear();
+    set({
+      token: null,
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
     });
   },
 

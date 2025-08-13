@@ -6,7 +6,6 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const Navbar = () => {
   const { user, logout } = useAuthZustand();
-  console.log("Navbar user:", user?.role);
 
   return (
     <nav className="bg-brand-600  dark:bg-brand-900 shadow-xs">
@@ -98,6 +97,12 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
                   >
                     Mi Espacio
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                  >
+                    Mi Perfil
                   </Link>
                   <div className="border-t border-brand-100 my-1"></div>
                   <button

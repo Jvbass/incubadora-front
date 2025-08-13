@@ -38,7 +38,7 @@ export interface ProfileResponse {
   bio: string;
   email: string;
   publicProfile: boolean;
-  techStack: TechStack[];
+  techStack: Technology[];
   socialLinks: SocialLink[];
   workExperiences: WorkExperience[];
   languages: Language[];
@@ -54,12 +54,6 @@ export interface UserProfileResponse {
   firstName: string;
   lastName: string;
   role: string;
-}
-
-export interface TechStack {
-  id: number;
-  name: string;
-  techColor: string;
 }
 
 export interface SocialLink {
@@ -88,6 +82,17 @@ export interface Certificate {
   name: string;
   imageUrl: string;
   certificateUrl: string;
+}
+
+export interface ProfileUpdateRequest {
+  headline: string;
+  bio: string;
+  publicProfile: boolean;
+  socialLinks: Omit<SocialLink, "id">[];
+  techStackIds: number[];
+  workExperiences: Omit<WorkExperience, "id">[];
+  languages: Omit<Language, "id">[];
+  certificates: Omit<Certificate, "id">[];
 }
 
 /*===================================================

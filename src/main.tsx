@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { AuthProvider } from "./components/providers/AuthProvider.tsx";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 // Renderiza la aplicación React en el elemento con id "root"
 ReactDOM.createRoot(document.getElementById("root")!).render(
