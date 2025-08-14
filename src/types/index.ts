@@ -102,6 +102,7 @@ export interface ProjectSummary {
   id: number;
   slug: string;
   title: string;
+  subtitle: string;
   developerUsername: string;
   createdAt: string;
   technologies: Technology[];
@@ -115,6 +116,7 @@ export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
 
 export interface ProjectFormInput {
   title: string;
+  subtitle: string;
   description: string;
   repositoryUrl: string;
   projectUrl: string;
@@ -129,6 +131,7 @@ export interface ProjectDetailResponse {
   id: number;
   slug: string;
   title: string;
+  subtitle: string;
   description: string;
   repositoryUrl: string;
   projectUrl: string;
