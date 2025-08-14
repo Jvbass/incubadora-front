@@ -12,7 +12,15 @@ import { AuthProvider } from "./components/providers/AuthProvider.tsx";
 export const queryClient = new QueryClient();
 
 // Renderiza la aplicación React en el elemento con id "root"
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const container = document.getElementById("root");
+
+if (!container) {
+  throw new Error("Failed to find the root element");
+}
+
+const root = ReactDOM.createRoot(container);
+
+root.render(
   // Proveedor de react-query para manejo de datos remotos y caché
   <QueryClientProvider client={queryClient}>
     {/* Proveedor de autenticación e inicialización para manejar el estado de autorizacion del usuario */}

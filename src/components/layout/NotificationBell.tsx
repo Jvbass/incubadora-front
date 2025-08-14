@@ -4,7 +4,15 @@ import { fetchNotifications } from "../../api/queries";
 import { Bell } from "lucide-react";
 import NotificationDropdown from "../ui/notification/NotificationDropdown";
 
-const NotificationBell = () => {
+interface NotificationBellProps {
+  iconSize?: number;
+  color?: string;
+}
+
+const NotificationBell = ({
+  iconSize = 18,
+  color = "text-brand-900",
+}: NotificationBellProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,10 +44,10 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-full p-2
-         text-text-light  dark:text-amber-50 hover:text-brand-900 hover:bg-indigo-400  focus:outline-none cursor-pointer transition duration-300"
+        className={`"relative rounded-full p-2 ${color}
+        dark:text-amber-50 hover:text-brand-900 hover:bg-indigo-400 focus:outline-none cursor-pointer transition duration-300" `}
       >
-        <Bell size={24} />
+        <Bell size={iconSize} />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 flex h-4 w-4">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
