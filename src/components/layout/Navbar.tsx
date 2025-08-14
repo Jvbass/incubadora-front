@@ -21,13 +21,13 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`hover:bg-brand-300 hover:dark:bg-brand-900  transition-all duration-200 w-fit fixed right-0 rounded-bl-lg z-50 ${
+      className={`hover:bg-brand-300 hover:dark:bg-brand-900 transition-all duration-200 w-fit fixed right-0 rounded-bl-lg z-50 ${
         isScrolled
           ? "bg-white shadow-sm dark:bg-bg-dark"
           : "bg-bg-light dark:bg-bg-dark"
       }`}
     >
-      <div className="w-full mx-auto px-2 sm:px-3 lg:px-4 ">
+      <div className="w-full mx-auto px-3 sm:px-4">
         <div className="flex items-right h-14">
           <div className="flex items-center space-x-1">
             <Link

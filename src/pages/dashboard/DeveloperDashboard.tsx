@@ -132,16 +132,14 @@ const DeveloperDashboard = () => {
           {/*Lista de proyectos */}
           <ul className="space-y-4 mt-4">
             {projects?.map((project) => (
-              <li key={project.slug}>
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  variant="compact"
-                  onEdit={handleProjectEdit} // <--- Pasamos la función de editar
-                  onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
-                  onView={handleProjectView} // <--- Pasamos la función de ver
-                />
-              </li>
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                variant="compact"
+                onEdit={handleProjectEdit} // <--- Pasamos la función de editar
+                onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
+                onView={handleProjectView} // <--- Pasamos la función de ver
+              />
             ))}
           </ul>
         </div>

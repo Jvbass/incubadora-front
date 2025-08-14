@@ -1,10 +1,11 @@
 import { Menu } from "lucide-react";
 
 interface MobileMenuButtonProps {
+  isOpen?: boolean;
   onClick: () => void;
 }
 
-export function MobileMenuButton({ onClick }: MobileMenuButtonProps) {
+export function MobileMenuButton({ isOpen, onClick }: MobileMenuButtonProps) {
   return (
     <button
       onClick={onClick}

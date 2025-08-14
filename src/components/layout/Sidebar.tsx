@@ -1,4 +1,4 @@
-import { Package, ClipboardPen, Brain, Egg } from "lucide-react";
+import { Package, ClipboardPen, Brain, Egg, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface SidebarProps {
@@ -12,9 +12,11 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-gray-950/60 z-40 md:hidden"
+          className="absolute inset-0 bg-gray-950/60 z-40 md:hidden"
           onClick={onClose}
-        />
+        >
+          <X className="text-white absolute top-20 right-4" />
+        </div>
       )}
 
       {/* Sidebar */}
@@ -27,7 +29,11 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       `}
       >
         {/* Logo and company name at top */}
-        <Link to="/home" className="mb-8 flex items-center w-full px-2">
+        <Link
+          to="/home"
+          className="mb-8 flex items-center w-full px-2"
+          onClick={onClose}
+        >
           <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
             <div className="w-6 h-6 border-2 border-white rounded-full border-l-transparent " />
           </div>
@@ -48,6 +54,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           <Link
             to="/home"
             className="flex items-center w-full p-2 text-white hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+            onClick={onClose}
           >
             <ClipboardPen size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
