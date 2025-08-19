@@ -8,6 +8,7 @@ interface ProjectMainContentProps {
   feedbackList?: FeedbackResponse[];
 }
 
+
 export const ProjectMainContent = ({
   project,
   feedbackList,
@@ -33,6 +34,9 @@ export const ProjectMainContent = ({
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
             {project.title}
           </h1>
+          <span className="text-md font-bold text-white mb-2">
+            {project.subtitle}
+          </span>
 
           <p className="text-lg text-gray-500 mb-4">
             Creado por{" "}

@@ -25,7 +25,7 @@ const ProfilePage = () => {
   });
 
   if (isLoading) {
-    return <Loading message="Cargando tu perfil..." />;
+    return <Loading message=" perfil..." />;
   }
 
   if (isError) {
@@ -170,6 +170,9 @@ const ProfilePage = () => {
                 <p className="text-gray-700">{feedback.feedbackDescription}</p>
                 <div className="mt-2 text-sm text-gray-500">
                   {new Date(feedback.createdAt).toLocaleDateString()}
+                </div>
+                <div className="mt-2 text-sm text-gray-500">
+                  {feedback.projectId}
                 </div>
               </div>
             ))}

@@ -57,6 +57,7 @@ const EditProfilePage = () => {
     defaultValues: {
       headline: "",
       bio: "",
+      slug: "",
       publicProfile: true,
       socialLinks: [],
       techStackIds: [],
@@ -66,7 +67,7 @@ const EditProfilePage = () => {
     },
   });
 
-  // Hook para manejar los campos de array dinámicos
+  // Hooks para manejar los campos de array dinámicos
   const {
     fields: workFields,
     append: appendWork,
@@ -76,11 +77,39 @@ const EditProfilePage = () => {
     name: "workExperiences",
   });
 
+  const {
+    fields: socialFields,
+    append: appendSocial,
+    remove: removeSocial,
+  } = useFieldArray({
+    control,
+    name: "socialLinks",
+  });
+
+  const {
+    fields: languageFields,
+    append: appendLanguage,
+    remove: removeLanguage,
+  } = useFieldArray({
+    control,
+    name: "languages",
+  });
+
+  const {
+    fields: certificateFields,
+    append: appendCertificate,
+    remove: removeCertificate,
+  } = useFieldArray({
+    control,
+    name: "certificates",
+  });
+
   // 4. Llenar el formulario con los datos del perfil una vez que carguen
   useEffect(() => {
     if (profileData) {
       reset({
         headline: profileData.headline,
+        slug: profileData.slug,
         bio: profileData.bio,
         publicProfile: profileData.publicProfile,
         socialLinks: profileData.socialLinks.map(({ id, ...rest }) => rest), // Omitir 'id'
@@ -131,6 +160,14 @@ const EditProfilePage = () => {
             <input
               id="headline"
               {...register("headline")}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="slug">Slug</label>
+            <input
+              id="slug"
+              {...register("slug")}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
             />
           </div>
@@ -218,8 +255,114 @@ const EditProfilePage = () => {
           </button>
         </section>
 
-        {/* Aquí irían los campos para SocialLinks, Languages, Certificates... */}
-        {/* La lógica sería similar a la de WorkExperience con useFieldArray */}
+        {/* Redes Sociales */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Redes Sociales</h2>
+          {socialFields.map((field, index) => (
+            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+              <input
+                {...register(`socialLinks.${index}.platform`)}
+                placeholder="Plataforma (ej: LinkedIn, Twitter)"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <input
+                {...register(`socialLinks.${index}.url`)}
+                placeholder="URL del perfil"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeSocial(index)}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => appendSocial({ platform: "", url: "" })}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            + Añadir Red Social
+          </button>
+        </section>
+
+        {/* Idiomas */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Idiomas</h2>
+          {languageFields.map((field, index) => (
+            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+              <input
+                {...register(`languages.${index}.language`)}
+                placeholder="Idioma"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <select
+                {...register(`languages.${index}.proficiency`)}
+                className="block w-full border-gray-300 rounded-md"
+              >
+                <option value="">Selecciona el nivel</option>
+                <option value="Básico">Básico</option>
+                <option value="Intermedio">Intermedio</option>
+                <option value="Avanzado">Avanzado</option>
+                <option value="Nativo">Nativo</option>
+              </select>
+              <button
+                type="button"
+                onClick={() => removeLanguage(index)}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => appendLanguage({ language: "", proficiency: "" })}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            + Añadir Idioma
+          </button>
+        </section>
+
+        {/* Certificaciones */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Certificaciones</h2>
+          {certificateFields.map((field, index) => (
+            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+              <input
+                {...register(`certificates.${index}.name`)}
+                placeholder="Nombre de la certificación"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <input
+                {...register(`certificates.${index}.imageUrl`)}
+                placeholder="URL de la imagen"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <input
+                {...register(`certificates.${index}.certificateUrl`)}
+                placeholder="URL de la certificación"
+                className="block w-full border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => removeCertificate(index)}
+                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => appendCertificate({ name: "", imageUrl: "", certificateUrl: "" })}
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            + Añadir Certificación
+          </button>
+        </section>
 
         <div className="flex justify-end gap-4">
           <button
