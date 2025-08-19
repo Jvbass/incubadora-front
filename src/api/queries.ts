@@ -1,6 +1,6 @@
 import apiService from "./apiService";
 import type {
-  UserProfileResponse,
+  UserResponse,
   ProjectSummary,
   ProjectFormInput,
   Technology,
@@ -44,8 +44,8 @@ export const loginUser = async (
  */
 export const registerUser = async (
   userData: RegisterRequest
-): Promise<UserProfileResponse> => {
-  const { data } = await apiService.post<UserProfileResponse>(
+): Promise<UserResponse> => {
+  const { data } = await apiService.post<UserResponse>(
     "/auth/register",
     userData
   );
@@ -56,8 +56,8 @@ export const registerUser = async (
  * Obtiene la información del usuario logeado.
  * @returns informacion del usuario logeado
  */
-export const fetchUserData = async (): Promise<UserProfileResponse> => {
-  const { data } = await apiService.get<UserProfileResponse>("/dashboard");
+export const fetchUserData = async (): Promise<UserResponse> => {
+  const { data } = await apiService.get<UserResponse>("/dashboard");
   return data;
 };
 

@@ -48,7 +48,7 @@ export interface ProfileResponse {
   feedbackGiven: FeedbackResponse[];
 }
 
-export interface UserProfileResponse {
+export interface UserResponse {
   username: string;
   email: string;
   firstName: string;
@@ -86,6 +86,7 @@ export interface Certificate {
 
 export interface ProfileUpdateRequest {
   headline: string;
+  slug: string;
   bio: string;
   publicProfile: boolean;
   socialLinks: Omit<SocialLink, "id">[];
