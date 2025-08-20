@@ -32,7 +32,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-1">
             <Link
               to="/create-project"
-              className="text-sm font-semibold text-cta-600 hover:text-text-light shadow-sm hover:bg-indigo-400 rounded-full border-2 px-1 flex items-center transition duration-200"
+              className="text-sm font-semibold  shadow-sm flex items-center transition duration-200 text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500   rounded-lg  py-1 px-1.5 text-center me-2  dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 "
             >
               <Plus strokeWidth={2} size={23} />
               Crear
