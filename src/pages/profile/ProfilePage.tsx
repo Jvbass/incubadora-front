@@ -10,7 +10,9 @@ import {
   MessageSquare,
   Network,
   Rocket,
+  Star,
 } from "lucide-react";
+import { ProjectCard } from "../../components/ui/card/ProjectCard";
 
 const ProfilePage = () => {
   const {
@@ -129,29 +131,11 @@ const ProfilePage = () => {
                 No tienes proyectos publicados aún.
               </p>
             ) : (
-              <ul className="mt-4 space-y-4">
+              <div className="mt-4 space-y-4">
                 {profile.projects.map((project: any) => (
-                  <li
-                    key={project.id}
-                    className="p-4 bg-gray-50 rounded-md border hover:shadow transition"
-                  >
-                    <h3 className="text-lg font-semibold text-indigo-800">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-700">{project.description}</p>
-                    <div className="mt-2 text-sm text-gray-500">
-                      Publicado el{" "}
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </div>
-                    <Link
-                      to={`/project/${project.slug}`}
-                      className="inline-block mt-2 text-indigo-600 hover:underline text-sm"
-                    >
-                      Ver detalles
-                    </Link>
-                  </li>
+                  <ProjectCard project={project} variant="full" />
                 ))}
-              </ul>
+              </div>
             )}
           </section>
 
@@ -171,8 +155,8 @@ const ProfilePage = () => {
                 <div className="mt-2 text-sm text-gray-500">
                   {new Date(feedback.createdAt).toLocaleDateString()}
                 </div>
-                <div className="mt-2 text-sm text-gray-500">
-                  {feedback.projectId}
+                <div className="mt-2 text-sm text-gray-500 flex items-center gap-1">
+                  {feedback.rating} <Star size={13} className="inline" />
                 </div>
               </div>
             ))}
