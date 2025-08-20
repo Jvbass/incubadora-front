@@ -259,7 +259,10 @@ const EditProfilePage = () => {
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Redes Sociales</h2>
           {socialFields.map((field, index) => (
-            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+            <div
+              key={field.id}
+              className="p-4 border rounded-md space-y-2 relative"
+            >
               <input
                 {...register(`socialLinks.${index}.platform`)}
                 placeholder="Plataforma (ej: LinkedIn, Twitter)"
@@ -292,7 +295,10 @@ const EditProfilePage = () => {
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Idiomas</h2>
           {languageFields.map((field, index) => (
-            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+            <div
+              key={field.id}
+              className="p-4 border rounded-md space-y-2 relative"
+            >
               <input
                 {...register(`languages.${index}.language`)}
                 placeholder="Idioma"
@@ -330,7 +336,10 @@ const EditProfilePage = () => {
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Certificaciones</h2>
           {certificateFields.map((field, index) => (
-            <div key={field.id} className="p-4 border rounded-md space-y-2 relative">
+            <div
+              key={field.id}
+              className="p-4 border rounded-md space-y-2 relative"
+            >
               <input
                 {...register(`certificates.${index}.name`)}
                 placeholder="Nombre de la certificación"
@@ -357,7 +366,9 @@ const EditProfilePage = () => {
           ))}
           <button
             type="button"
-            onClick={() => appendCertificate({ name: "", imageUrl: "", certificateUrl: "" })}
+            onClick={() =>
+              appendCertificate({ name: "", imageUrl: "", certificateUrl: "" })
+            }
             className="text-sm text-indigo-600 hover:underline"
           >
             + Añadir Certificación

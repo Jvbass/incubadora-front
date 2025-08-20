@@ -42,7 +42,7 @@ export const ProjectSidePanel = ({
 
   return (
     <aside>
-      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-4">
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-17">
         <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-3">
           Detalles
         </h3>

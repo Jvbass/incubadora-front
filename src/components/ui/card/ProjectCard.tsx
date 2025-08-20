@@ -73,11 +73,11 @@ export const ProjectCard = React.memo(
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
                 <MessageSquare size={16} />
-                <span>{project.id}</span>
+                <span>{project.feedbackCount}</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
                 <Star size={16} className="text-cta-600" />
-                <span>{project.id}</span>
+                <span>{project.averageRating.toFixed(1)}</span>
               </div>
             </div>
             <div className="flex items-center gap-1 text-xs text-text-soft dark:text-gray-500">

@@ -111,6 +111,8 @@ export interface ProjectSummary {
   needMentoring: boolean;
   status: string;
   developmentProgress: number;
+  feedbackCount: number;
+  averageRating: number;
 }
 
 export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
