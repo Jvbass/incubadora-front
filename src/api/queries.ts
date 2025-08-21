@@ -89,6 +89,19 @@ export const updateUserProfile = async (
   return data;
 };
 
+/**
+ * Obtiene el perfil público de un usuario por su slug.
+ * Endpoint: GET /api/profiles/{slug}
+ */
+export const fetchPublicProfileBySlug = async (slug: string): Promise<ProfileResponse> => {
+  // Si no hay slug, no se puede hacer la petición.
+  if (!slug) {
+    throw new Error("El slug del perfil es requerido.");
+  }
+  const { data } = await apiService.get<ProfileResponse>(`/profiles/${slug}`);
+  return data;
+};
+
 /**=========================================
  *  PROJECTS QUERIES
  *=========================================*/

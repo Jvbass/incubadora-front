@@ -1,33 +1,45 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { fetchUserProfile } from "../../api/queries";
+import { Link, useParams } from "react-router-dom";
+import { fetchPublicProfileBySlug, fetchUserProfile } from "../../api/queries";
 import Loading from "../../components/ux/Loading";
-import {
-  Briefcase,
-  GraduationCap,
-  Heart,
-  Mail,
-  MessageSquare,
-  Network,
-  Rocket,
-  Star,
-} from "lucide-react";
 import { ProjectCard } from "../../components/ui/card/ProjectCard";
 
+import { Heart, MessageSquare, Rocket, Star } from "lucide-react";
+import type { ProjectSummary } from "../../types";
+
 const ProfilePage = () => {
+  const { slug } = useParams<{ slug: string }>();
+
+  // Hook #1: Obtiene y cachea el perfil del usuario autenticado.
+  // Usaremos este dato para saber el slug del usuario actual y compararlo.
+  const { data: ownProfileData } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: fetchUserProfile,
+    staleTime: 1000 * 60 * 60, // Cachear por 1 hora, ya que no cambia a menudo
+  });
+
+  // Hook #2: Obtiene el perfil que se debe mostrar en la página.
+  // Puede ser el perfil público (si hay slug) o el propio (si no hay slug).
+  const isPublicProfileView = !!slug;
   const {
     data: profile,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["userProfile"],
-    queryFn: fetchUserProfile,
-    staleTime: 1000 * 60 * 15, // 15 minutos de caché
+    queryKey: isPublicProfileView ? ["publicProfile", slug] : ["userProfile"],
+    queryFn: isPublicProfileView
+      ? () => fetchPublicProfileBySlug(slug!)
+      : fetchUserProfile,
+    staleTime: 1000 * 60 * 20, // 20 minutos de caché para perfiles visitados
   });
 
+  // La comparación ahora se hace con el slug del perfil del propio usuario,
+  // obtenido del primer hook.
+  const isOwnProfile = !isPublicProfileView || ownProfileData?.slug === slug;
+
   if (isLoading) {
-    return <Loading message=" perfil..." />;
+    return <Loading message="Cargando perfil..." />;
   }
 
   if (isError) {
@@ -43,7 +55,15 @@ const ProfilePage = () => {
   if (!profile) {
     return (
       <div className="text-center p-8">
-        <p>No se encontró tu perfil.</p>
+        <p>No se encontró el perfil.</p>
+      </div>
+    );
+  }
+
+  if (!isOwnProfile && !profile.publicProfile) {
+    return (
+      <div className="text-center p-8">
+        <p>Este perfil es privado.</p>
       </div>
     );
   }
@@ -65,9 +85,8 @@ const ProfilePage = () => {
                 {profile.firstName} {profile.lastName}
               </h1>
               <p className="text-lg text-gray-600">
-                {profile.headline ? profile.headline : "Sin Headline"}
+                {profile.headline || "Sin Headline"}
               </p>
-
               {profile.techStack.map((tech) => (
                 <span
                   key={tech.id}
@@ -101,26 +120,21 @@ const ProfilePage = () => {
                   </a>
                 </div>
               ))}
-
-              <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                <Mail size={16} />
-                <span>{profile.email}</span>
-              </div>
             </div>
           </div>
-          <Link
-            to="/profile/edit"
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-          >
-            Editar Perfil
-          </Link>
+          {isOwnProfile && (
+            <Link
+              to="/profile/edit"
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+            >
+              Editar Perfil
+            </Link>
+          )}
         </div>
       </header>
 
       <main className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Columna Izquierda */}
         <div className="md:col-span-2 space-y-8">
-          {/* Proyectos */}
           <section className="p-6 bg-white rounded-lg shadow-md border">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Rocket size={20} /> Proyectos Publicados (
@@ -128,12 +142,18 @@ const ProfilePage = () => {
             </h2>
             {profile.projects.length === 0 ? (
               <p className="text-gray-500 mt-4">
-                No tienes proyectos publicados aún.
+                {isOwnProfile
+                  ? "No tienes proyectos publicados aún."
+                  : "Este usuario no tiene proyectos publicados."}
               </p>
             ) : (
               <div className="mt-4 space-y-4">
-                {profile.projects.map((project: any) => (
-                  <ProjectCard project={project} variant="full" />
+                {profile.projects.map((project: ProjectSummary) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    variant="full"
+                  />
                 ))}
               </div>
             )}
@@ -143,7 +163,12 @@ const ProfilePage = () => {
           <section className="p-6 bg-white rounded-lg shadow-md border">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <MessageSquare size={20} /> Feedback Dado (
-              {profile.feedbackGiven.length})
+              {profile.feedbackGiven.length === 0
+                ? isOwnProfile
+                  ? "No has realizado feedback aún."
+                  : "Este usuario no ha realizado feedback aún."
+                : profile.feedbackGiven.length}
+              )
             </h2>
 
             {profile.feedbackGiven.map((feedback) => (
@@ -164,10 +189,26 @@ const ProfilePage = () => {
 
           {/* Kudos */}
           <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Heart size={20} /> Kudos Recibidos (
-              {profile.kudosReceived.length})
-            </h2>
+            <h3 className="text-xl font-semibold flex items-center gap-2">
+              <Heart size={20} /> Kudos Recibidos{" "}
+            </h3>
+            <span>
+              {profile.kudosReceived.length === 0 ? (
+                isOwnProfile ? (
+                  "No has recibido kudos aún."
+                ) : (
+                  <div className="flex justify-center">
+                    <Link to="/home" className="text-cta-600 hover:underline">
+                      {profile.firstName} no ha recibido kudos aún, sé el
+                      primero en dar uno!
+                    </Link>
+                  </div>
+                )
+              ) : (
+                profile.kudosReceived.length
+              )}
+            </span>
+
             {profile.kudosReceived.map((kudo) => (
               <div
                 key={kudo.id}
@@ -178,47 +219,12 @@ const ProfilePage = () => {
                   Dado por {kudo.senderUsername} el{" "}
                   {new Date(kudo.createdAt).toLocaleDateString()}
                 </div>
-                <div className="mt-2">
-                  Proyecto:{" "}
-                  {kudo.relatedProjectTitle}
-                  </div>
+                <div className="mt-2">Proyecto: {kudo.relatedProjectTitle}</div>
               </div>
             ))}
+           
           </section>
         </div>
-
-        {/* Columna Derecha (Sidebar) */}
-        <aside className="space-y-8">
-          {/* Bio */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h2 className="text-xl font-semibold mb-2">Sobre mí</h2>
-            <p className="text-gray-700 whitespace-pre-wrap">{profile.bio}</p>
-          </section>
-
-          {/* Social Links */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <Network size={20} /> Redes
-            </h2>
-            {/* ... Lógica para mostrar links ... */}
-          </section>
-
-          {/* Experiencia */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <Briefcase size={20} /> Experiencia
-            </h2>
-            {/* ... Lógica para mostrar experiencia ... */}
-          </section>
-
-          {/* Certificados */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <GraduationCap size={20} /> Certificados
-            </h2>
-            {/* ... Lógica para mostrar certificados ... */}
-          </section>
-        </aside>
       </main>
     </div>
   );
