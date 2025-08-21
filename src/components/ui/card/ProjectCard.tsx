@@ -1,6 +1,12 @@
 import React from "react";
 import type { ProjectSummary } from "../../../types";
-import { CircleCheck, LoaderCircle, MessageSquare, Star } from "lucide-react";
+import {
+  CircleCheck,
+  LoaderCircle,
+  MessageSquare,
+  Star,
+  User,
+} from "lucide-react";
 
 interface ProjectCardProps {
   project: ProjectSummary;
@@ -36,8 +42,12 @@ export const ProjectCard = React.memo(
             <h3 className="text-lg  text-text-main dark:text-text-light">
               {project.title}
             </h3>
-            <p className="text-sm text-text-soft dark:text-gray-400 truncate">
-              {project.title}
+            <p className="text-sm text-bg-dark dark:text-brand-100 truncate">
+              {project.subtitle}
+            </p>
+
+            <p className="text-sm text-text-soft dark:text-gray-400 truncate flex items-center">
+              <User size={16} className="mr-1" /> {project.developerUsername}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
               {/* Etiquetas de Tecnología */}
@@ -63,11 +73,11 @@ export const ProjectCard = React.memo(
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
                 <MessageSquare size={16} />
-                <span>{project.id}</span>
+                <span>{project.feedbackCount}</span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
                 <Star size={16} className="text-cta-600" />
-                <span>{project.id}</span>
+                <span>{project.averageRating.toFixed(1)}</span>
               </div>
             </div>
             <div className="flex items-center gap-1 text-xs text-text-soft dark:text-gray-500">

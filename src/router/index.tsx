@@ -14,6 +14,8 @@ import HomePage from "../pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
 import ProjectDetailPage from "../pages/ProjectDetailPage";
+import ProfilePage from "../pages/profile/ProfilePage";
+import EditProfilePage from "../pages/profile/EditProfilePage";
 
 const AppRouter = () => {
   return (
@@ -46,6 +48,27 @@ const AppRouter = () => {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <DeveloperDashboard />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <ProfilePage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile/edit"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <EditProfilePage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

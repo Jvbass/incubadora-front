@@ -38,7 +38,7 @@ export interface ProfileResponse {
   bio: string;
   email: string;
   publicProfile: boolean;
-  techStack: TechStack[];
+  techStack: Technology[];
   socialLinks: SocialLink[];
   workExperiences: WorkExperience[];
   languages: Language[];
@@ -48,18 +48,12 @@ export interface ProfileResponse {
   feedbackGiven: FeedbackResponse[];
 }
 
-export interface UserProfileResponse {
+export interface UserResponse {
   username: string;
   email: string;
   firstName: string;
   lastName: string;
   role: string;
-}
-
-export interface TechStack {
-  id: number;
-  name: string;
-  techColor: string;
 }
 
 export interface SocialLink {
@@ -90,6 +84,18 @@ export interface Certificate {
   certificateUrl: string;
 }
 
+export interface ProfileUpdateRequest {
+  headline: string;
+  slug: string;
+  bio: string;
+  publicProfile: boolean;
+  socialLinks: Omit<SocialLink, "id">[];
+  techStackIds: number[];
+  workExperiences: Omit<WorkExperience, "id">[];
+  languages: Omit<Language, "id">[];
+  certificates: Omit<Certificate, "id">[];
+}
+
 /*===================================================
 * projects
 ===================================================*/
@@ -97,6 +103,7 @@ export interface ProjectSummary {
   id: number;
   slug: string;
   title: string;
+  subtitle: string;
   developerUsername: string;
   createdAt: string;
   technologies: Technology[];
@@ -104,12 +111,15 @@ export interface ProjectSummary {
   needMentoring: boolean;
   status: string;
   developmentProgress: number;
+  feedbackCount: number;
+  averageRating: number;
 }
 
 export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
 
 export interface ProjectFormInput {
   title: string;
+  subtitle: string;
   description: string;
   repositoryUrl: string;
   projectUrl: string;
@@ -124,6 +134,7 @@ export interface ProjectDetailResponse {
   id: number;
   slug: string;
   title: string;
+  subtitle: string;
   description: string;
   repositoryUrl: string;
   projectUrl: string;

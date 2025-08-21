@@ -84,9 +84,24 @@ const DeveloperDashboard = () => {
     return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="p-6 bg-white rounded-lg shadow-md mb-5">
-          <h2 className="text-2xl font-semibold border-b pb-2">
-            Información de tu Perfil
-          </h2>
+          <div className="flex justify-between items-center border-b pb-2">
+            <h2 className="text-2xl font-semibold">Información de tu Perfil</h2>
+            {/* --- Botones ver y editar perfil--- */}
+            <div>
+              <Link
+                to="/profile/edit"
+                className="px-4 py-2 m-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              >
+                Editar Perfil
+              </Link>
+              <Link
+                to="/profile"
+                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              >
+                Ver Perfil Completo
+              </Link>
+            </div>
+          </div>
           <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
             <p>
               <strong>Usuario:</strong> {data.username}
@@ -114,18 +129,17 @@ const DeveloperDashboard = () => {
             </Link>
           </div>
 
+          {/*Lista de proyectos */}
           <ul className="space-y-4 mt-4">
             {projects?.map((project) => (
-              <li key={project.slug}>
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  variant="compact"
-                  onEdit={handleProjectEdit} // <--- Pasamos la función de editar
-                  onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
-                  onView={handleProjectView} // <--- Pasamos la función de ver
-                />
-              </li>
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                variant="compact"
+                onEdit={handleProjectEdit} // <--- Pasamos la función de editar
+                onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
+                onView={handleProjectView} // <--- Pasamos la función de ver
+              />
             ))}
           </ul>
         </div>

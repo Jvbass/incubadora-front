@@ -3,90 +3,69 @@ import NotificationBell from "./NotificationBell"; // <-- 1. Importar
 import { Bookmark, Plus } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const { user, logout } = useAuthZustand();
-  console.log("Navbar user:", user?.role);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="bg-brand-600  dark:bg-brand-900 shadow-xs">
-      <div className="max-w mx-auto px-4 sm:px-6 lg:px-8 ">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex-shrink-0">
-            <Link
-              to="/home"
-              className="text-2xl font-bold text-text-light hover:text-brand-900 dark:hover:text-brand-600 transition duration-200 "
-            >
-              Incubadora.dev
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Link
-              to="/home"
-              className="text-sm font-medium text-gray-400 cursor-not-allowed"
-            >
-              Productos
-            </Link>
-            <Link
-              to="/home"
-              className="text-sm font-medium text-text-light dark:text-amber-50  hover:text-brand-900 dark:hover:text-brand-300 cursor-pointer transition duration-200"
-            >
-              Proyectos
-            </Link>
-            <Link
-              to="/home"
-              className="text-sm font-medium text-gray-400 cursor-not-allowed"
-            >
-              Mentorías
-            </Link>
-            <Link
-              to="/home"
-              className="text-sm font-medium text-gray-400 cursor-not-allowed "
-            >
-              Blog
-            </Link>
-
+    <nav
+      className={`hover:bg-brand-300 hover:dark:bg-brand-900 transition-all duration-200 w-fit fixed right-0 rounded-bl-lg z-50 ${
+        isScrolled
+          ? "bg-white shadow-sm dark:bg-bg-dark"
+          : "bg-bg-light dark:bg-bg-dark"
+      }`}
+    >
+      <div className="w-full mx-auto px-3 sm:px-4">
+        <div className="flex items-right h-14">
+          <div className="flex items-center space-x-1">
             <Link
               to="/create-project"
-              className="text-sm font-bold text-cta-600 hover:text-text-light shadow-sm hover:bg-indigo-400 rounded-full border-2 px-2 py-1 flex items-center transition duration-200"
+              className="text-sm font-semibold  shadow-sm flex items-center transition duration-200 text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500   rounded-lg  py-1 px-1.5 text-center me-2  dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 "
             >
-              <Plus className="mr-1" strokeWidth={2} /> Crear
+              <Plus strokeWidth={2} size={23} />
+              Crear
             </Link>
 
             {/* Componente de notificación */}
-            <NotificationBell />
+            <NotificationBell iconSize={23} color="text-text-main" />
 
             {/* Componente de cambio de tema */}
-            <ThemeSwitcher />
+            <ThemeSwitcher iconSize={23} color="text-text-main" />
 
             {/* Proyectos guardados */}
             <span className="text-gray-400">
-              <Bookmark className="cursor-not-allowed" />
+              <Bookmark className="cursor-not-allowed" size={23} />
             </span>
 
             <div className="h-8 border-l border-divider"></div>
 
-            {/* User Profile Dropdown */}
+            {/* Perfil del usuario / Dropdown */}
             <div className="relative group ">
-              <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-indigo-400  transition-colors duration-200  text-text-light hover:text-brand-900 ">
+              <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
                 {/* Avatar */}
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                     user?.username || "User"
                   )}&background=6366f1&color=ffffff&size=32&rounded=true`}
                   alt={user?.username}
-                  className="w-8 h-8 rounded-lg"
+                  className="w-7 h-7 rounded-lg"
                 />
                 {/* User Info */}
                 <div className="text-right">
-                  <p className="text-sm font-medium ">{user?.username}</p>
-                  {
-                    user?.role === "dev" && (
-                      <p className="text-xs text-brand-100">Dev</p>
-                    )
-                  }
-                  
+                  <span className="text-sm font-medium ">{user?.username}</span>
+                  {user?.role === "dev" && <p className="text-xs ">Dev</p>}
                 </div>
               </div>
 
@@ -98,6 +77,12 @@ const Navbar = () => {
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
                   >
                     Mi Espacio
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                  >
+                    Mi Perfil
                   </Link>
                   <div className="border-t border-brand-100 my-1"></div>
                   <button

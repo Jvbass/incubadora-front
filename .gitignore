@@ -29,3 +29,6 @@ dist-ssr
 .idea/
 *.iws
 *.iml
+
+# Temporary files
+TODO.md
