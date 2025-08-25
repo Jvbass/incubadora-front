@@ -16,6 +16,8 @@ import type {
   SortByType,
   ProfileResponse,
   ProfileUpdateRequest,
+  KudoPost,
+  KudoResponse,
 } from "../types";
 
 /**=========================================
@@ -328,6 +330,18 @@ export const updateComment = async ({
 export const deleteComment = async (commentId: number): Promise<void> => {
   await apiService.delete(`/comments/${commentId}`);
 };
+
+
+/**=========================================
+ *  KUDOS QUERIES
+ *=========================================*/
+export const postKudo = async (kudoData: KudoPost): Promise<KudoResponse> => {
+  const { data } = await apiService.post<KudoResponse>("/kudos", kudoData);
+  return data;
+};
+
+
+
 
 /**=========================================
  *  NOTIFICATION QUERIES
