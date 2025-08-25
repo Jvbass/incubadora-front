@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { fetchPublicProfileBySlug, fetchUserProfile } from "../../api/queries";
 import Loading from "../../components/ux/Loading";
 import { ProjectCard } from "../../components/ui/card/ProjectCard";
-
 import { Heart, MessageSquare, Rocket, Star } from "lucide-react";
 import type { ProjectSummary } from "../../types";
 
@@ -21,6 +20,7 @@ const ProfilePage = () => {
   // Hook #2: Obtiene el perfil que se debe mostrar en la página.
   // Puede ser el perfil público (si hay slug) o el propio (si no hay slug).
   const isPublicProfileView = !!slug;
+  /*** Hook #2: Obtiene el perfil que se debe mostrar en la página. ***/
   const {
     data: profile,
     isLoading,
@@ -28,13 +28,13 @@ const ProfilePage = () => {
     error,
   } = useQuery({
     queryKey: isPublicProfileView ? ["publicProfile", slug] : ["userProfile"],
-    queryFn: isPublicProfileView
+    queryFn: isPublicProfileView //si hay slug, se busca el perfil público
       ? () => fetchPublicProfileBySlug(slug!)
-      : fetchUserProfile,
+      : fetchUserProfile,//si no hay slug, se busca el perfil propio
     staleTime: 1000 * 60 * 20, // 20 minutos de caché para perfiles visitados
   });
 
-  // La comparación ahora se hace con el slug del perfil del propio usuario,
+    // La comparación con el slug del perfil del propio usuario,
   // obtenido del primer hook.
   const isOwnProfile = !isPublicProfileView || ownProfileData?.slug === slug;
 
@@ -159,6 +159,75 @@ const ProfilePage = () => {
             )}
           </section>
 
+          {/* Kudos */}
+          <section className="p-6 bg-white rounded-lg shadow-md border">
+            <div className="flex justify-baseline items-center mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-1 me-2">
+                <Heart size={20} /> Kudos Recibidos
+              </h3>
+              <span>
+                {profile.kudosReceived.length === 0 ? (
+                  isOwnProfile ? (
+                    "No has recibido kudos aún."
+                  ) : (
+                    <div className="flex justify-center">
+                      <Link to="/home" className="text-cta-600 hover:underline">
+                        {profile.firstName} no ha recibido kudos aún, sé el
+                        primero en dar uno!
+                      </Link>
+                    </div>
+                  )
+                ) : (
+                  `(${profile.kudosReceived.length})`
+                )}
+              </span>
+            </div>
+
+            {profile.kudosReceived.map((kudo) => (
+              <div
+                key={kudo.id}
+                className="mt-4 p-4 bg-gray-50 rounded-md border"
+              >
+                <p className="text-gray-700">{kudo.message}</p>
+                <div className="mt-2 text-sm text-gray-500">
+                  Dado por {kudo.senderUsername} el{" "}
+                  {new Date(kudo.createdAt).toLocaleDateString()}
+                </div>
+                <div className="mt-2">Proyecto: {kudo.relatedProjectTitle}</div>
+              </div>
+            ))}
+
+            {!isOwnProfile ? (
+              <div className="mt-6 p-4 bg-white rounded-md border">
+                <h4 className="text-lg font-semibold mb-2">Enviar un Kudo</h4>
+                <textarea
+                  className="w-full p-2 border rounded mb-2"
+                  placeholder={`Escribe un mensaje para ${profile.firstName}...`}
+                  rows={3}
+                />
+                <div className="mb-2">
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Proyecto relacionado (opcional):
+                  </label>
+                  <select className="w-full p-2 border rounded">
+                    <option>Selecciona un proyecto</option>
+                    {profile.projects.map((project: ProjectSummary) => (
+                      <option key={project.id} value={project.id}>
+                        {project.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                  type="button"
+                >
+                  Enviar Kudo
+                </button>
+              </div>
+            ) : profile.kudosReceived.length }
+          </section>
+
           {/* Feedbacks */}
           <section className="p-6 bg-white rounded-lg shadow-md border">
             <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -185,44 +254,6 @@ const ProfilePage = () => {
                 </div>
               </div>
             ))}
-          </section>
-
-          {/* Kudos */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
-            <h3 className="text-xl font-semibold flex items-center gap-2">
-              <Heart size={20} /> Kudos Recibidos{" "}
-            </h3>
-            <span>
-              {profile.kudosReceived.length === 0 ? (
-                isOwnProfile ? (
-                  "No has recibido kudos aún."
-                ) : (
-                  <div className="flex justify-center">
-                    <Link to="/home" className="text-cta-600 hover:underline">
-                      {profile.firstName} no ha recibido kudos aún, sé el
-                      primero en dar uno!
-                    </Link>
-                  </div>
-                )
-              ) : (
-                profile.kudosReceived.length
-              )}
-            </span>
-
-            {profile.kudosReceived.map((kudo) => (
-              <div
-                key={kudo.id}
-                className="mt-4 p-4 bg-gray-50 rounded-md border"
-              >
-                <p className="text-gray-700">{kudo.message}</p>
-                <div className="mt-2 text-sm text-gray-500">
-                  Dado por {kudo.senderUsername} el{" "}
-                  {new Date(kudo.createdAt).toLocaleDateString()}
-                </div>
-                <div className="mt-2">Proyecto: {kudo.relatedProjectTitle}</div>
-              </div>
-            ))}
-           
           </section>
         </div>
       </main>

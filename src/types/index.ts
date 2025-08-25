@@ -44,7 +44,7 @@ export interface ProfileResponse {
   languages: Language[];
   certificates: Certificate[];
   projects: ProjectSummary[];
-  kudosReceived: KudosReceived[];
+  kudosReceived: KudoResponse[];
   feedbackGiven: FeedbackResponse[];
 }
 
@@ -178,7 +178,11 @@ export interface FeedbackRequest {
   rating: number;
 }
 
-export interface KudosReceived {
+/*===================================================
+ * kudos
+ *===================================================*/
+
+export interface KudoResponse {
   id: number;
   message: string;
   isPublic: boolean;
@@ -187,6 +191,12 @@ export interface KudosReceived {
   receiverUsername: string;
   relatedProjectSlug: string;
   relatedProjectTitle: string;
+}
+
+export interface KudoPost {
+  receiverSlug: string;
+  message: string;
+  relatedProjectId?: number;
 }
 
 /*===================================================

@@ -52,7 +52,7 @@ const EditProfilePage = () => {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<ProfileUpdateRequest>({
     defaultValues: {
       headline: "",
@@ -112,13 +112,11 @@ const EditProfilePage = () => {
         slug: profileData.slug,
         bio: profileData.bio,
         publicProfile: profileData.publicProfile,
-        socialLinks: profileData.socialLinks.map(({ id, ...rest }) => rest), // Omitir 'id'
+        socialLinks: profileData.socialLinks.map(({ ...rest }) => rest), // Omitir 'id'
         techStackIds: profileData.techStack.map((tech) => tech.id),
-        workExperiences: profileData.workExperiences.map(
-          ({ id, ...rest }) => rest
-        ),
-        languages: profileData.languages.map(({ id, ...rest }) => rest),
-        certificates: profileData.certificates.map(({ id, ...rest }) => rest),
+        workExperiences: profileData.workExperiences.map(({ ...rest }) => rest),
+        languages: profileData.languages.map(({ ...rest }) => rest),
+        certificates: profileData.certificates.map(({ ...rest }) => rest),
       });
     }
   }, [profileData, reset]);
