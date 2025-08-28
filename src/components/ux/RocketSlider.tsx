@@ -27,7 +27,7 @@ export const RocketSlider = ({
     <div className="relative w-full py-4">
       <div className="relative h-2 bg-gray-200 rounded-full">
         <div
-          className="absolute h-2 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full"
+          className="absolute h-2 bg-gradient-to-r from-yellow-500 to-red-800 rounded-full"
           style={{ width: `${percentage}%` }}
         />
         <span

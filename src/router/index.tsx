@@ -22,7 +22,6 @@ const AppRouter = () => {
     <Routes>
       {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
       <Route path="/" element={<RoleBasedRedirect />} />
-
       {/* RUTAS PÚBLICAS (PROTEGIDAS PARA USUARIOS LOGUEADOS) */}
       <Route
         path="/login"
@@ -40,7 +39,6 @@ const AppRouter = () => {
           </PublicRoute>
         }
       />
-
       {/* RUTAS DE DASHBOARDS PROTEGIDAS */}
       <Route
         path="/dashboard"
@@ -48,6 +46,19 @@ const AppRouter = () => {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <DeveloperDashboard />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/**
+       * RUTAS DE PERFIL
+       */}
+      <Route
+        path="/profile/:slug"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <ProfilePage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }
@@ -62,7 +73,6 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/profile/edit"
         element={
@@ -73,6 +83,7 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+      /** * RUTA DE INICIO */
       <Route
         path="/home"
         element={
@@ -93,7 +104,6 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/project/:projectSlug"
         element={
@@ -104,7 +114,6 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -14,7 +14,7 @@ const RatingDisplay = ({ rating }: { rating: number }) => {
         className="bg-blue-600 h-2.5 rounded-full"
         style={{ width: `${percentage}%` }}
       ></div>
-      <span className="text-xs font-semibold text-gray-600 mt-1 block text-right">
+      <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 mt-1 block text-right">
         Calificación: {rating}/10
       </span>
     </div>
@@ -63,33 +63,37 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
   return (
     <article
       id={`feedback-${feedback.id}`}
-      className="bg-white p-5 rounded-lg shadow-md border border-gray-200 transition-all duration-300 "
+      className="bg-white dark:bg-bg-dark p-5 rounded-lg transition-all duration-300 "
     >
       {/* Encabezado de la tarjeta con autor y fecha */}
-      <header className="flex items-center justify-between mb-4 border-b border-gray-200 pb-3">
+      <header className="flex items-center justify-between mb-4 border-b border-gray-400  dark:border-gray-700 pb-3">
         <div className="flex items-center gap-3">
           {/* Avatar Placeholder */}
           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
             {feedback.author.charAt(0).toUpperCase()}
           </div>
-          <span className="font-bold text-gray-800">{feedback.author}</span>
+          <span className="font-bold text-gray-800 dark:text-gray-200">
+            {feedback.author}
+          </span>
         </div>
-        <time className="text-sm text-gray-500">{formattedDate}</time>
+        <time className="text-sm text-gray-500 dark:text-gray-300">
+          {formattedDate}
+        </time>
       </header>
 
       {/* Cuerpo de la tarjeta con la descripción y la calificación */}
       <div className="space-y-4">
-        <p className="text-gray-700 leading-relaxed">
+        <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
           {feedback.feedbackDescription}
         </p>
         <RatingDisplay rating={feedback.rating} />
       </div>
 
       {/* Footer con acciones y sección de comentarios */}
-      <footer className="mt-6 pt-3 border-t border-gray-100">
+      <footer className="mt-6 pt-3 border-t border-gray-400  dark:border-gray-700 ">
         <div className="flex justify-end">
           <button
-            className="cursor-pointer flex items-center space-x-2 text-sm font-semibold text-gray-600 hover:text-indigo-700 transition-colors"
+            className="cursor-pointer flex items-center space-x-2 text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-indigo-700 transition-colors"
             onClick={() => setCommentsVisible(!commentsVisible)}
           >
             <MessageSquareText size={16} />

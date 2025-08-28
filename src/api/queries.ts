@@ -16,6 +16,8 @@ import type {
   SortByType,
   ProfileResponse,
   ProfileUpdateRequest,
+  KudoPost,
+  KudoResponse,
 } from "../types";
 
 /**=========================================
@@ -86,6 +88,19 @@ export const updateUserProfile = async (
     "/me/profile",
     profileData
   );
+  return data;
+};
+
+/**
+ * Obtiene el perfil público de un usuario por su slug.
+ * Endpoint: GET /api/profiles/{slug}
+ */
+export const fetchPublicProfileBySlug = async (slug: string): Promise<ProfileResponse> => {
+  // Si no hay slug, no se puede hacer la petición.
+  if (!slug) {
+    throw new Error("El slug del perfil es requerido.");
+  }
+  const { data } = await apiService.get<ProfileResponse>(`/profiles/${slug}`);
   return data;
 };
 
@@ -315,6 +330,18 @@ export const updateComment = async ({
 export const deleteComment = async (commentId: number): Promise<void> => {
   await apiService.delete(`/comments/${commentId}`);
 };
+
+
+/**=========================================
+ *  KUDOS QUERIES
+ *=========================================*/
+export const postKudo = async (kudoData: KudoPost): Promise<KudoResponse> => {
+  const { data } = await apiService.post<KudoResponse>("/kudos", kudoData);
+  return data;
+};
+
+
+
 
 /**=========================================
  *  NOTIFICATION QUERIES

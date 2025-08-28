@@ -47,7 +47,7 @@ export const CommentForm = ({
           required: "El comentario no puede estar vacío",
         })}
         rows={3}
-        className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+        className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:text-text-light text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
         placeholder="Escribe tu respuesta..."
         disabled={isSubmitting} // Deshabilitamos mientras se envía
       />
