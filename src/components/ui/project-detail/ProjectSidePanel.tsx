@@ -26,11 +26,13 @@ const InfoRow = ({
   value: string | number;
 }) => (
   <div className="flex items-center justify-between text-sm">
-    <div className="flex items-center gap-2 text-gray-600">
+    <div className="flex items-center gap-2 text-gray-600 dark:text-text-light">
       {icon}
       <span>{label}:</span>
     </div>
-    <span className="font-medium text-sm text-gray-800">{value}</span>
+    <span className="font-medium text-sm text-gray-800 dark:text-gray-400 ">
+      {value}
+    </span>
   </div>
 );
 
@@ -42,8 +44,8 @@ export const ProjectSidePanel = ({
 
   return (
     <aside>
-      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6 sticky top-17">
-        <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-3">
+      <div className="p-6 w-76 bg-white dark:bg-bg-dark text-gray-800 dark:text-text-light rounded-lg shadow-md space-y-6 fixed top-26 right-5">
+        <h3 className="text-xl font-semibold border-b border-gray-200 pb-3">
           Detalles
         </h3>
 

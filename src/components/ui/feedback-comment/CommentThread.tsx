@@ -96,7 +96,7 @@ export const CommentThread = ({
     <div className="mt-6 space-y-4">
       {/* Formulario para crear un comentario de Nivel Superior */}
       <div className="mt-6">
-        <h4 className="text-md font-semibold text-gray-800 mb-2">
+        <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">
           Deja un comentario
         </h4>
         <CommentForm
@@ -107,7 +107,7 @@ export const CommentThread = ({
         />
       </div>
 
-      <div className="border-t border-gray-200 pt-4" />
+      <div className="border-t border-gray-400  dark:border-gray-700  pt-4" />
 
       {/* Renderizado de los hilos de comentarios existentes */}
       {comments?.map((comment) => (
