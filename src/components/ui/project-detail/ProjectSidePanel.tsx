@@ -6,7 +6,7 @@ import {
   Users,
   Lightbulb,
   TrendingUp,
-  UserRound,
+  Flag,
 } from "lucide-react";
 import { useProjectRating } from "../../../hooks/useProjectRating";
 
@@ -26,11 +26,11 @@ const InfoRow = ({
   value: string | number;
 }) => (
   <div className="flex items-center justify-between text-sm">
-    <div className="flex items-center gap-2 text-gray-600 dark:text-text-light">
+    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-200">
       {icon}
       <span>{label}:</span>
     </div>
-    <span className="font-medium text-sm text-gray-800 dark:text-gray-400 ">
+    <span className="font-medium text-sm text-gray-800 dark:text-text-light ">
       {value}
     </span>
   </div>
@@ -74,34 +74,44 @@ export const ProjectSidePanel = ({
         </div>
 
         {/* Botones de acción */}
-        <div className="space-y-3 pt-4 border-t border-gray-200">
-          <a
-            href={project.projectUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
-          >
-            <ExternalLink size={18} />
-            Visitar Proyecto
-          </a>
-          <a
-            href={project.repositoryUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md bg-gray-800 text-white font-semibold hover:bg-gray-900 transition-colors"
-          >
-            <Github size={18} />
-            Ver Repositorio
-          </a>
-          <a
-            href={project.repositoryUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-md bg-cta-600 text-white font-semibold hover:bg-cta-900 transition-colors"
-          >
-            <UserRound size={18} />
-            Desarrollador
-          </a>
+        <div className="space-y-3 text-accent-900 dark:text-cta-300">
+          <h3 className="text-xl font-semibold border-b  dark:border-text-light border-gray-200 pb-3 text-gray-800 dark:text-text-light">
+            Acciones
+          </h3>
+
+          <div className="flex items-center justify-start gap-2 w-full hover:text-cta-600 transition ease-in-out duration-200">
+            <a
+              href={project.projectUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <ExternalLink size={18} />
+              <span>Proyecto desplegado</span>
+            </a>
+          </div>
+          <div className="flex items-center justify-start gap-2 w-full hover:text-cta-600 transition ease-in-out duration-200">
+            <a
+              href={project.projectUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Github size={18} />
+              <span>Repositorio</span>
+            </a>
+          </div>
+          <div className="flex items-center justify-start gap-2 w-full hover:text-cta-900 transition ease-in-out duration-200">
+            <a
+              href={project.projectUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Flag size={18} />
+              <span>Reportar</span>
+            </a>
+          </div>
         </div>
       </div>
     </aside>

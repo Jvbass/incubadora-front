@@ -103,10 +103,22 @@ export const ProjectCard = React.memo(
       const statusStyles = getStatusStyles(project.status);
 
       return (
-        <li className="bg-white p-4 rounded-lg  border border-gray-200 flex justify-between items-center">
+        <li className="bg-white text-text-main dark:bg-bg-dark dark:text-text-light p-4 rounded-lg  border border-gray-400 flex justify-between items-center">
           {/* Información del Proyecto */}
           <div>
-            <h3 className="font-bold text-gray-800">{project.title}</h3>
+            <h3 className="font-bold text-lg">{project.title}</h3>
+            <h2 className="font-bold text-md">Rendimiento:</h2>
+            <div className=" flex flex-col text-sm text-gray-700 dark:text-gray-200">
+              <span className="font-stretch-expanded">
+                Feedbacks: {project.feedbackCount}
+              </span>
+              <span className="font-stretch-expanded">
+                Rating promedio: {project.averageRating}
+              </span>
+              <span className="font-mono">
+                Progreso: {project.developmentProgress}%
+              </span>
+            </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {project.technologies.slice(0, 4).map((tech) => (
                 <span
@@ -132,7 +144,7 @@ export const ProjectCard = React.memo(
               {onEdit && (
                 <button
                   onClick={() => onEdit(project.slug)}
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer"
+                  className="text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:text-indigo-200 cursor-pointer"
                 >
                   Editar
                 </button>
@@ -141,7 +153,7 @@ export const ProjectCard = React.memo(
               {onDelete && (
                 <button
                   onClick={() => onDelete(project.slug)}
-                  className="text-sm font-medium text-red-600 hover:text-red-800 cursor-pointer"
+                  className="text-sm font-medium text-red-700 dark:text-red-400 hover:text-red-300 cursor-pointer"
                 >
                   Borrar
                 </button>
@@ -149,7 +161,7 @@ export const ProjectCard = React.memo(
               {onView && (
                 <button
                   onClick={() => onView(project.slug)}
-                  className="text-sm font-medium text-red-600 hover:text-red-800 cursor-pointer"
+                  className="text-sm font-medium text-red-700 dark:text-red-400 hover:text-red-300 cursor-pointer"
                 >
                   Ver
                 </button>
