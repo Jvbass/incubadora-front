@@ -75,14 +75,14 @@ export const StarRating = ({
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1">{stars}</div>
       {showRating && ratingValue && (
-        <span className="text-lg font-semibold text-gray-800">
+        <span className="text-lg font-semibold text-gray-800 dark:text-gray-300">
           {ratingValue}
         </span>
       )}
       {showCount && count !== undefined && (
         <>
           <span className="text-gray-400">•</span>
-          <span className="text-gray-600">
+          <span className="text-gray-600 dark:text-gray-300">
             {count} {count === 1 ? "review" : "reviews"}
           </span>
         </>

@@ -4,12 +4,16 @@ import Loading from "../../ux/Loading";
 import { useEffect } from "react";
 import type { ProjectModalProps } from "../../../types";
 import { Link } from "react-router-dom";
+import MDEditor from "@uiw/react-md-editor";
+import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
+import rehypeSanitize from "rehype-sanitize";
 
 const ProjectDetailModal = ({
   projectSlug,
   isOpen,
   onClose,
 }: ProjectModalProps) => {
+  const effectiveTheme = useEffectiveTheme();
   const {
     data: project,
     isLoading,
@@ -155,9 +159,19 @@ const ProjectDetailModal = ({
               <h3 className="font-semibold text-lg text-gray-300 mb-2">
                 Descripción
               </h3>
-              <p className="text-gray-300 whitespace-pre-wrap text-base break-words">
-                {project.description}
-              </p>
+              <div className="mt-8 prose prose-lg max-w-none prose-p:text-gray-600 text-gray-800 dark:text-text-light">
+                <MDEditor.Markdown
+                  source={project.description}
+                  style={{
+                    backgroundColor:
+                      effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+                    padding: "2rem",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "0.5rem",
+                  }}
+                  rehypePlugins={[[rehypeSanitize]]}
+                />
+              </div>
               <div className="flex justify-end mt-4">
                 <Link
                   to={`/feedback/${project.id}`}

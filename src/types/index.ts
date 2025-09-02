@@ -167,6 +167,8 @@ export interface FeedbackResponse {
   feedbackDescription: string;
   rating: number;
   author: string;
+  relatedProjectSlug: string;
+  relatedProjectTitle: string;
   authorId: number;
   projectId: number;
   createdAt: string;

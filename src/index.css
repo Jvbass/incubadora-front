@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -48,4 +49,168 @@
 
   --color-border: #d1d5db; /* Bordes de inputs, cards (modo claro) */
   --color-divider: #e5e7eb; /* Líneas separadoras, sutiles */
+}
+
+/* Estilos básicos para el contenido renderizado desde Markdown/HTML */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: var(--color-text-main);
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-weight: bold;
+  border-bottom: none !important;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1em;
+  color: #272626ff;
+}
+.prose ul {
+  list-style-type: disc;
+}
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose a {
+  color: #2563eb; /* theme('colors.blue.600') */
+}
+
+.prose strong {
+  font-weight: bold;
+  color: #111827; /* Texto principal en modo claro */
+}
+
+.dark .prose strong {
+  font-weight: bold;
+  color: #e3e4e6ff; /* Texto principal en modo claro */
+}
+
+.wmde-markdown pre,
+.wmde-markdown code {
+  background-color: #f7f7f7ff !important;
+  color: #000 !important;
+  border: 1px solid #d1d5dbff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.wmde-markdown hr {
+  background-color: transparent;
+  border: 0; /* Reseteamos el borde por defecto */
+  border-top: 0.5px solid #9ca3afff; /* Grosor y color para modo claro */
+  margin: 1.5em 0; /* Añadimos espacio vertical */
+}
+
+.dark .wmde-markdown hr {
+  border-top-color: var(
+    --color-text-soft
+  ); /* Color específico para modo oscuro */
+}
+
+/* --- Sobrescrituras para MODO OSCURO --- */
+.wmde-markdown {
+  color: var(--color-text-main) !important;
+}
+
+.dark .wmde-markdown {
+  color: var(--color-text-light) !important;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: var(--color-text-light) !important;
+}
+
+.dark .wmde-markdown p,
+.dark .wmde-markdown ul,
+.dark .wmde-markdown ol,
+.dark .wmde-markdown li,
+.dark .wmde-markdown blockquote {
+  color: var(--color-text-light) !important;
+}
+
+.wmde-markdown table th {
+  font-weight: bolder;
+  text-align: center;
+}
+
+.wmde-markdown table td,
+.wmde-markdown table th {
+  border-color: #767879ff !important;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #fdfdfdff;
+}
+
+.dark .wmde-markdown table td,
+.dark .wmde-markdown table th {
+  border-color: #aaadadff !important;
+  color: var(--color-text-light) !important;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #1e293b91;
+}
+
+.wmde-markdown pre,
+.wmde-markdown code {
+  background-color: #f7f7f7ff !important;
+  color: #222222ff !important;
+  border: 1px solid #d1d5dbff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.dark .wmde-markdown pre,
+.dark .wmde-markdown code {
+  background-color: #0d162556 !important;
+  color: var(--color-text-light) !important;
+  border: 1px solid #374151ff;}
+
+/* ========================================================================== */
+/* Estilos para el EDITOR de Markdown                                       */
+/* Estos estilos se aplican al componente <MDEditor /> en el formulario      */
+/* ========================================================================== */
+
+/* ... (Aquí van tus estilos para .w-md-editor que ya funcionan bien) ... */
+/* Por ejemplo: */
+.w-md-editor {
+  background-color: var(--color-bg-light) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none !important;
+}
+
+.dark .w-md-editor {
+  background-color: var(--color-bg-dark) !important;
+  border-color: var(--color-text-soft) !important;
+  color: var(--color-text-light);
+}
+
+.w-md-editor-toolbar {
+  background-color: var(--color-bg-soft) !important;
+  border-bottom-color: var(--color-divider) !important;
+}
+.dark .w-md-editor-toolbar {
+  background-color: #0f172a !important; /* bg-darker */
+  border-bottom-color: var(--color-text-soft) !important;
+}
+
+.w-md-editor-toolbar svg {
+  width: 18px !important;
+  height: 18px !important;
 }

@@ -53,46 +53,53 @@ const Navbar = () => {
 
             {/* Perfil del usuario / Dropdown */}
             <div className="relative group ">
-              <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
-                {/* Avatar */}
-                <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    user?.username || "User"
-                  )}&background=6366f1&color=ffffff&size=32&rounded=true`}
-                  alt={user?.username}
-                  className="w-7 h-7 rounded-lg"
-                />
-                {/* User Info */}
-                <div className="text-right">
-                  <span className="text-sm font-medium ">{user?.username}</span>
-                  {user?.role === "dev" && <p className="text-xs ">Dev</p>}
+              <Link
+                to="/dashboard"
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+              >
+                <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
+                  {/* Avatar */}
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      user?.username || "User"
+                    )}&background=6366f1&color=ffffff&size=32&rounded=true`}
+                    alt={user?.username}
+                    className="w-7 h-7 rounded-lg"
+                  />
+                  {/* User Info */}
+                  <div className="text-right">
+                    <span className="text-sm font-medium ">
+                      {user?.username}
+                    </span>
+                    {user?.role === "dev" && <p className="text-xs ">Dev</p>}
+                  </div>
                 </div>
-              </div>
 
-              {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg  border-gray-200 invisible group-hover:opacity-100  group-hover:visible transition-all duration-200 z-50">
-                <div className="py-2">
-                  <Link
-                    to="/dashboard"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
-                  >
-                    Mi Espacio
-                  </Link>
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
-                  >
-                    Mi Perfil
-                  </Link>
-                  <div className="border-t border-brand-100 my-1"></div>
-                  <button
-                    onClick={logout}
-                    className="block w-full text-left px-4 py-2 text-sm text-cta-600  transition-colors cursor-pointer hover:text-cta-900"
-                  >
-                    Cerrar Sesión
-                  </button>
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg  border-gray-200 invisible group-hover:opacity-100  group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-2">
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                    >
+                      Mi Espacio
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                    >
+                      Mi Perfil
+                    </Link>
+                    <div className="border-t border-brand-100 my-1"></div>
+                    <button
+                      onClick={logout}
+                      className="block w-full text-left px-4 py-2 text-sm text-cta-600  transition-colors cursor-pointer hover:text-cta-900"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

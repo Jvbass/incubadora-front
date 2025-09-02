@@ -82,9 +82,9 @@ const DeveloperDashboard = () => {
     }
 
     return (
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
-          <div className="flex justify-between items-center border-b pb-2">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="p-6 bg-white text-text-main dark:bg-bg-dark dark:text-text-light rounded-lg shadow-md mb-5 ">
+          <div className="flex justify-between items-center border-b border-gray-500 pb-2">
             <h2 className="text-2xl font-semibold">Información de tu Perfil</h2>
             {/* --- Botones ver y editar perfil--- */}
             <div>
@@ -118,8 +118,8 @@ const DeveloperDashboard = () => {
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
-          <div className="flex justify-between items-center border-b pb-2 mb-4">
+        <div className="p-6 bg-white text-text-main dark:bg-bg-dark dark:text-text-light rounded-lg shadow-md mb-5">
+          <div className="flex justify-between items-center border-b pb-2 mb-4 border-gray-500">
             <h2 className="text-2xl font-semibold">Mis Proyectos</h2>
             <Link
               to="/create-project"
@@ -137,8 +137,8 @@ const DeveloperDashboard = () => {
                 project={project}
                 variant="compact"
                 onEdit={handleProjectEdit} // <--- Pasamos la función de editar
-                onDelete={(Slug) => console.log(`Borrar proyecto ${Slug}`)} // <--- Pasamos la función de borrar
                 onView={handleProjectView} // <--- Pasamos la función de ver
+                //onDelete={handleProjectDelete} // <--- borrar pendiente*
               />
             ))}
           </ul>
@@ -160,8 +160,10 @@ const DeveloperDashboard = () => {
           />
         )}
 
-        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
-          <h2 className="text-2xl font-semibold border-b pb-2">Feedbacks</h2>
+        <div className="p-6 bg-white text-text-main dark:bg-bg-dark dark:text-text-light rounded-lg shadow-md mb-5">
+          <h2 className="text-2xl font-semibold border-b border-gray-500 pb-2">
+            Feedbacks
+          </h2>
           <div className="col-span-2 mt-4 grid grid-cols-2 md:grid-cols-2 gap-4">
             <div>
               <h3> Feedbacks Recibidos</h3>
@@ -172,10 +174,11 @@ const DeveloperDashboard = () => {
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-lg shadow-md mb-5">
-          <h2 className="text-2xl font-semibold border-b pb-2">
+        <div className="p-6 bg-white text-text-main dark:bg-bg-dark dark:text-text-light rounded-lg shadow-md mb-5">
+          <h2 className="text-2xl font-semibold border-b  border-gray-500 pb-2">
             Reconocimientos/Kudos
           </h2>
+
         </div>
       </div>
     );

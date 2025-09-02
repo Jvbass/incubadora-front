@@ -30,11 +30,11 @@ const ProfilePage = () => {
     queryKey: isPublicProfileView ? ["publicProfile", slug] : ["userProfile"],
     queryFn: isPublicProfileView //si hay slug, se busca el perfil público
       ? () => fetchPublicProfileBySlug(slug!)
-      : fetchUserProfile,//si no hay slug, se busca el perfil propio
+      : fetchUserProfile, //si no hay slug, se busca el perfil propio
     staleTime: 1000 * 60 * 20, // 20 minutos de caché para perfiles visitados
   });
 
-    // La comparación con el slug del perfil del propio usuario,
+  // La comparación con el slug del perfil del propio usuario,
   // obtenido del primer hook.
   const isOwnProfile = !isPublicProfileView || ownProfileData?.slug === slug;
 
@@ -135,7 +135,7 @@ const ProfilePage = () => {
 
       <main className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          <section className="p-6 bg-white rounded-lg shadow-md border">
+          <section className="p-6 bg-white rounded-lg shadow-md ">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Rocket size={20} /> Proyectos Publicados (
               {profile.projects.length})
@@ -160,7 +160,7 @@ const ProfilePage = () => {
           </section>
 
           {/* Kudos */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
+          <section className="p-6  bg-gray-50 dark:bg-bg-dark rounded-lg shadow-md ">
             <div className="flex justify-baseline items-center mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-1 me-2">
                 <Heart size={20} /> Kudos Recibidos
@@ -186,7 +186,7 @@ const ProfilePage = () => {
             {profile.kudosReceived.map((kudo) => (
               <div
                 key={kudo.id}
-                className="mt-4 p-4 bg-gray-50 rounded-md border"
+                className="mt-4 p-4 bg-gray-50 dark:bg-bg-dark rounded-md "
               >
                 <p className="text-gray-700">{kudo.message}</p>
                 <div className="mt-2 text-sm text-gray-500">
@@ -198,10 +198,10 @@ const ProfilePage = () => {
             ))}
 
             {!isOwnProfile ? (
-              <div className="mt-6 p-4 bg-white rounded-md border">
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-bg-dark  rounded-md ">
                 <h4 className="text-lg font-semibold mb-2">Enviar un Kudo</h4>
                 <textarea
-                  className="w-full p-2 border rounded mb-2"
+                  className="w-full p-2  rounded mb-2"
                   placeholder={`Escribe un mensaje para ${profile.firstName}...`}
                   rows={3}
                 />
@@ -209,7 +209,7 @@ const ProfilePage = () => {
                   <label className="block text-sm text-gray-600 mb-1">
                     Proyecto relacionado (opcional):
                   </label>
-                  <select className="w-full p-2 border rounded">
+                  <select className="w-full p-2  rounded">
                     <option>Selecciona un proyecto</option>
                     {profile.projects.map((project: ProjectSummary) => (
                       <option key={project.id} value={project.id}>
@@ -225,11 +225,13 @@ const ProfilePage = () => {
                   Enviar Kudo
                 </button>
               </div>
-            ) : profile.kudosReceived.length }
+            ) : (
+              profile.kudosReceived.length
+            )}
           </section>
 
           {/* Feedbacks */}
-          <section className="p-6 bg-white rounded-lg shadow-md border">
+          <section className="p-6  bg-gray-50 dark:bg-bg-dark rounded-lg shadow-md ">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <MessageSquare size={20} /> Feedback Dado (
               {profile.feedbackGiven.length === 0
@@ -243,14 +245,21 @@ const ProfilePage = () => {
             {profile.feedbackGiven.map((feedback) => (
               <div
                 key={feedback.id}
-                className="mt-4 p-4 bg-gray-50 rounded-md border"
+                className="mt-4 p-4 bg-gray-50 dark:bg-bg-dark rounded-md "
               >
+                <h3 className="text-lg text-text-main dark:text-text-light">
+                  {feedback.relatedProjectTitle}
+                </h3>
                 <p className="text-gray-700">{feedback.feedbackDescription}</p>
                 <div className="mt-2 text-sm text-gray-500">
                   {new Date(feedback.createdAt).toLocaleDateString()}
                 </div>
+
                 <div className="mt-2 text-sm text-gray-500 flex items-center gap-1">
                   {feedback.rating} <Star size={13} className="inline" />
+                </div>
+                <div className="mt-2 text-sm text-gray-500 flex items-center gap-1">
+                  {feedback.projectId}
                 </div>
               </div>
             ))}
