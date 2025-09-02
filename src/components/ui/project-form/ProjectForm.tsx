@@ -7,7 +7,12 @@ import type { ProjectFormInput } from "../../../types";
 import { useMemo } from "react";
 import MultiSelect from "./MultiSelect";
 
+import MDEditor from "@uiw/react-md-editor";
+import rehypeSanitize from "rehype-sanitize";
+import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
+
 const ProjectForm = () => {
+  const effectiveTheme = useEffectiveTheme(); //hook para obtener el theme y aplicarlo al componente MDEditor
   // OBTENER DATOS DE TECNOLOGÍAS CON REACT QUERY ---
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
@@ -42,23 +47,6 @@ const ProjectForm = () => {
       technologyIds: [],
     },
   });
-
-  const MAX_DESCRIPTION_LENGTH = 2000; // Usamos el nuevo límite que necesitas
-  const descriptionValue = watch("description") || "";
-  const currentLength = descriptionValue.length;
-
-  const getCounterColor = () => {
-    const usagePercentage = currentLength / MAX_DESCRIPTION_LENGTH;
-    if (usagePercentage >= 1) {
-      return "text-red-600";
-    }
-    if (usagePercentage >= 0.9) {
-      return "text-lime-500";
-    }
-    return "text-gray-400";
-  };
-
-  const counterColorClass = getCounterColor();
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -107,8 +95,8 @@ const ProjectForm = () => {
                 {...register("title", {
                   required: "El título es obligatorio",
                   maxLength: {
-                    value: 255,
-                    message: "El título no puede exceder los 255 caracteres",
+                    value: 50,
+                    message: "El título no puede exceder los 50 caracteres",
                   },
                 })}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
@@ -119,37 +107,81 @@ const ProjectForm = () => {
                 </p>
               )}
             </div>
+            {/* subttitulo */}
+            <div>
+              <label
+                htmlFor="subtitle"
+                className="block text-sm font-medium  dark:text-brand-100 text-text-main"
+              >
+                Título del Proyecto <span className=" text-xs ">*</span>
+              </label>
+              <input
+                type="text"
+                id="subtitle"
+                {...register("subtitle", {
+                  required: "El título es obligatorio",
+                  maxLength: {
+                    value: 100,
+                    message: "El subtítulo no puede exceder los 100 caracteres",
+                  },
+                })}
+                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
+              />
+              {errors.subtitle && (
+                <p className="text-xs text-red-600 mt-1">
+                  {errors.subtitle.message}
+                </p>
+              )}
+            </div>
 
             {/* textarea de descripcion */}
             <div>
-              <div className="flex justify-between items-center">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium  dark:text-brand-100 text-text-main"
-                >
-                  Descripción <span className="text-xs">*</span>
-                </label>
-                <span
-                  className={`text-xs font-medium transition-colors ${counterColorClass}`}
-                >
-                  {MAX_DESCRIPTION_LENGTH - currentLength} caracteres restantes
-                </span>
-              </div>
-              <textarea
-                id="description"
-                //atributo nativo maxLength para detener la escritura.
-                maxLength={MAX_DESCRIPTION_LENGTH}
-                {...register("description", {
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium dark:text-brand-100 text-text-main"
+              >
+                Descripción <span className="text-xs">*</span>
+              </label>
+
+              <Controller
+                name="description"
+                control={control}
+                rules={{
                   required: "La descripción es obligatoria",
                   maxLength: {
-                    value: MAX_DESCRIPTION_LENGTH,
-                    message: `La descripción no puede exceder los ${MAX_DESCRIPTION_LENGTH} caracteres`,
+                    value: 2000,
+                    message: `La descripción no puede exceder los 2000 caracteres`,
                   },
-                })}
-                rows={10}
-                className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm dark:placeholder:text-gray-400 dark:text-accent-100"
-                placeholder="Describe los objetivos, funcionalidades y el estado actual de tu proyecto..."
-              ></textarea>
+                }}
+                render={({ field }) => (
+                  <div className="mt-1" data-color-mode={effectiveTheme}>
+                    <MDEditor
+                      style={{
+                        whiteSpace: "pre-wrap",
+                        backgroundColor:
+                          effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+                      }}
+                      value={field.value}
+                      onChange={field.onChange}
+                      height={400}
+                      previewOptions={{
+                        style: {
+                          backgroundColor:
+                            effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+                        },
+                        // plugin rehypeSanitize.
+                        // Esto procesará el HTML generado por el editor y eliminará cualquier
+                        // etiqueta o atributo inseguro antes de mostrarlo en la vista previa.
+                        rehypePlugins: [[rehypeSanitize]],
+                      }}
+                      textareaProps={{
+                        placeholder:
+                          "Describe los objetivos, funcionalidades y el estado actual de tu proyecto...",
+                      }}
+                    />
+                  </div>
+                )}
+              />
               {errors.description && (
                 <p className="text-xs text-red-600 mt-1">
                   {errors.description.message}

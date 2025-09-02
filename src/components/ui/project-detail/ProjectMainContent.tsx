@@ -2,6 +2,9 @@ import type { ProjectDetailResponse, FeedbackResponse } from "../../../types";
 import { useProjectRating } from "../../../hooks/useProjectRating";
 import { StarRating } from "../../ux/StarRating";
 import { Link } from "react-router-dom";
+import MDEditor from "@uiw/react-md-editor";
+import rehypeSanitize from "rehype-sanitize";
+import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
 
 interface ProjectMainContentProps {
   project: ProjectDetailResponse;
@@ -12,6 +15,8 @@ export const ProjectMainContent = ({
   project,
   feedbackList,
 }: ProjectMainContentProps) => {
+
+  const effectiveTheme = useEffectiveTheme(); 
   const { starRating, feedbackCount, averageRatingFormatted } =
     useProjectRating(feedbackList);
 
@@ -61,7 +66,16 @@ export const ProjectMainContent = ({
 
       {/* Project Description */}
       <div className="mt-8 prose prose-lg max-w-none prose-p:text-gray-600 text-gray-800 dark:text-text-light">
-        <p>{project.description}</p>
+        <MDEditor.Markdown
+          source={project.description}
+          style={{
+            backgroundColor: effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+            padding: "2rem",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            borderRadius: "0.5rem",
+          }}
+          rehypePlugins={[[rehypeSanitize]]}
+        />
       </div>
     </section>
   );
