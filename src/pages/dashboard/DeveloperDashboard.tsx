@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchMyProjects, fetchUserData } from "../../api/queries";
+import { fetchMyProjects, fetchUserProfile } from "../../api/queries";
 import Loading from "../../components/ux/Loading";
 
 import { Link } from "react-router-dom";
@@ -36,8 +36,9 @@ const DeveloperDashboard = () => {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["userData"],
-    queryFn: fetchUserData,
+    queryFn: fetchUserProfile,
     staleTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
   });
 
   const { data: projects } = useQuery<ProjectSummary[]>({
@@ -104,16 +105,16 @@ const DeveloperDashboard = () => {
           </div>
           <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
             <p>
-              <strong>Usuario:</strong> {data.username}
+              <strong>Nombre:</strong> {data.firstName}
+            </p>
+            <p>
+              <strong>Apellido:</strong> {data.lastName}
             </p>
             <p>
               <strong>Email:</strong> {data.email}
             </p>
             <p>
-              <strong>Nombre:</strong> {data.firstName}
-            </p>
-            <p>
-              <strong>Apellido:</strong> {data.lastName}
+              <strong>Slug:</strong> /{data.slug}
             </p>
           </div>
         </div>
@@ -164,12 +165,21 @@ const DeveloperDashboard = () => {
           <h2 className="text-2xl font-semibold border-b border-gray-500 pb-2">
             Feedbacks
           </h2>
-          <div className="col-span-2 mt-4 grid grid-cols-2 md:grid-cols-2 gap-4">
+          <div className=" mt-4  gap-4">
             <div>
-              <h3> Feedbacks Recibidos</h3>
-            </div>
-            <div>
-              <h3>Feedbacks Enviados</h3>
+              <h3> Feedbacks enviados</h3>
+              <ul>
+                {data.feedbackGiven.map((feedback) => (
+                  <li key={feedback.id}>
+                    {feedback.relatedProjectTitle}
+                    {
+                      <span className="text-gray-500">
+                        - {feedback.feedbackDescription} - {feedback.rating}⭐
+                      </span>
+                    }
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -178,7 +188,14 @@ const DeveloperDashboard = () => {
           <h2 className="text-2xl font-semibold border-b  border-gray-500 pb-2">
             Reconocimientos/Kudos
           </h2>
-
+          <ul>
+            {data.kudosReceived.map((kudo) => (
+              <li key={kudo.id}>
+                <span className="text-gray-500">{kudo.message}</span> -
+                {kudo.senderUsername}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     );

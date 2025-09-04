@@ -12,7 +12,15 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { AuthProvider } from "./components/providers/AuthProvider.tsx";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // default global staleTime de 15 minutos
+      staleTime: 1000 * 60 * 15,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Renderiza la aplicación React en el elemento con id "root"
 const container = document.getElementById("root");
