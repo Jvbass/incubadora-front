@@ -18,8 +18,8 @@ interface ProjectCardProps {
 
 const getStatusStyles = (status: string): string => {
   return status === "published"
-    ? "bg-green-100 text-green-800"
-    : "bg-yellow-100 text-yellow-800";
+    ? "text-red-400"
+    : "text-gray-400";
 };
 
 export const ProjectCard = React.memo(
@@ -103,7 +103,7 @@ export const ProjectCard = React.memo(
       const statusStyles = getStatusStyles(project.status);
 
       return (
-        <li className="bg-white text-text-main dark:bg-bg-dark dark:text-text-light p-4 rounded-lg  border border-gray-400 flex justify-between items-center">
+        <li className="bg-white text-text-main dark:bg-bg-dark dark:text-text-light p-4 rounded-lg  border border-gray-400 flex justify-between">
           {/* Información del Proyecto */}
           <div>
             <h3 className="font-bold text-lg">{project.title}</h3>
@@ -123,7 +123,7 @@ export const ProjectCard = React.memo(
               {project.technologies.slice(0, 4).map((tech) => (
                 <span
                   key={tech.id}
-                  className="px-2 py-0.5 text-xs font-semibold text-white rounded-full"
+                  className=" px-2 py-0.5 text-xs font-semibold text-white rounded-full"
                   style={{ backgroundColor: tech.techColor }}
                 >
                   {tech.name}
@@ -133,12 +133,19 @@ export const ProjectCard = React.memo(
           </div>
 
           {/* Estado y Acciones */}
-          <div className="text-right">
-            <span
-              className={`px-3 py-1 text-xs font-semibold rounded-full ${statusStyles}`}
-            >
-              {project.status}
-            </span>
+          <div className="flex flex-col justify-between items-center">
+            <div className="flex">
+              <span className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}>
+                {project.status}
+              </span>
+              {project.status == "published" ? (
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-red-400 opacity-100"></span>
+                  {/* <span className="relative inline-flex size-0 rounded-full bg-red-500"></span> */}
+                </span>
+              ) : null}
+            </div>
+
             <div className="mt-2 flex items-center gap-4">
               {/* El botón solo se renderiza si la función onEdit fue pasada como prop */}
               {onEdit && (
