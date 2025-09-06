@@ -69,19 +69,12 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-      <header className="p-6 bg-white rounded-lg shadow-md mb-8 border border-gray-200">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
+      <header className="p-6 bg-transparent rounded-lg shadow-md mb-8 ">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-6">
-            <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                `${profile.firstName} ${profile.lastName}`
-              )}&background=1e3a8a&color=f3f4f6&size=128&rounded=true&font-size=0.33`}
-              alt="Avatar"
-              className="w-24 h-24 rounded-full border-4 border-white"
-            />
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-text-light">
                 {profile.firstName} {profile.lastName}
               </h1>
               <p className="text-lg text-gray-600">
@@ -102,7 +95,7 @@ const ProfilePage = () => {
                   key={lang.id}
                   className="px-2 py-0.5 text-text-soft dark:text-gray-400"
                 >
-                  {lang.language} ({lang.proficiency})
+                  {lang.language } ({lang.proficiency})
                 </span>
               ))}
               <br />
@@ -122,10 +115,17 @@ const ProfilePage = () => {
               ))}
             </div>
           </div>
+          <img
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+              `${profile.firstName} ${profile.lastName}`
+            )}&background=1e3a8a&color=f3f4f6&size=128&rounded=true&font-size=0.33`}
+            alt="Avatar"
+            className="w-24 h-24 rounded-full border-4 border-white"
+          />
           {isOwnProfile && (
             <Link
               to="/profile/edit"
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+              className="fixed bottom-2 right-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
             >
               Editar Perfil
             </Link>
@@ -133,11 +133,11 @@ const ProfilePage = () => {
         </div>
       </header>
 
-      <main className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <main className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="md:col-span-2 space-y-8">
-          <section className="p-6 bg-white rounded-lg shadow-md ">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Rocket size={20} /> Proyectos Publicados (
+          <section className="p-6 rounded-lg shadow-md ">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-text-light">
+              <Rocket size={20} /> Mis Proyectos (
               {profile.projects.length})
             </h2>
             {profile.projects.length === 0 ? (
