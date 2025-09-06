@@ -17,9 +17,7 @@ interface ProjectCardProps {
 }
 
 const getStatusStyles = (status: string): string => {
-  return status === "published"
-    ? "text-red-400"
-    : "text-gray-400";
+  return status === "published" ? "text-red-400" : "text-gray-400";
 };
 
 export const ProjectCard = React.memo(
@@ -49,22 +47,20 @@ export const ProjectCard = React.memo(
             <p className="text-sm text-text-soft dark:text-gray-400 truncate flex items-center">
               <User size={16} className="mr-1" /> {project.developerUsername}
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
-              {/* Etiquetas de Tecnología */}
-              {project.technologies.slice(0, 3).map((tech) => (
-                <span
+            {/* Tecnologias usadas  */}
+            <div className="flex flex-wrap gap-2 mt-2 justify-start">
+              {project.technologies.slice(0, 4).map((tech) => (
+                <div
                   key={tech.id}
-                  className="px-2 py-0.5 rounded-full border border-border text-text-soft dark:text-gray-400"
-                  style={{ borderColor: tech.techColor }}
+                  style={{
+                    borderColor: tech.techColor,
+                    backgroundColor: tech.techColor + "2A",
+                  }}
+                  className="px-2 py-0.5 border-2 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
                 >
-                  {tech.name}
-                </span>
+                  <span>{tech.name}</span>
+                </div>
               ))}
-              {/* Estado del Proyecto */}
-              <div className="flex items-center gap-x-3 text-text-soft dark:text-gray-400">
-                {project.isCollaborative && <span>• Colaborativo</span>}
-                {project.needMentoring && <span>• Busca mentoría</span>}
-              </div>
             </div>
           </div>
 
@@ -119,15 +115,18 @@ export const ProjectCard = React.memo(
                 Progreso: {project.developmentProgress}%
               </span>
             </div>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2 mt-2 justify-start">
               {project.technologies.slice(0, 4).map((tech) => (
-                <span
+                <div
                   key={tech.id}
-                  className=" px-2 py-0.5 text-xs font-semibold text-white rounded-full"
-                  style={{ backgroundColor: tech.techColor }}
+                  style={{
+                    borderColor: tech.techColor,
+                    backgroundColor: tech.techColor + "1A", // Opacidad sutil
+                  }}
+                  className="px-2 py-0.5 border-1 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
                 >
-                  {tech.name}
-                </span>
+                  <span>{tech.name}</span>
+                </div>
               ))}
             </div>
           </div>
@@ -135,12 +134,15 @@ export const ProjectCard = React.memo(
           {/* Estado y Acciones */}
           <div className="flex flex-col justify-between items-center">
             <div className="flex">
-              <span className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}>
+              <span
+                className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}
+              >
                 {project.status}
               </span>
               {project.status == "published" ? (
                 <span className="relative flex size-2">
-                  <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-red-400 opacity-100"></span>
+                  <span className="absolute h-full w-full animate-ping rounded-full bg-red-400 opacity-100 "></span>
+                  <span className="absolute  h-2 w-2 rounded-full bg-red-500"></span>
                   {/* <span className="relative inline-flex size-0 rounded-full bg-red-500"></span> */}
                 </span>
               ) : null}

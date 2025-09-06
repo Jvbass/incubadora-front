@@ -10,10 +10,10 @@ import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
 import ProjectEditModal from "../../components/ui/modal/ProjectEditModal";
 
 const DeveloperDashboard = () => {
-  const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>(
+  const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>( // Estado para el proyecto que se está viendo
     null
   );
-  const [editingProjectSlug, setEditingProjectSlug] = useState<string | null>(
+  const [editingProjectSlug, setEditingProjectSlug] = useState<string | null>( // Estado para el proyecto que se está editando
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
