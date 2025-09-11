@@ -22,7 +22,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Sidebar */}
       <div
         className={`
-        fixed md:fixed top-0 left-0 h-full
+        fixed md:fixed top-0 left-0 h-full border-r border-gray-400/20
         w-48 md:w-16 hover:w-48 bg-bg-dark flex flex-col py-4 z-50 
         transition-all duration-300 ease-in-out group 
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}

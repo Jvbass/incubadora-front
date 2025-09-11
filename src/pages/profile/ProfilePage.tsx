@@ -69,76 +69,90 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
-      <header className="p-6 bg-transparent rounded-lg shadow-md mb-8 ">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-6">
+    <div className="max-w-5xl mx-auto p-3 sm:p-6 lg:p-8">
+      <header className="p-8 mb-8 min-h-64">
+        <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-8">
+          {/* Texto */}
+          <div className="w-full md:w-3/4 flex flex-col gap-4 ">
+            {/* Nombre y título */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-text-light">
-                {profile.firstName} {profile.lastName}
-              </h1>
-              <p className="text-lg text-gray-600">
-                {profile.headline || "Sin Headline"}
+              <span className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
+                Hola! Soy {profile.firstName} {profile.lastName}
+              </span>
+              <p className="text-lg md:text-xl dark:text-gray-300 text-gray-600 text-left mt-3">
+                {profile.headline || "Desarrollador"}
               </p>
+            </div>
+
+            {/* stack */}
+            <div className="flex flex-wrap justify-center md:justify-start gap-2">
               {profile.techStack.map((tech) => (
-                <span
-                  key={tech.id}
-                  className="px-2 py-0.5 rounded-full border border-border text-text-soft dark:text-gray-400"
-                  style={{ borderColor: tech.techColor }}
-                >
-                  {tech.name}
-                </span>
-              ))}
-              <br />
-              {profile.languages.map((lang) => (
-                <span
-                  key={lang.id}
-                  className="px-2 py-0.5 text-text-soft dark:text-gray-400"
-                >
-                  {lang.language } ({lang.proficiency})
-                </span>
-              ))}
-              <br />
-              {profile.socialLinks.map((link) => (
                 <div
-                  key={link.id}
-                  className="flex items-center gap-2 mt-2 text-sm text-gray-500"
+                  key={tech.id}
+                  style={{
+                    borderColor: tech.techColor,
+                    backgroundColor: tech.techColor + "2A", // Opacidad
+                  }}
+                  className="px-2 py-0.5 border-1 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
                 >
-                  <span>{link.platform}:</span>
-                  <a
-                    href={link.url}
-                    className="text-indigo-600 hover:underline"
-                  >
-                    {link.url}
-                  </a>
+                  <span>{tech.name}</span>
                 </div>
               ))}
             </div>
+
+            {/* Idiomas */}
+            <div className="flex justify-center md:justify-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+              {profile.languages.map((lang) => (
+                <span
+                  key={lang.id}
+                  className="px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-800"
+                >
+                  {lang.language} ({lang.proficiency})
+                </span>
+              ))}
+            </div>
+
+            {/* Redes */}
+            <div className="flex md:justify-start gap-4 mt-2">
+              {profile.socialLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  className="text-indigo-600 hover:underline text-sm"
+                >
+                  {link.platform}
+                </a>
+              ))}
+            </div>
           </div>
-          <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-              `${profile.firstName} ${profile.lastName}`
-            )}&background=1e3a8a&color=f3f4f6&size=128&rounded=true&font-size=0.33`}
-            alt="Avatar"
-            className="w-24 h-24 rounded-full border-4 border-white"
-          />
-          {isOwnProfile && (
-            <Link
-              to="/profile/edit"
-              className="fixed bottom-2 right-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-            >
-              Editar Perfil
-            </Link>
-          )}
+          {/* Imagen */}
+          <div className="w-full md:w-1/4 flex justify-end">
+            <img
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                `${profile.firstName} ${profile.lastName}`
+              )}&background=1e3a8a&color=f3f4f6&size=160&rounded=true&font-size=0.33`}
+              alt="Avatar"
+              className="w-32 h-32 md:w-40 md:h-40 rounded-full shadow-md"
+            />
+          </div>
         </div>
+
+        {/* Botón editar */}
+        {isOwnProfile && (
+          <Link
+            to="/profile/edit"
+            className="fixed bottom-2 right-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+          >
+            Editar Perfil
+          </Link>
+        )}
       </header>
 
-      <main className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="max-w-4xl mx-auto p-3 sm:p-6 lg:p-8">
         <div className="md:col-span-2 space-y-8">
-          <section className="p-6 rounded-lg shadow-md ">
-            <h2 className="text-xl font-semibold flex items-center gap-2 text-text-light">
-              <Rocket size={20} /> Mis Proyectos (
-              {profile.projects.length})
+          <section className="p-6">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-text-main dark:text-text-light">
+              <Rocket size={20} /> Mis Proyectos ({profile.projects.length})
             </h2>
             {profile.projects.length === 0 ? (
               <p className="text-gray-500 mt-4">
@@ -160,17 +174,17 @@ const ProfilePage = () => {
           </section>
 
           {/* Kudos */}
-          <section className="p-6  bg-gray-50 dark:bg-bg-dark rounded-lg shadow-md ">
-            <div className="flex justify-baseline items-center mb-4">
+          <section className="p-6">
+            <div className="flex justify-baseline items-center mb-4 dark:text-text-light">
               <h3 className="text-lg font-semibold flex items-center gap-1 me-2">
                 <Heart size={20} /> Kudos Recibidos
               </h3>
-              <span>
+              <span className="text-sm text-gray-600 dark:text-gray-400 ">
                 {profile.kudosReceived.length === 0 ? (
                   isOwnProfile ? (
                     "No has recibido kudos aún."
                   ) : (
-                    <div className="flex justify-center">
+                    <div className="flex justify-center ">
                       <Link to="/home" className="text-cta-600 hover:underline">
                         {profile.firstName} no ha recibido kudos aún, sé el
                         primero en dar uno!
@@ -181,14 +195,29 @@ const ProfilePage = () => {
                   `(${profile.kudosReceived.length})`
                 )}
               </span>
+              {/* Condicional para mostrar el botón solo si NO es el perfil propio */}
+              {!isOwnProfile && (
+                <div className="flex w-auto justify-center ms-auto text-sm text-gray-500">
+                  <Link
+                    // TODO abre modal
+                    to={`/give-kudos/${profile.slug}`}
+                    className="px-4 py-2 text-sm font-medium text-cta-600 border border-cta-600 rounded-full hover:bg-brand-900 flex items-center gap-2"
+                  >
+                    <Heart size={16} />
+                    Reconoce a {profile.firstName}
+                  </Link>
+                </div>
+              )}
             </div>
 
             {profile.kudosReceived.map((kudo) => (
               <div
                 key={kudo.id}
-                className="mt-4 p-4 bg-gray-50 dark:bg-bg-dark rounded-md "
+                className="mt-4 p-4 rounded-md dark:text-gray-300 border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600"
               >
-                <p className="text-gray-700">{kudo.message}</p>
+                <p className="text-gray-700 dark:text-gray-200">
+                  {kudo.message}
+                </p>
                 <div className="mt-2 text-sm text-gray-500">
                   Dado por {kudo.senderUsername} el{" "}
                   {new Date(kudo.createdAt).toLocaleDateString()}
@@ -197,7 +226,7 @@ const ProfilePage = () => {
               </div>
             ))}
 
-            {!isOwnProfile ? (
+            
               <div className="mt-6 p-4 bg-gray-50 dark:bg-bg-dark  rounded-md ">
                 <h4 className="text-lg font-semibold mb-2">Enviar un Kudo</h4>
                 <textarea
@@ -225,22 +254,25 @@ const ProfilePage = () => {
                   Enviar Kudo
                 </button>
               </div>
-            ) : (
-              profile.kudosReceived.length
-            )}
+       
           </section>
 
           {/* Feedbacks */}
-          <section className="p-6  bg-gray-50 dark:bg-bg-dark rounded-lg shadow-md ">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <MessageSquare size={20} /> Feedback Dado (
+          <section className="p-6">
+            <div className="flex justify-baseline items-center mb-4 dark:text-text-light">
+            <h3 className="text-lg font-semibold flex items-center gap-1 me-2">
+              <MessageSquare size={20} /> Feedback realizados
+            </h3>
+            <span className="text-sm text-gray-600 dark:text-gray-400 ">
+              (
               {profile.feedbackGiven.length === 0
                 ? isOwnProfile
                   ? "No has realizado feedback aún."
                   : "Este usuario no ha realizado feedback aún."
                 : profile.feedbackGiven.length}
               )
-            </h2>
+            </span>
+            </div>
 
             {profile.feedbackGiven.map((feedback) => (
               <div

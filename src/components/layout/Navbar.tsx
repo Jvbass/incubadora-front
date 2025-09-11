@@ -53,8 +53,8 @@ const Navbar = () => {
 
             {/* Perfil del usuario / Dropdown */}
             <div className="relative group ">
-              <Link
-                to="/dashboard"
+              <div
+
                 className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
               >
                 <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
@@ -99,7 +99,7 @@ const Navbar = () => {
                     </button>
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>
