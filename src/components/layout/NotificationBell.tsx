@@ -21,7 +21,7 @@ const NotificationBell = ({
     queryKey: ["notifications"],
     queryFn: fetchNotifications,
     staleTime: 1000 * 60 * 5, // 5 minutos
-    refetchInterval: 1000 * 60, // 1 minuto
+    refetchInterval: 1000 * 60 * 10, // 1 minuto
     refetchOnWindowFocus: true,
   });
 

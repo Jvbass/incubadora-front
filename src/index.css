@@ -51,6 +51,7 @@
   --color-divider: #e5e7eb; /* Líneas separadoras, sutiles */
 }
 
+/*markdown editor**/
 /* Estilos básicos para el contenido renderizado desde Markdown/HTML */
 .prose h1,
 .prose h2,
@@ -180,7 +181,8 @@
 .dark .wmde-markdown code {
   background-color: #0d162556 !important;
   color: var(--color-text-light) !important;
-  border: 1px solid #374151ff;}
+  border: 1px solid #374151ff;
+}
 
 /* ========================================================================== */
 /* Estilos para el EDITOR de Markdown                                       */
@@ -190,13 +192,13 @@
 /* ... (Aquí van tus estilos para .w-md-editor que ya funcionan bien) ... */
 /* Por ejemplo: */
 .w-md-editor {
-  background-color: var(--color-bg-light) !important;
+  background-color: var(--color-text-light) !important;
   border-color: var(--color-border) !important;
   box-shadow: none !important;
 }
 
 .dark .w-md-editor {
-  background-color: var(--color-bg-dark) !important;
+  background-color: var(--color-bg-darker) !important;
   border-color: var(--color-text-soft) !important;
   color: var(--color-text-light);
 }
