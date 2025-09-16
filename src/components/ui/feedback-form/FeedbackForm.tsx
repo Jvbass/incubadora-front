@@ -1,16 +1,17 @@
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation  } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { createFeedbackForProject } from "../../../api/queries";
 import type { FeedbackRequest } from "../../../types";
 import { RocketSlider } from "../../ux/RocketSlider";
+import { queryClient } from "../../../main";
 
 interface FeedbackFormProps {
   projectSlug: string;
 }
 
 export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
-  const queryClient = useQueryClient();
+  
 
   const {
     control,

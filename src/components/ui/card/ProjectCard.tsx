@@ -17,7 +17,7 @@ interface ProjectCardProps {
 }
 
 const getStatusStyles = (status: string): string => {
-  return status === "published" ? "text-red-400" : "text-gray-400";
+  return status === "published" ? "text-red-500" : "text-gray-400";
 };
 
 export const ProjectCard = React.memo(
@@ -25,7 +25,7 @@ export const ProjectCard = React.memo(
     // Vista Detallada para el HomePage ---
     if (variant === "full") {
       return (
-        <li className="flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600">
+        <li className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600">
           {/* 1. Avatar del Proyecto */}
           <img
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -141,8 +141,8 @@ export const ProjectCard = React.memo(
               </span>
               {project.status == "published" ? (
                 <span className="relative flex size-2">
-                  <span className="absolute h-full w-full animate-ping rounded-full bg-red-400 opacity-100 "></span>
-                  <span className="absolute  h-2 w-2 rounded-full bg-red-500"></span>
+                  <span className="absolute h-full w-full animate-pulse rounded-full bg-red-600 opacity-100 "></span>
+                  {/* <span className="absolute  h-2 w-2 rounded-full bg-red-500"></span> */}
                   {/* <span className="relative inline-flex size-0 rounded-full bg-red-500"></span> */}
                 </span>
               ) : null}

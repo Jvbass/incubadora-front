@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { ProjectFormInput, ProjectModalProps } from "../../../types";
+import type { ProjectFormInput } from "../../../types";
 import {
   fetchProjectById,
   fetchTechnologies,
@@ -11,6 +11,14 @@ import toast from "react-hot-toast";
 import MultiSelect from "../project-form/MultiSelect";
 import Loading from "../../ux/Loading";
 
+/*============props============ */
+export interface ProjectModalProps {
+  projectSlug: string | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+/*============ */
+
 const ProjectEditModal = ({
   projectSlug,
   isOpen,
@@ -18,7 +26,7 @@ const ProjectEditModal = ({
 }: ProjectModalProps) => {
   const queryClient = useQueryClient();
 
-  // Fetcheamos los datos del proyecto a editar para mostrarlos en los inputs
+  // fetch de los datos del proyecto a editar para mostrarlos en los inputs
   const { data: projectData, isLoading: isLoadingProject } = useQuery({
     queryKey: ["projectDetail", projectSlug],
     queryFn: () => fetchProjectById(projectSlug!),
@@ -56,6 +64,7 @@ const ProjectEditModal = ({
       ? status
       : "pending"; //por defecto
   };
+
   // useEffect para rellenar los inputs con los datos del proyecto
   useEffect(() => {
     if (projectData) {

@@ -159,7 +159,7 @@ const ProjectForm = () => {
                       style={{
                         whiteSpace: "pre-wrap",
                         backgroundColor:
-                          effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+                          effectiveTheme === "dark" ? "#1e293a" : "#f3f4f6",
                       }}
                       value={field.value}
                       onChange={field.onChange}
@@ -167,7 +167,7 @@ const ProjectForm = () => {
                       previewOptions={{
                         style: {
                           backgroundColor:
-                            effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+                            effectiveTheme === "dark" ? "#0f172a" : "#f3f4f6",
                         },
                         // plugin rehypeSanitize.
                         // Esto procesará el HTML generado por el editor y eliminará cualquier

@@ -8,6 +8,7 @@ import type { ProjectSummary } from "../../types";
 import { useState } from "react";
 import ProjectDetailModal from "../../components/ui/modal/ProjectDetailModal";
 import ProjectEditModal from "../../components/ui/modal/ProjectEditModal";
+import Button from "../../components/button/RoundedButton";
 
 const DeveloperDashboard = () => {
   const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>( // Estado para el proyecto que se está viendo
@@ -103,7 +104,7 @@ const DeveloperDashboard = () => {
               </Link>
             </div>
           </div>
-          <div className="mt-4 grSlug grSlug-cols-1 md:grSlug-cols-2 gap-4">
+          <div className="mt-4 grid-cols-1 md:grid-cols-2 gap-4">
             <p>
               <strong>Nombre:</strong> {data.firstName}
             </p>
@@ -193,6 +194,17 @@ const DeveloperDashboard = () => {
               <li key={kudo.id}>
                 <span className="text-gray-500">{kudo.message}</span> -
                 {kudo.senderUsername}
+                <span className="text-gray-500">
+                  - {kudo.relatedProjectTitle}
+                </span>
+                <span className="text-gray-500">
+                  - {kudo.isPublic ? "Publico" : "Privado"}
+                </span> 
+                {kudo.isPublic ? (
+                  <Button variant="outline">Cambiar a privado</Button>
+                ) : (
+                  <Button variant="outline">Cambiar a publico</Button>
+                )}
               </li>
             ))}
           </ul>
