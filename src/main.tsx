@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App.tsx";
 import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+// import "@uiw/react-markdown-preview/markdown.css";
 import "./index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -12,7 +12,15 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { AuthProvider } from "./components/providers/AuthProvider.tsx";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // default global staleTime de 15 minutos
+      staleTime: 1000 * 60 * 15,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Renderiza la aplicación React en el elemento con id "root"
 const container = document.getElementById("root");

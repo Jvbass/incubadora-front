@@ -147,12 +147,6 @@ export interface ProjectDetailResponse {
   developmentProgress: number;
 }
 
-export interface ProjectModalProps {
-  projectSlug: string | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
-
 export interface Technology {
   id: number;
   name: string;

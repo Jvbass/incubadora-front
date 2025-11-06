@@ -54,6 +54,7 @@ export const useAuthZustand = () => {
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       setLoading(false);
+      console.log("error", error)
       toast.error(error.response?.data?.message || "Ocurrió un error durante el registro.");
     }
   });

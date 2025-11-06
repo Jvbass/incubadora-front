@@ -22,7 +22,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Sidebar */}
       <div
         className={`
-        fixed md:fixed top-0 left-0 h-full
+        fixed md:fixed top-0 left-0 h-full border-r border-gray-400/20
         w-48 md:w-16 hover:w-48 bg-bg-dark flex flex-col py-4 z-50 
         transition-all duration-300 ease-in-out group 
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
@@ -34,8 +34,12 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           className="mb-8 flex items-center w-full px-2"
           onClick={onClose}
         >
-          <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-            <div className="w-6 h-6 border-2 border-white rounded-full border-l-transparent " />
+          <div className="w-12 h-12 bg-brand-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <img
+              className="w-10 h-10"
+              src="./images/LogoDarkSinFondo.svg"
+              alt="Logo"
+            />
           </div>
           <span className="ml-3 text-white font-semibold md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
             Incubadora.dev
