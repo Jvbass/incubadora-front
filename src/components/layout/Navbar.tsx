@@ -9,6 +9,8 @@ const Navbar = () => {
   const { user, logout } = useAuthZustand();
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -54,7 +56,7 @@ const Navbar = () => {
             {/* Perfil del usuario / Dropdown */}
             <div className="relative group ">
               <div
-
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
               >
                 <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
@@ -76,7 +78,11 @@ const Navbar = () => {
                 </div>
 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg  border-gray-200 invisible group-hover:opacity-100  group-hover:visible transition-all duration-200 z-50">
+                <div
+                  className={`absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg border-gray-200 transition-all duration-200 z-50 
+          ${isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}
+          md:group-hover:opacity-100 md:group-hover:visible`}
+                >
                   <div className="py-2">
                     <Link
                       to="/dashboard"

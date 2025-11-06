@@ -11,7 +11,7 @@ interface ButtonProps {
   className?: string; // Prop adicional para clases personalizadas
 }
 
-const Button: React.FC<ButtonProps> = ({
+export const Button = ({
   children,
   onClick,
   variant = "primary",
@@ -19,7 +19,7 @@ const Button: React.FC<ButtonProps> = ({
   icon: Icon,
   linkTo,
   className = "",
-}) => {
+}: ButtonProps) => {
   // 2. Define las clases base y las variantes
   const baseClasses =
     "flex items-center justify-center gap-2 font-semibold rounded-lg cursor-pointer transition-all duration-200 ease-in-out";
@@ -63,5 +63,3 @@ const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-
-export default Button;

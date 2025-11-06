@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App.tsx";
 import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+// import "@uiw/react-markdown-preview/markdown.css";
 import "./index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

@@ -13,7 +13,6 @@ import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
 
 const ProjectForm = () => {
   const effectiveTheme = useEffectiveTheme(); //hook para obtener el theme y aplicarlo al componente MDEditor
-  // OBTENER DATOS DE TECNOLOGÍAS CON REACT QUERY ---
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
     queryFn: fetchTechnologies,
@@ -36,7 +35,6 @@ const ProjectForm = () => {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormInput>({
     defaultValues: {
