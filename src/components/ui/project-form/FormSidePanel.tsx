@@ -1,8 +1,6 @@
-// src/components/ui/project-form/FormSidePanel.tsx
-
+import { Lightbulb } from "lucide-react";
 import { formHelpContent } from "../../../data/formHelpContent";
 import { useActiveFieldStore } from "../../../hooks/useActiveField";
-
 
 const FormSidePanel = () => {
   const { activeField } = useActiveFieldStore();
@@ -13,10 +11,18 @@ const FormSidePanel = () => {
       <div className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md sticky top-4 border border-blue-300 dark:border-slate-600  ">
         {hint ? (
           <>
-            <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">
-              {hint.title}
-            </h2>
-            <p className="text-sm text-slate-600 dark:text-text-light mb-4">
+            <div className="mb-3 flex justify-between items-center relative">
+              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 ">
+                {hint.title}
+              </h2>
+              <Lightbulb
+                strokeWidth={2}
+                size={30}
+                color="#fcf80fff"
+                className="absolute top-0 right-0 ml-0 animate-pulse"
+              />
+            </div>
+            <p className="text-sm text-slate-600 dark:text-text-light mb-4 ">
               {hint.description}
             </p>
             {hint.recommendations && (

@@ -121,7 +121,6 @@ const ProjectForm = () => {
                 type="text"
                 id="subtitle"
                 {...register("subtitle", {
-                  required: "El título es obligatorio",
                   maxLength: {
                     value: 100,
                     message: "El subtítulo no puede exceder los 100 caracteres",
@@ -173,7 +172,7 @@ const ProjectForm = () => {
                       previewOptions={{
                         style: {
                           backgroundColor:
-                            effectiveTheme === "dark" ? "#0f172a" : "#e4e4e4ff",
+                            effectiveTheme === "dark" ? "#0f172a" : "#ecececff",
                         },
                         // plugin rehypeSanitize.
                         // Esto procesará el HTML generado por el editor y eliminará cualquier
