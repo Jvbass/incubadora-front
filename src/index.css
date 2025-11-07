@@ -39,7 +39,7 @@
 
   /* Neutros */
   --color-bg-light: #f9fafb; /* Fondo claro principal */
-  --color-bg-soft: #f3f4f6; /* Fondo de inputs, tarjetas secundarias */
+  --color-bg-soft: #ecececff; /* Fondo de inputs, tarjetas secundarias */
   --color-bg-dark: #1e293b; /* Fondo oscuro para tarjetas en modo dark */
   --color-bg-darker: #0f172a; /* Fondo principal en modo oscuro */
 
@@ -192,8 +192,8 @@
 /* ... (Aquí van tus estilos para .w-md-editor que ya funcionan bien) ... */
 /* Por ejemplo: */
 .w-md-editor {
-  background-color: var(--color-text-light) !important;
-  border-color: var(--color-border) !important;
+  background-color: var(--color-bg-soft)!important;
+  border-color: #93c5fd !important;
   box-shadow: none !important;
 }
 
