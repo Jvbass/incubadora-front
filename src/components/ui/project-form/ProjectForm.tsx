@@ -2,9 +2,14 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { createProject, fetchTechnologies } from "../../../api/queries";
+import {
+  createProject,
+  fetchTechnologies,
+  fetchProjectById,
+  updateProjectById,
+} from "../../../api/queries";
 import type { ProjectFormInput } from "../../../types";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import MultiSelect from "./MultiSelect";
 
 import MDEditor from "@uiw/react-md-editor";
@@ -12,7 +17,12 @@ import rehypeSanitize from "rehype-sanitize";
 import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
 import { useActiveFieldStore } from "../../../hooks/useActiveField";
 
-const ProjectForm = () => {
+interface ProjectFormProps {
+  projectSlug?: string;
+  onClose?: () => void;
+}
+
+const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
   const effectiveTheme = useEffectiveTheme(); //hook para obtener el theme y aplicarlo al componente MDEditor
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
@@ -37,6 +47,7 @@ const ProjectForm = () => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormInput>({
     defaultValues: {
@@ -51,7 +62,33 @@ const ProjectForm = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({
+  // Fetch project data if editing
+  const { data: projectData } = useQuery({
+    queryKey: ["projectDetail", projectSlug],
+    queryFn: () => fetchProjectById(projectSlug!),
+    enabled: !!projectSlug,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+
+  // Populate form when projectData is available
+  useEffect(() => {
+    if (projectData) {
+      const technologyIds = projectData.technologies.map((t) => t.id);
+      reset({
+        ...projectData,
+        technologyIds,
+        // Ensure status is one of the allowed values
+        status: ["pending", "published", "archived"].includes(
+          projectData.status
+        )
+          ? (projectData.status as "pending" | "published" | "archived")
+          : "pending",
+      });
+    }
+  }, [projectData, reset]);
+
+  const createMutation = useMutation({
     mutationFn: createProject,
     onSuccess: (data) => {
       toast.success(`Proyecto "${data.title}" creado exitosamente!`);
@@ -64,8 +101,29 @@ const ProjectForm = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: ProjectFormInput) =>
+      updateProjectById(projectSlug!, data),
+    onSuccess: (data) => {
+      toast.success(`Proyecto "${data.title}" actualizado exitosamente!`);
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetail", projectSlug],
+      });
+      if (onClose) onClose();
+    },
+    onError: (error) => {
+      toast.error(`Error al actualizar el proyecto: ${error.message}`);
+    },
+  });
+
   const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
-    mutate(data);
+    if (projectSlug) {
+      updateMutation.mutate(data);
+    } else {
+      createMutation.mutate(data);
+    }
   };
 
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
@@ -152,15 +210,14 @@ const ProjectForm = () => {
                 rules={{
                   required: "La descripción es obligatoria",
                   maxLength: {
-                    value: 2000,
-                    message: `La descripción no puede exceder los 2000 caracteres`,
+                    value: 15000,
+                    message: `La descripción no puede exceder los 15000 caracteres`,
                   },
                 }}
                 render={({ field }) => (
                   <div className="mt-1" data-color-mode={effectiveTheme}>
                     <MDEditor
                       onFocus={() => setActiveField("description")}
-                      onBlur={() => setActiveField(null)}
                       style={{
                         whiteSpace: "pre-wrap",
                         backgroundColor:
@@ -374,13 +431,26 @@ const ProjectForm = () => {
           </div>
         </section>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+            >
+              Cancelar
+            </button>
+          )}
           <button
             type="submit"
             disabled={isSubmitting}
             className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            {isSubmitting ? "Publicando..." : "Publicar Proyecto"}
+            {isSubmitting
+              ? "Guardando..."
+              : projectSlug
+              ? "Guardar Cambios"
+              : "Publicar Proyecto"}
           </button>
         </div>
       </form>

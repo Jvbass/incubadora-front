@@ -8,11 +8,11 @@ const FormSidePanel = () => {
 
   return (
     <aside className="md:col-span-1 transition-all duration-300 ">
-      <div className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-md sticky top-4 border border-blue-300 dark:border-slate-600  ">
+      <div className="p-6 bg-bg-light dark:bg-slate-800 rounded-lg shadow-xs  shadow-amber-300 drop-shadow-accent-100 sticky top-4 border border-yellow-500 ">
         {hint ? (
           <>
             <div className="mb-3 flex justify-between items-center relative">
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 ">
+              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 max-w-50">
                 {hint.title}
               </h2>
               <Lightbulb
@@ -31,6 +31,16 @@ const FormSidePanel = () => {
                   <li key={i}>{rec}</li>
                 ))}
               </ul>
+            )}
+            {hint.link && (
+              <a
+                href={hint.link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-700 transition-colors"
+              >
+                {hint.link.title}
+              </a>
             )}
           </>
         ) : (

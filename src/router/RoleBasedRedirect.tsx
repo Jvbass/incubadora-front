@@ -1,14 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { useAuthZustand } from "../hooks/useAuthZustand";
+import Loading from "../components/ux/Loading";
 
-// Este componente no renderiza UI. Su única función es redirigir.
+// Redirigir al usuario segun su rol
 const RoleBasedRedirect = () => {
   const { user, isAuthenticated, isLoading } = useAuthZustand();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Cargando...</div>
+        <Loading message="Redirigiendo" />
       </div>
     );
   }
@@ -18,12 +19,12 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Mapeo de roles a las rutas de sus dashboards.
+  // Mapeo segun rol del usuario.
   const roleToPathMap: { [key: string]: string } = {
     dev: "/home",
-    // Administrador: "/admin",
-    // Mentor: "/mentor",
-    // Reclutador: "/recruiter",
+    mentor: "/dashboard",
+    // administrador: "/admin",
+    // reclutador: "/recruiter",
   };
 
   // Obtenemos la ruta correspondiente al rol del usuario.

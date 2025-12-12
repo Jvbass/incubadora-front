@@ -10,8 +10,13 @@ import { FeedbackCard } from "../components/ui/card/FeedbackCard";
 import { FeedbackForm } from "../components/ui/feedback-form/FeedbackForm";
 import { ProjectSidePanel } from "../components/ui/project-detail/ProjectSidePanel";
 
-const ProjectDetailPage = () => {
-  const { projectSlug } = useParams<{ projectSlug: string }>();
+interface ProjectDetailPageProps {
+  slug?: string;
+}
+
+const ProjectDetailPage = ({ slug }: ProjectDetailPageProps) => {
+  const { projectSlug: paramSlug } = useParams<{ projectSlug: string }>();
+  const projectSlug = slug || paramSlug;
 
   // Query para obtener los detalles del proyecto
   const {
