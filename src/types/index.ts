@@ -236,3 +236,26 @@ export interface PagedResponse<T> {
   totalPages: number;
   last: boolean;
 }
+
+
+/*===================================================
+ * Mentor Upgrade Request
+ *===================================================*/
+
+export interface MentorRequest {
+  notificationId: number;
+  type: string;
+  applicant: {
+    username: string;
+    slug: string;
+  };
+  message: string;
+  status: string;
+  approveLink: string;
+  rejectLink: string;
+  createdAt: string;
+}
+
+export interface RejectRequest {
+  reason: string;
+}

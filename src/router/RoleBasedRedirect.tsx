@@ -23,11 +23,10 @@ const RoleBasedRedirect = () => {
   const roleToPathMap: { [key: string]: string } = {
     dev: "/home",
     mentor: "/dashboard",
-    // administrador: "/admin",
+    administrator: "/admin",
     // reclutador: "/recruiter",
   };
 
-  // Obtenemos la ruta correspondiente al rol del usuario.
   // Si el rol no existe en nuestro mapa, lo mandamos al login por seguridad.
   const path = user ? roleToPathMap[user.role] || "/login" : "/login";
 

@@ -240,11 +240,11 @@ const ProfilePage = () => {
               <div className="text-sm text-gray-600 dark:text-gray-400 ">
                 {profile.projects.length === 0 ? (
                   isOwnProfile ? (
-                    "No tienes proyectos publicados aún."
+                    "Aún no tienes proyectos publicados."
                   ) : (
                     <div className="flex justify-center ">
                       <Link to="/home" className="text-cta-600 hover:underline">
-                        {profile.firstName} No ha publicado proyectos aún
+                        {profile.firstName} Aún no ha publicado proyectos
                       </Link>
                     </div>
                   )
@@ -256,7 +256,7 @@ const ProfilePage = () => {
             {profile.projects.length === 0 ? (
               <p className="text-gray-500 mt-4">
                 {isOwnProfile
-                  ? "No tienes proyectos publicados aún."
+                  ? "Aún no tienes proyectos publicados."
                   : "Este usuario no tiene proyectos publicados."}
               </p>
             ) : (

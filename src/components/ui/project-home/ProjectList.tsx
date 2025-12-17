@@ -52,13 +52,12 @@ export const ProjectList = ({ title, sortBy }: ProjectListProps) => {
         {data.pages.map((page, i) => (
           <React.Fragment key={i}>
             {page.content.map((project) => (
-              <Link
-                to={`/project/${project.slug}`}
+              <li
                 key={project.id}
                 className="block hover:opacity-90 transition-opacity"
               >
                 <ProjectCard project={project} variant="full" />
-              </Link>
+              </li>
             ))}
           </React.Fragment>
         ))}

@@ -7,6 +7,7 @@ import {
   Star,
   User,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ProjectCardProps {
   project: ProjectSummary;
@@ -25,8 +26,11 @@ export const ProjectCard = React.memo(
     // Vista Detallada para el HomePage ---
     if (variant === "full") {
       return (
-        <li className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-border dark:hover:border-gray-500
-        dark:hover:bg-bg-hoverdark">
+        <Link
+          to={`/project/${project.slug}`}
+          className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-border dark:hover:border-gray-500
+        dark:hover:bg-bg-hoverdark"
+        >
           {/* 1. Avatar del Proyecto */}
           <img
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -91,7 +95,7 @@ export const ProjectCard = React.memo(
               )}
             </div>
           </div>
-        </li>
+        </Link>
       );
     }
 

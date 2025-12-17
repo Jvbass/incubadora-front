@@ -1,5 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchMyProjects, fetchUserProfile } from "../../api/queries";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchMyProjects,
+  fetchUserProfile,
+  requestMentorUpgrade,
+} from "../../api/queries";
 import Loading from "../../components/ux/Loading";
 import { Cog, Eye, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -11,6 +15,7 @@ import ProjectForm from "../../components/ui/project-form/ProjectForm";
 import ProjectDetailPage from "../ProjectDetailPage";
 import { Button } from "../../components/button/RoundedButton";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
+import toast from "react-hot-toast";
 
 const DeveloperDashboard = () => {
   const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>( // Estado para el proyecto que se está viendo
@@ -21,7 +26,10 @@ const DeveloperDashboard = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const queryClient = useQueryClient(); // Obtener el cliente de consulta
+
   const { user } = useAuthZustand();
+
   const handleProjectView = (projectSlug: string) => {
     setViewingProjectSlug(projectSlug);
     setEditingProjectSlug(null);
@@ -52,6 +60,26 @@ const DeveloperDashboard = () => {
     queryFn: fetchMyProjects,
     staleTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
+  });
+
+  const requestMentorMutation = useMutation({
+    mutationFn: requestMentorUpgrade,
+    onSuccess: () => {
+      toast.success(
+        "Solicitud enviada. Recibirás una notificación con la respuesta del administrador."
+      );
+    },
+    onError: (error: any) => {
+      // Capturamos el error 403 (validación de proyectos o de 24 horas)
+      const errorMessage =
+        error.response?.data?.message ||
+        "Ocurrió un error al enviar la solicitud.";
+      toast.error(errorMessage);
+    },
+    onSettled: () => {
+      // Invalida el perfil para que el botón refleje que hay una solicitud pendiente
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    },
   });
 
   /** renderizado declarativo */
@@ -95,7 +123,12 @@ const DeveloperDashboard = () => {
         dark:hover:bg-bg-hoverdark dark:text-text-dark-text"
         >
           <div className="flex justify-between items-center border-b border-border pb-2">
-            <h2 className="text-2xl font-semibold ">Mi Perfil</h2>
+            <div className="flex justify-center items-baseline gap-3">
+              <h2 className="text-2xl font-semibold ">Mi Perfil</h2>
+              <span className="text-xs text-yellow-800 dark:text-yellow-400">
+                {data.publicProfile ? "Publico" : "Privado"}
+              </span>
+            </div>
             {/* --- Botones ver y editar perfil--- */}
             <div className="flex space-x-4">
               <Link to="/profile/edit">
@@ -116,6 +149,7 @@ const DeveloperDashboard = () => {
             <p>
               <strong>Nombre:</strong> {data.firstName}
             </p>
+
             <p>
               <strong>Apellido:</strong> {data.lastName}
             </p>
@@ -129,20 +163,24 @@ const DeveloperDashboard = () => {
               <strong>Rol:</strong> {user?.role}
             </p>
             <div>
+              {/* Lógica para mostrar el botón de Solicitud */}
               {projects?.length < 3 && user?.role === "dev" && (
                 <span className="text-xs text-red-400">
                   Publica 3 proyectos para poder cambiar tu rol a mentor
                 </span>
               )}
+
+              {/* Condición para mostrar el botón de solicitud */}
               {projects?.length >= 3 && user?.role === "dev" && (
                 <Button
                   variant="outline"
                   className="text-xs text-red-400"
-                  onClick={() => {
-                    setIsModalOpen(true);
-                  }}
+                  onClick={() => requestMentorMutation.mutate()} // Llamada a la mutación
+                  disabled={requestMentorMutation.isPending} // Deshabilitar mientras está cargando
                 >
-                  Solicitar Cambio A Mentor
+                  {requestMentorMutation.isPending
+                    ? "Enviando Solicitud..."
+                    : "Solicitar Cambio A Mentor"}
                 </Button>
               )}
             </div>

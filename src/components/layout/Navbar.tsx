@@ -11,6 +11,9 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const dashboardHref =
+    user?.role === "administrator" ? "/admin" : "/dashboard";
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -102,7 +105,7 @@ const Navbar = () => {
                 >
                   <div className="py-2">
                     <Link
-                      to="/dashboard"
+                      to={dashboardHref}
                       onClick={() => setIsMenuOpen(false)}
                       className=" px-4 py-2 text-sm text-gray-700 dark:text-text-light hover:text-yellow-500 transition-colors duration-300 hover:bg-gray-50 dark:hover:bg-bg-hoverdark dark:hover:text-yellow-400 flex justify-between items-center"
                     >

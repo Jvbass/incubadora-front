@@ -18,6 +18,8 @@ import type {
   ProfileUpdateRequest,
   KudoPost,
   KudoResponse,
+  MentorRequest,
+  RejectRequest,
 } from "../types";
 
 /**=========================================
@@ -95,7 +97,9 @@ export const updateUserProfile = async (
  * Obtiene el perfil público de un usuario por su slug.
  * Endpoint: GET /api/profiles/{slug}
  */
-export const fetchPublicProfileBySlug = async (slug: string): Promise<ProfileResponse> => {
+export const fetchPublicProfileBySlug = async (
+  slug: string
+): Promise<ProfileResponse> => {
   // Si no hay slug, no se puede hacer la petición.
   if (!slug) {
     throw new Error("El slug del perfil es requerido.");
@@ -331,7 +335,6 @@ export const deleteComment = async (commentId: number): Promise<void> => {
   await apiService.delete(`/comments/${commentId}`);
 };
 
-
 /**=========================================
  *  KUDOS QUERIES
  *=========================================*/
@@ -339,9 +342,6 @@ export const postKudo = async (kudoData: KudoPost): Promise<KudoResponse> => {
   const { data } = await apiService.post<KudoResponse>("/kudos", kudoData);
   return data;
 };
-
-
-
 
 /**=========================================
  *  NOTIFICATION QUERIES
@@ -376,4 +376,65 @@ export const markAllNotificationsAsRead = async (): Promise<Notification[]> => {
     "/notifications/read-all"
   );
   return data;
+};
+
+/** =========================================
+ *  Roles Dev Mentor Admin Queries
+ *=========================================
+ *
+ *
+ */
+
+ /**
+ * [DEV] Solicita el ascenso de rol a mentor.
+ * Endpoint: PATCH /api/me/profile/request-mentor-upgrade
+ */
+
+export const requestMentorUpgrade = async (): Promise<void> => {
+  await apiService.patch("/me/profile/request-mentor-upgrade");
+};
+
+
+/**
+ * [ADMIN] Obtiene la lista de solicitudes pendientes.
+ * Endpoint: GET /api/dashboard/admin/mentor-requests
+ */
+export const fetchMentorRequests = async (): Promise<MentorRequest[]> => {
+  const { data } = await apiService.get<MentorRequest[]>(
+    "/dashboard/admin/mentor-requests"
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Aprueba una solicitud de ascenso a mentor.
+ * Endpoint: PATCH /api/admin/mentor-requests/{userId}/approve
+ * @returns {token: string} El nuevo token JWT del usuario ascendido.
+ */
+export const approveMentorUpgrade = async (
+  userId: number
+): Promise<{ token: string }> => {
+  const { data } = await apiService.patch<{ token: string }>(
+    `/admin/mentor-requests/${userId}/approve`
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Rechaza una solicitud de ascenso a mentor.
+ * Endpoint: PATCH /api/admin/mentor-requests/{notificationId}/reject
+ * @param notificationId ID de la notificación (solicitud).
+ * @param reason Motivo del rechazo.
+ */
+export const rejectMentorUpgrade = async ({
+  notificationId,
+  reason,
+}: {
+  notificationId: number;
+  reason: string;
+}): Promise<void> => {
+  await apiService.patch(
+    `/admin/mentor-requests/${notificationId}/reject`,
+    { reason } as RejectRequest
+  );
 };
