@@ -2,16 +2,27 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { createProject, fetchTechnologies } from "../../../api/queries";
+import {
+  createProject,
+  fetchTechnologies,
+  fetchProjectById,
+  updateProjectById,
+} from "../../../api/queries";
 import type { ProjectFormInput } from "../../../types";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import MultiSelect from "./MultiSelect";
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
+import { useActiveFieldStore } from "../../../hooks/useActiveField";
 
-const ProjectForm = () => {
+interface ProjectFormProps {
+  projectSlug?: string;
+  onClose?: () => void;
+}
+
+const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
   const effectiveTheme = useEffectiveTheme(); //hook para obtener el theme y aplicarlo al componente MDEditor
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
@@ -19,6 +30,7 @@ const ProjectForm = () => {
     staleTime: 1000 * 60 * 60, // Cachear por 1 hora
     refetchOnWindowFocus: false, // Opcional: Evita re-fetch al cambiar de pestaña
   });
+  const { setActiveField } = useActiveFieldStore();
 
   // FORMATEAR DATOS PARA REACT-SELECT ---
   // Usamos useMemo para evitar que este cálculo se repita en cada render.
@@ -35,6 +47,7 @@ const ProjectForm = () => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormInput>({
     defaultValues: {
@@ -49,7 +62,33 @@ const ProjectForm = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({
+  // Fetch project data if editing
+  const { data: projectData } = useQuery({
+    queryKey: ["projectDetail", projectSlug],
+    queryFn: () => fetchProjectById(projectSlug!),
+    enabled: !!projectSlug,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+
+  // Populate form when projectData is available
+  useEffect(() => {
+    if (projectData) {
+      const technologyIds = projectData.technologies.map((t) => t.id);
+      reset({
+        ...projectData,
+        technologyIds,
+        // Ensure status is one of the allowed values
+        status: ["pending", "published", "archived"].includes(
+          projectData.status
+        )
+          ? (projectData.status as "pending" | "published" | "archived")
+          : "pending",
+      });
+    }
+  }, [projectData, reset]);
+
+  const createMutation = useMutation({
     mutationFn: createProject,
     onSuccess: (data) => {
       toast.success(`Proyecto "${data.title}" creado exitosamente!`);
@@ -62,8 +101,29 @@ const ProjectForm = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: ProjectFormInput) =>
+      updateProjectById(projectSlug!, data),
+    onSuccess: (data) => {
+      toast.success(`Proyecto "${data.title}" actualizado exitosamente!`);
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetail", projectSlug],
+      });
+      if (onClose) onClose();
+    },
+    onError: (error) => {
+      toast.error(`Error al actualizar el proyecto: ${error.message}`);
+    },
+  });
+
   const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
-    mutate(data);
+    if (projectSlug) {
+      updateMutation.mutate(data);
+    } else {
+      createMutation.mutate(data);
+    }
   };
 
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
@@ -79,7 +139,7 @@ const ProjectForm = () => {
             Información General
           </h3>
           <div className="space-y-4">
-            {/* titulo */}
+            {/* ==============================titulo================================ */}
             <div>
               <label
                 htmlFor="title"
@@ -88,8 +148,8 @@ const ProjectForm = () => {
                 Título del Proyecto <span className=" text-xs ">*</span>
               </label>
               <input
-                type="text"
                 id="title"
+                type="text"
                 {...register("title", {
                   required: "El título es obligatorio",
                   maxLength: {
@@ -97,6 +157,8 @@ const ProjectForm = () => {
                     message: "El título no puede exceder los 50 caracteres",
                   },
                 })}
+                onFocus={() => setActiveField("title")}
+                onBlur={() => setActiveField(null)}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
               {errors.title && (
@@ -105,24 +167,25 @@ const ProjectForm = () => {
                 </p>
               )}
             </div>
-            {/* subttitulo */}
+            {/* ====================================subttitulo =========================*/}
             <div>
               <label
                 htmlFor="subtitle"
                 className="block text-sm font-medium  dark:text-brand-100 text-text-main"
               >
-                Título del Proyecto <span className=" text-xs ">*</span>
+                Subtitulo del proyecto <span className=" text-xs ">*</span>
               </label>
               <input
                 type="text"
                 id="subtitle"
                 {...register("subtitle", {
-                  required: "El título es obligatorio",
                   maxLength: {
                     value: 100,
                     message: "El subtítulo no puede exceder los 100 caracteres",
                   },
                 })}
+                onFocus={() => setActiveField("subtitle")}
+                onBlur={() => setActiveField(null)}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
               {errors.subtitle && (
@@ -132,7 +195,7 @@ const ProjectForm = () => {
               )}
             </div>
 
-            {/* textarea de descripcion */}
+            {/* =========================textarea de descripcion============================ */}
             <div>
               <label
                 htmlFor="description"
@@ -147,13 +210,14 @@ const ProjectForm = () => {
                 rules={{
                   required: "La descripción es obligatoria",
                   maxLength: {
-                    value: 2000,
-                    message: `La descripción no puede exceder los 2000 caracteres`,
+                    value: 15000,
+                    message: `La descripción no puede exceder los 15000 caracteres`,
                   },
                 }}
                 render={({ field }) => (
                   <div className="mt-1" data-color-mode={effectiveTheme}>
                     <MDEditor
+                      onFocus={() => setActiveField("description")}
                       style={{
                         whiteSpace: "pre-wrap",
                         backgroundColor:
@@ -165,7 +229,7 @@ const ProjectForm = () => {
                       previewOptions={{
                         style: {
                           backgroundColor:
-                            effectiveTheme === "dark" ? "#0f172a" : "#f3f4f6",
+                            effectiveTheme === "dark" ? "#0f172a" : "#ecececff",
                         },
                         // plugin rehypeSanitize.
                         // Esto procesará el HTML generado por el editor y eliminará cualquier
@@ -187,7 +251,7 @@ const ProjectForm = () => {
               )}
             </div>
 
-            {/* inputs para urls */}
+            {/* =====================inputs para urls =============================*/}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
@@ -207,6 +271,8 @@ const ProjectForm = () => {
                         "La url debe contener el protocolo https://, http:// o ftp://",
                     },
                   })}
+                  onFocus={() => setActiveField("repositoryUrl")}
+                  onBlur={() => setActiveField(null)}
                   className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 "
                 />
                 {errors.repositoryUrl && (
@@ -232,6 +298,8 @@ const ProjectForm = () => {
                       message: "Por favor, ingresa una URL válida",
                     },
                   })}
+                  onFocus={() => setActiveField("projectUrl")}
+                  onBlur={() => setActiveField(null)}
                   className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 "
                 />
                 {errors.projectUrl && (
@@ -250,7 +318,7 @@ const ProjectForm = () => {
             Detalles Técnicos
           </h3>
 
-          {/* tecnologías */}
+          {/*============================ tecnologías======================== */}
           <div className="space-y-6">
             <div>
               <div>
@@ -260,23 +328,28 @@ const ProjectForm = () => {
                     * (Lenguajes, Frameworks, Herramientas)
                   </span>
                 </label>
-                <Controller
-                  name="technologyIds"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      value.length > 0 ||
-                      "Debes seleccionar al menos una tecnología",
-                  }}
-                  render={({ field }) => (
-                    <MultiSelect
-                      field={field}
-                      options={technologyOptions}
-                      isLoading={isLoadingTechs}
-                      placeholder="Escribe para buscar tecnologías..."
-                    />
-                  )}
-                />
+                <div
+                  onFocus={() => setActiveField("technologyIds")}
+                  onBlur={() => setActiveField(null)}
+                >
+                  <Controller
+                    name="technologyIds"
+                    control={control}
+                    rules={{
+                      validate: (value) =>
+                        value.length > 0 ||
+                        "Debes seleccionar al menos una tecnología",
+                    }}
+                    render={({ field }) => (
+                      <MultiSelect
+                        field={field}
+                        options={technologyOptions}
+                        isLoading={isLoadingTechs}
+                        placeholder="Escribe para buscar tecnologías..."
+                      />
+                    )}
+                  />
+                </div>
               </div>
 
               {errors.technologyIds && (
@@ -287,7 +360,7 @@ const ProjectForm = () => {
             </div>
           </div>
 
-          {/* checkbox para estado/mentoria/colaboradores */}
+          {/* ===================checkbox para estado/mentoria/colaboradores =========================*/}
           <div className="grid grid-cols-1  gap-6 mt-7">
             <div>
               <label className="block text-sm font-medium  dark:text-brand-100 text-text-main mb-2">
@@ -296,6 +369,8 @@ const ProjectForm = () => {
               <select
                 id="status"
                 {...register("status")}
+                onFocus={() => setActiveField("status")}
+                onBlur={() => setActiveField(null)}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm  dark:placeholder:text-gray-400 dark:text-accent-100 dark:bg-bg-dark"
               >
                 <option value="pending">Borrador</option>
@@ -308,6 +383,8 @@ const ProjectForm = () => {
                 <input
                   type="checkbox"
                   {...register("isCollaborative")}
+                  onFocus={() => setActiveField("isCollaborative")}
+                  onBlur={() => setActiveField(null)}
                   className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                 />
                 <span>Busco colaboradores</span>
@@ -316,6 +393,8 @@ const ProjectForm = () => {
                 <input
                   type="checkbox"
                   {...register("needMentoring")}
+                  onFocus={() => setActiveField("needMentoring")}
+                  onBlur={() => setActiveField(null)}
                   className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                 />
                 <span>Busco mentor</span>
@@ -343,6 +422,8 @@ const ProjectForm = () => {
                   max="100"
                   {...field}
                   onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  onFocus={() => setActiveField("developmentProgress")}
+                  onBlur={() => setActiveField(null)}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
               )}
@@ -350,13 +431,26 @@ const ProjectForm = () => {
           </div>
         </section>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+            >
+              Cancelar
+            </button>
+          )}
           <button
             type="submit"
             disabled={isSubmitting}
             className="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            {isSubmitting ? "Publicando..." : "Publicar Proyecto"}
+            {isSubmitting
+              ? "Guardando..."
+              : projectSlug
+              ? "Guardar Cambios"
+              : "Publicar Proyecto"}
           </button>
         </div>
       </form>

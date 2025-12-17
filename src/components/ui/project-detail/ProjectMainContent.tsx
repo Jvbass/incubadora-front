@@ -69,7 +69,7 @@ export const ProjectMainContent = ({
         <MDEditor.Markdown
           source={project.description}
           style={{
-            backgroundColor: effectiveTheme === "dark" ? "#1e293b" : "#f9fafb",
+            backgroundColor: effectiveTheme === "dark" ? "#2B2E33" : "#f9fafb",
             padding: "2rem",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "0.5rem",

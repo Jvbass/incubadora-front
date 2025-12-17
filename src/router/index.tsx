@@ -16,6 +16,7 @@ import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
 import ProjectDetailPage from "../pages/ProjectDetailPage";
 import ProfilePage from "../pages/profile/ProfilePage";
 import EditProfilePage from "../pages/profile/EditProfilePage";
+import AdminDashboard from "../pages/dashboard/AdminDashboard";
 
 const AppRouter = () => {
   return (
@@ -46,6 +47,17 @@ const AppRouter = () => {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <DeveloperDashboard />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* RUTA DE ADMINISTRADOR */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <AdminDashboard />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

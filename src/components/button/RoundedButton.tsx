@@ -34,7 +34,7 @@ export const Button = ({
     primary: "bg-blue-600 text-white hover:bg-blue-700",
     secondary: "bg-gray-600 text-white hover:bg-gray-700",
     outline:
-      "bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-100",
+      "bg-transparent text-gray-600 hover:bg-yellow-500 border border-yellow-500 dark:border-yellow-300  dark:hover:bg-yellow-50",
   };
 
   // 3. Combina todas las clases

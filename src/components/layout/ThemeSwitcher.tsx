@@ -34,8 +34,8 @@ export const ThemeSwitcher = ({ iconSize = 18, color = "text-black" }: ThemeSwit
   return (
     <button
       onClick={toggleTheme}
-      className={`relative rounded-full p-2 hover:bg-indigo-400 
-      focus:outline-none ${color} dark:text-amber-50 hover:text-brand-900 cursor-pointer transition duration-300`}
+      className={`relative rounded-md p-2 hover:bg-text-soft 
+      focus:outline-none ${color} dark:text-amber-50 hover:text-yellow-500 cursor-pointer transition duration-300`}
       aria-label={`Cambiar a tema ${theme === "light" ? "oscuro" : "claro"}`}
     >
       {icons[theme]}

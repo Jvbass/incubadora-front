@@ -161,17 +161,21 @@ const ProfilePage = () => {
             </div>
           </div>
           {/* Imagen */}
-          <div className="w-full md:w-1/4 flex items-center justify-center md:justify-end align-center flex-col">
+          <div className="relative w-full md:w-1/4 flex items-center justify-center md:justify-end align-center flex-col">
             <img
               src="https://mitsloanreview.mx/wp-content/uploads/2024/02/quien-es-julian-assange.jpg"
               alt="Avatar"
               className="w-32 h-32 object-cover md:w-40 md:h-40 rounded-full shadow-md"
             />
+            {/* mostrar el rol del usuario */}
+            <span className="absolute bottom-12 left-40 w-full text-3xl">
+              ✔️
+            </span>
 
             <div className="flex items-center mt-3">
               <div className="relative inline-flex overflow-hidden rounded-full p-[1px]">
                 <div className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9EC4F5_0%,#21554E_50%,#9EC4F5_100%)]"></div>
-                <div className="inline-flex items-center justify-center w-full px-3 py-1 text-sm text-black-600 bg-bg-soft rounded-full cursor-pointer dark:bg-gray-800 dark:text-white/80 backdrop-blur-3xl whitespace-nowrap">
+                <div className="inline-flex items-center justify-center w-full px-3 py-1 text-sm text-black-600 bg-bg-soft rounded-full  dark:bg-gray-800 dark:text-white/80 backdrop-blur-3xl whitespace-nowrap">
                   <span>Disponible para trabajar</span>
                 </div>
               </div>
@@ -236,11 +240,11 @@ const ProfilePage = () => {
               <div className="text-sm text-gray-600 dark:text-gray-400 ">
                 {profile.projects.length === 0 ? (
                   isOwnProfile ? (
-                    "No tienes proyectos publicados aún."
+                    "Aún no tienes proyectos publicados."
                   ) : (
                     <div className="flex justify-center ">
                       <Link to="/home" className="text-cta-600 hover:underline">
-                        {profile.firstName} No ha publicado proyectos aún
+                        {profile.firstName} Aún no ha publicado proyectos
                       </Link>
                     </div>
                   )
@@ -252,7 +256,7 @@ const ProfilePage = () => {
             {profile.projects.length === 0 ? (
               <p className="text-gray-500 mt-4">
                 {isOwnProfile
-                  ? "No tienes proyectos publicados aún."
+                  ? "Aún no tienes proyectos publicados."
                   : "Este usuario no tiene proyectos publicados."}
               </p>
             ) : (
@@ -402,7 +406,9 @@ const ProfilePage = () => {
                     alt={certificate.name}
                     className="w-30 h-30 object-cover rounded-full ring-3 ring-cta-600 dark:ring-cta-300"
                   />
-                  <p className="dark:text-text-light text-text-main text-center text-sm ">{certificate.name}</p>
+                  <p className="dark:text-text-light text-text-main text-center text-sm ">
+                    {certificate.name}
+                  </p>
                 </a>
               ))}
             </div>

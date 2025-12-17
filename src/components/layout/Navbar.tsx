@@ -1,15 +1,18 @@
 import { Link } from "react-router-dom";
-import NotificationBell from "./NotificationBell"; // <-- 1. Importar
-import { Bookmark, Plus } from "lucide-react";
+import NotificationBell from "./NotificationBell";
+import { Bookmark, LayoutDashboard, Lightbulb, User } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
   const { user, logout } = useAuthZustand();
   const [isScrolled, setIsScrolled] = useState(false);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const dashboardHref =
+    user?.role === "administrator" ? "/admin" : "/dashboard";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,13 +20,27 @@ const Navbar = () => {
       setIsScrolled(scrollTop > 0);
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
     <nav
-      className={`hover:bg-brand-300 hover:dark:bg-brand-900 transition-all duration-200 w-fit fixed right-0 rounded-bl-lg z-50 ${
+      className={`hover:bg-brand-300 hover:dark:bg-bg-hoverdark transition-all duration-200 w-fit fixed right-0 rounded-bl-lg z-50 ${
         isScrolled
           ? "bg-white shadow-sm dark:bg-bg-dark"
           : "bg-bg-light dark:bg-bg-dark"
@@ -36,7 +53,7 @@ const Navbar = () => {
               to="/create-project"
               className="text-sm font-semibold  shadow-sm flex items-center transition duration-200 text-yellow-500 hover:text-white border border-yellow-500 hover:bg-yellow-500   rounded-lg  py-1 px-1.5 text-center me-2  dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 "
             >
-              <Plus strokeWidth={2} size={23} />
+              <Lightbulb strokeWidth={2} size={23} />
               Crear
             </Link>
 
@@ -51,61 +68,72 @@ const Navbar = () => {
               <Bookmark className="cursor-not-allowed" size={23} />
             </span>
 
-            <div className="h-8 border-l border-divider"></div>
+            <div className="h-8 border-l border-border"></div>
 
             {/* Perfil del usuario / Dropdown */}
-            <div className="relative group ">
-              <div
+            <div className="relative" ref={dropdownRef}>
+              <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                className="block px-2 py-2 text-sm text-gray-700 dark:text-text-light "
               >
-                <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200  text-text-main dark:text-brand-100 hover:text-brand-100">
+                <div className="flex items-right space-x-3 cursor-pointer p-2 rounded-lg transition-colors duration-200 text-text-main dark:text-brand-100  hover:text-yellow-500">
                   {/* Avatar */}
                   <img
                     src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
                       user?.username || "User"
                     )}&background=6366f1&color=ffffff&size=32&rounded=true`}
                     alt={user?.username}
-                    className="w-7 h-7 rounded-lg"
+                    className="w-9 h-9 rounded-lg"
                   />
                   {/* User Info */}
                   <div className="text-right">
-                    <span className="text-sm font-medium ">
+                    <span className="text-sm font-medium">
                       {user?.username}
                     </span>
-                    {user?.role === "dev" && <p className="text-xs ">Dev</p>}
+                    <p className="text-xs">{user?.role}</p>
                   </div>
                 </div>
 
                 {/* Dropdown Menu */}
                 <div
-                  className={`absolute right-0 mt-1 w-48 bg-bg-light dark:bg-bg-darker rounded-lg shadow-lg border-gray-200 transition-all duration-200 z-50 
-          ${isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}
-          md:group-hover:opacity-100 md:group-hover:visible`}
+                  className={`absolute text-left right-0 mt-1 w-48 bg-bg-light dark:bg-bg-dark  shadow-lg  transition-all duration-200 z-50 
+                    ${
+                      isMenuOpen
+                        ? "opacity-100 visible"
+                        : "opacity-0 invisible pointer-events-none"
+                    }`}
                 >
                   <div className="py-2">
                     <Link
-                      to="/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                      to={dashboardHref}
+                      onClick={() => setIsMenuOpen(false)}
+                      className=" px-4 py-2 text-sm text-gray-700 dark:text-text-light hover:text-yellow-500 transition-colors duration-300 hover:bg-gray-50 dark:hover:bg-bg-hoverdark dark:hover:text-yellow-400 flex justify-between items-center"
                     >
-                      Mi Espacio
+                      <span>Panel</span>
+                      <LayoutDashboard size={18} />
                     </Link>
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-text-light  hover:text-indigo-600 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                      className=" px-4 py-2 text-sm text-gray-700 dark:text-text-light hover:text-yellow-500 transition-colors hover:bg-gray-50 dark:hover:bg-bg-hoverdark dark:hover:text-yellow-400 flex justify-between items-center"
                     >
-                      Mi Perfil
+                      <span>Mi Perfil</span>
+                      <User size={18} />
                     </Link>
-                    <div className="border-t border-brand-100 my-1"></div>
+
+                    <div className="border-t border-border my-1"></div>
                     <button
-                      onClick={logout}
-                      className="block w-full text-left px-4 py-2 text-sm text-cta-600  transition-colors cursor-pointer hover:text-cta-900"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        logout();
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-cta-600 transition-colors cursor-pointer dark:hover:text-gray-50 hover:bg-gray-50 dark:hover:bg-red-900"
                     >
                       Cerrar Sesión
                     </button>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
