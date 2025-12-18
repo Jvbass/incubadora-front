@@ -1,5 +1,5 @@
 /*===================================================
-* auth & user
+* Auth & User
 ===================================================*/
 export interface DecodedToken {
   sub: string;
@@ -27,7 +27,7 @@ export interface LoginRequest {
 }
 
 /*===================================================
-* profile
+* Profile
 ===================================================*/
 
 export interface ProfileResponse {
@@ -97,7 +97,7 @@ export interface ProfileUpdateRequest {
 }
 
 /*===================================================
-* projects
+* Projects
 ===================================================*/
 export interface ProjectSummary {
   id: number;
@@ -117,7 +117,7 @@ export interface ProjectSummary {
 
 export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
 
-export interface ProjectFormInput {
+export interface CreateProjectRequest {
   title: string;
   subtitle: string;
   description: string;
@@ -154,7 +154,7 @@ export interface Technology {
 }
 
 /*===================================================
- * feedback
+ * Feedback
  *===================================================*/
 export interface FeedbackResponse {
   id: number;
@@ -175,7 +175,7 @@ export interface FeedbackRequest {
 }
 
 /*===================================================
- * kudos
+ * Kudos
  *===================================================*/
 
 export interface KudoResponse {
@@ -196,7 +196,7 @@ export interface KudoPost {
 }
 
 /*===================================================
- * comments
+ * Comments // Comentarios
  *===================================================*/
 export interface CommentAuthor {
   username: string;
@@ -216,7 +216,7 @@ export interface CommentRequest {
 }
 
 /*===================================================
- * Notifications
+ * Notifications // Notificaciones
  *===================================================*/
 export interface Notification {
   id: number;
@@ -237,9 +237,8 @@ export interface PagedResponse<T> {
   last: boolean;
 }
 
-
 /*===================================================
- * Mentor Upgrade Request
+ * Mentor Upgrade Request // Solicitud de mentor
  *===================================================*/
 
 export interface MentorRequest {
@@ -259,3 +258,72 @@ export interface MentorRequest {
 export interface RejectRequest {
   reason: string;
 }
+
+/*===================================================
+ * Mentorship // Mentorias
+ *===================================================*/
+
+export interface ScheduleSlotRequest {
+  dayOfWeek: string; // "MONDAY", "TUESDAY", etc.
+  startTime: string; // "09:00"
+  endTime: string; // "10:00"
+}
+
+export interface CreateMentorshipRequest {
+  title: string;
+  description: string;
+  specialty: string;
+  durationMinutes: number;
+  platform: "zoom" | "meet" | "discord" | "teams" | "other";
+  timezone: string;
+  price?: number;
+  isFree: boolean;
+  schedules: ScheduleSlotRequest[];
+}
+
+export interface MentorshipSummary {
+  id: number;
+  title: string;
+  specialty: string;
+  durationMinutes: number;
+  platform: string;
+  price?: number;
+  isFree: boolean;
+  mentorUsername: string;
+  createdAt: string;
+  status: "active" | "inactive" | "paused";
+  totalBookings: number;
+}
+
+export interface MentorshipDetailResponse extends MentorshipSummary {
+  description: string;
+  timezone: string;
+  schedules: ScheduleSlotResponse[];
+}
+
+export interface ScheduleSlotResponse {
+  id: number;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+}
+
+// Constantes para las opciones de plataforma
+export const PLATFORM_OPTIONS = [
+  { value: "zoom", label: "Zoom" },
+  { value: "meet", label: "Google Meet" },
+  { value: "discord", label: "Discord" },
+  { value: "teams", label: "Microsoft Teams" },
+  { value: "other", label: "Otra" },
+] as const;
+
+// Constantes para los días de la semana
+export const DAYS_OF_WEEK = [
+  { value: "MONDAY", label: "Lunes" },
+  { value: "TUESDAY", label: "Martes" },
+  { value: "WEDNESDAY", label: "Miércoles" },
+  { value: "THURSDAY", label: "Jueves" },
+  { value: "FRIDAY", label: "Viernes" },
+  { value: "SATURDAY", label: "Sábado" },
+  { value: "SUNDAY", label: "Domingo" },
+] as const;

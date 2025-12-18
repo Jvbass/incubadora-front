@@ -17,6 +17,7 @@ import ProjectDetailPage from "../pages/ProjectDetailPage";
 import ProfilePage from "../pages/profile/ProfilePage";
 import EditProfilePage from "../pages/profile/EditProfilePage";
 import AdminDashboard from "../pages/dashboard/AdminDashboard";
+import CreateMentorshipPage from "../pages/dashboard/CreateMentorshipPage";
 
 const AppRouter = () => {
   return (
@@ -106,6 +107,7 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+      {/* RUTAS DE PROYECTOS */}
       <Route
         path="/create-project"
         element={
@@ -122,6 +124,17 @@ const AppRouter = () => {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <ProjectDetailPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* RUTA DE MENTORSHIP */}
+      <Route
+        path="/create-mentorship"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <CreateMentorshipPage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

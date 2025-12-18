@@ -72,7 +72,7 @@ const Navbar = () => {
 
             {/* Perfil del usuario / Dropdown */}
             <div className="relative" ref={dropdownRef}>
-              <button
+              <div
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="block px-2 py-2 text-sm text-gray-700 dark:text-text-light "
               >
@@ -133,7 +133,7 @@ const Navbar = () => {
                     </button>
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
         </div>
