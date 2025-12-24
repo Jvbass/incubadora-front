@@ -92,7 +92,7 @@ const MentorDashboard = () => {
     queryFn: fetchMyMentorships,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    enabled: user?.role === "mentor" || user?.role === "administrator",
+    enabled: user?.role === "MENTOR" || user?.role === "ADMINISTRATOR",
   });
 
   const { data: editingMentorshipData } = useQuery({
@@ -241,7 +241,7 @@ const MentorDashboard = () => {
       </div>
 
       {/* Sección de Mentorías - Solo para mentores */}
-      {(user?.role === "mentor" || user?.role === "administrator") && (
+      {(user?.role === "MENTOR" || user?.role === "ADMINISTRATOR") && (
         <div className="p-6 rounded-lg shadow-md mb-5 border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-border dark:hover:border-gray-500 dark:hover:bg-bg-hoverdark dark:text-text-dark-text">
           <div className="flex justify-between items-center border-b pb-2 mb-4 border-border">
             <h2 className="text-2xl font-semibold">Mis Mentorías</h2>

@@ -12,7 +12,7 @@ const Navbar = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const dashboardHref =
-    user?.role === "administrator" ? "/admin" : "/dashboard";
+    user?.role === "ADMINISTRATOR" ? "/admin" : "/dashboard";
 
   useEffect(() => {
     const handleScroll = () => {

@@ -19,12 +19,12 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Mapeo segun rol del usuario.
+  // Redireccionar segun rol del usuario.
   const roleToPathMap: { [key: string]: string } = {
-    dev: "/home",
-    mentor: "/dashboard",
-    administrator: "/admin",
-    // reclutador: "/recruiter",
+    DEV: "/home",
+    MENTOR: "/dashboard",
+    ADMINISTRATOR: "/admin",
+    // RECRUITER: "/recruiter",
   };
 
   // Si el rol no existe en nuestro mapa, lo mandamos al login por seguridad.

@@ -451,13 +451,29 @@ export const rejectMentorUpgrade = async ({
  */
 export const createMentorship = async (
   mentorshipData: CreateMentorshipRequest
-): Promise<MentorshipDetailResponse> => {
-  const { data } = await apiService.post<MentorshipDetailResponse>(
+): Promise<CreateMentorshipRequest> => {
+  const { data } = await apiService.post<CreateMentorshipRequest>(
     "/mentorships",
     mentorshipData
   );
   return data;
 };
+
+/**
+ * Crea un nuevo proyecto.
+ * @param projectData Datos del proyecto a crear.
+ * @returns Datos del proyecto creado
+
+export const createProject = async (
+  projectData: CreateProjectRequest
+): Promise<CreateProjectRequest> => {
+  // El backend devuelve un ProjectResponseDto al crear
+  const { data } = await apiService.post<CreateProjectRequest>(
+    "/projects",
+    projectData
+  );
+  return data;
+}; */
 
 /**
  * Obtiene la lista de mentorías del mentor autenticado.
