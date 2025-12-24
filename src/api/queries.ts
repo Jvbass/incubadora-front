@@ -2,7 +2,7 @@ import apiService from "./apiService";
 import type {
   UserResponse,
   ProjectSummary,
-  ProjectFormInput,
+  CreateProjectRequest,
   Technology,
   LoginRequest,
   RegisterRequest,
@@ -20,6 +20,9 @@ import type {
   KudoResponse,
   MentorRequest,
   RejectRequest,
+  CreateMentorshipRequest,
+  MentorshipSummary,
+  MentorshipDetailResponse,
 } from "../types";
 
 /**=========================================
@@ -151,10 +154,10 @@ export const fetchProjects = async ({
  * @returns Datos del proyecto creado
  */
 export const createProject = async (
-  projectData: ProjectFormInput
-): Promise<ProjectFormInput> => {
+  projectData: CreateProjectRequest
+): Promise<CreateProjectRequest> => {
   // El backend devuelve un ProjectResponseDto al crear
-  const { data } = await apiService.post<ProjectFormInput>(
+  const { data } = await apiService.post<CreateProjectRequest>(
     "/projects",
     projectData
   );
@@ -201,9 +204,9 @@ export const fetchProjectById = async (
  */
 export const updateProjectById = async (
   projectSlug: string,
-  projectData: ProjectFormInput
-): Promise<ProjectFormInput> => {
-  const { data } = await apiService.put<ProjectFormInput>(
+  projectData: CreateProjectRequest
+): Promise<CreateProjectRequest> => {
+  const { data } = await apiService.put<CreateProjectRequest>(
     `/projects/${projectSlug}`,
     projectData
   );
@@ -385,7 +388,7 @@ export const markAllNotificationsAsRead = async (): Promise<Notification[]> => {
  *
  */
 
- /**
+/**
  * [DEV] Solicita el ascenso de rol a mentor.
  * Endpoint: PATCH /api/me/profile/request-mentor-upgrade
  */
@@ -393,7 +396,6 @@ export const markAllNotificationsAsRead = async (): Promise<Notification[]> => {
 export const requestMentorUpgrade = async (): Promise<void> => {
   await apiService.patch("/me/profile/request-mentor-upgrade");
 };
-
 
 /**
  * [ADMIN] Obtiene la lista de solicitudes pendientes.
@@ -433,8 +435,106 @@ export const rejectMentorUpgrade = async ({
   notificationId: number;
   reason: string;
 }): Promise<void> => {
-  await apiService.patch(
-    `/admin/mentor-requests/${notificationId}/reject`,
-    { reason } as RejectRequest
+  await apiService.patch(`/admin/mentor-requests/${notificationId}/reject`, {
+    reason,
+  } as RejectRequest);
+};
+
+/**=========================================
+ *  MENTORSHIP QUERIES
+ *=========================================*/
+
+/**
+ * Crea una nueva mentoría.
+ * @param mentorshipData Datos de la mentoría a crear.
+ * @returns Datos de la mentoría creada
+ */
+export const createMentorship = async (
+  mentorshipData: CreateMentorshipRequest
+): Promise<CreateMentorshipRequest> => {
+  const { data } = await apiService.post<CreateMentorshipRequest>(
+    "/mentorships",
+    mentorshipData
   );
+  return data;
+};
+
+/**
+ * Crea un nuevo proyecto.
+ * @param projectData Datos del proyecto a crear.
+ * @returns Datos del proyecto creado
+
+export const createProject = async (
+  projectData: CreateProjectRequest
+): Promise<CreateProjectRequest> => {
+  // El backend devuelve un ProjectResponseDto al crear
+  const { data } = await apiService.post<CreateProjectRequest>(
+    "/projects",
+    projectData
+  );
+  return data;
+}; */
+
+/**
+ * Obtiene la lista de mentorías del mentor autenticado.
+ * @returns lista de mentorías del mentor
+ */
+export const fetchMyMentorships = async (): Promise<MentorshipSummary[]> => {
+  const { data } = await apiService.get<MentorshipSummary[]>(
+    "/mentorships/my-mentorships"
+  );
+  return data;
+};
+
+/**
+ * Obtiene los detalles completos de una mentoría por su ID.
+ * @param mentorshipId ID de la mentoría a obtener.
+ */
+export const fetchMentorshipById = async (
+  mentorshipId: number
+): Promise<MentorshipDetailResponse> => {
+  const { data } = await apiService.get<MentorshipDetailResponse>(
+    `/mentorships/${mentorshipId}`
+  );
+  return data;
+};
+
+/**
+ * Actualiza una mentoría por su ID.
+ * @param mentorshipId ID de la mentoría a actualizar.
+ * @param mentorshipData Datos actualizados de la mentoría.
+ */
+export const updateMentorshipById = async (
+  mentorshipId: number,
+  mentorshipData: CreateMentorshipRequest
+): Promise<MentorshipDetailResponse> => {
+  const { data } = await apiService.put<MentorshipDetailResponse>(
+    `/mentorships/${mentorshipId}`,
+    mentorshipData
+  );
+  return data;
+};
+
+/**
+ * Elimina una mentoría por su ID.
+ * @param mentorshipId ID de la mentoría a eliminar.
+ */
+export const deleteMentorship = async (mentorshipId: number): Promise<void> => {
+  await apiService.delete(`/mentorships/${mentorshipId}`);
+};
+
+/**
+ * Cambia el estado de una mentoría (activa/inactiva/pausada).
+ * @param mentorshipId ID de la mentoría.
+ * @param status Nuevo estado.
+ */
+export const updateMentorshipStatus = async (
+  mentorshipId: number,
+  status: "active" | "inactive" | "paused"
+): Promise<MentorshipSummary> => {
+  const { data } = await apiService.patch<MentorshipSummary>(
+    `/mentorships/${mentorshipId}/status`,
+    { status }
+  );
+  return data;
 };

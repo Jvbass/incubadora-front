@@ -9,6 +9,7 @@ interface ButtonProps {
   icon?: React.ElementType;
   linkTo?: string;
   className?: string; // Prop adicional para clases personalizadas
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -19,6 +20,7 @@ export const Button = ({
   icon: Icon,
   linkTo,
   className = "",
+  disabled,
 }: ButtonProps) => {
   // 2. Define las clases base y las variantes
   const baseClasses =
@@ -58,7 +60,7 @@ export const Button = ({
   }
 
   return (
-    <button className={combinedClasses} onClick={onClick}>
+    <button className={combinedClasses} onClick={onClick} disabled={disabled}>
       {buttonContent}
     </button>
   );

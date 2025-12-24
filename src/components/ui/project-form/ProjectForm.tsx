@@ -8,7 +8,7 @@ import {
   fetchProjectById,
   updateProjectById,
 } from "../../../api/queries";
-import type { ProjectFormInput } from "../../../types";
+import type { CreateProjectRequest } from "../../../types";
 import { useMemo, useEffect } from "react";
 import MultiSelect from "./MultiSelect";
 
@@ -49,7 +49,7 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ProjectFormInput>({
+  } = useForm<CreateProjectRequest>({
     defaultValues: {
       status: "pending",
       isCollaborative: false,
@@ -102,7 +102,7 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: ProjectFormInput) =>
+    mutationFn: (data: CreateProjectRequest) =>
       updateProjectById(projectSlug!, data),
     onSuccess: (data) => {
       toast.success(`Proyecto "${data.title}" actualizado exitosamente!`);
@@ -118,7 +118,7 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
     },
   });
 
-  const onSubmit: SubmitHandler<ProjectFormInput> = (data) => {
+  const onSubmit: SubmitHandler<CreateProjectRequest> = (data) => {
     if (projectSlug) {
       updateMutation.mutate(data);
     } else {

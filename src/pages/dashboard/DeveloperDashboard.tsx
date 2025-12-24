@@ -72,8 +72,8 @@ const DeveloperDashboard = () => {
     onError: (error: any) => {
       // Capturamos el error 403 (validación de proyectos o de 24 horas)
       const errorMessage =
-        error.response?.data?.message ||
-        "Ocurrió un error al enviar la solicitud.";
+        error.response?.data?.message || //mostramos error desde el back o
+        "Ocurrió un error al enviar la solicitud."; // mostramos error por defecto
       toast.error(errorMessage);
     },
     onSettled: () => {
@@ -164,14 +164,14 @@ const DeveloperDashboard = () => {
             </p>
             <div>
               {/* Lógica para mostrar el botón de Solicitud */}
-              {projects?.length < 3 && user?.role === "dev" && (
+              {(projects?.length || 0) < 3 && user?.role === "DEV" && (
                 <span className="text-xs text-red-400">
                   Publica 3 proyectos para poder cambiar tu rol a mentor
                 </span>
               )}
 
               {/* Condición para mostrar el botón de solicitud */}
-              {projects?.length >= 3 && user?.role === "dev" && (
+              {(projects?.length || 0) >= 3 && user?.role === "DEV" && (
                 <Button
                   variant="outline"
                   className="text-xs text-red-400"
