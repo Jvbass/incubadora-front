@@ -44,9 +44,6 @@ importers:
       react-hot-toast:
         specifier: 2.5.2
         version: 2.5.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      react-md-editor:
-        specifier: 0.2.2
-        version: 0.2.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-router-dom:
         specifier: 7.6.2
         version: 7.6.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -81,9 +78,6 @@ importers:
       '@types/react-dom':
         specifier: 19.1.2
         version: 19.1.2(@types/react@19.1.2)
-      '@types/react-select':
-        specifier: 5.0.0
-        version: 5.0.0(@types/react@19.1.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@vitejs/plugin-react':
         specifier: 4.4.1
         version: 4.4.1(vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1))
@@ -831,9 +825,6 @@ packages:
     peerDependencies:
       '@types/react': ^19.0.0
 
-  '@types/react-select@5.0.0':
-    resolution: {integrity: sha512-vddLcBpzUMVpVNmnBtpC5cyZ2ajaHx/g6SHUo6lmMw0FIiOzrtmoSQ4UI6TRl+sm8TGGT+Oir8NRMZfYQtgr8Q==}
-
   '@types/react-transition-group@4.4.12':
     resolution: {integrity: sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==}
     peerDependencies:
@@ -1013,15 +1004,9 @@ packages:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
 
-  classnames@2.5.1:
-    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
-
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
-
-  codemirror@5.65.20:
-    resolution: {integrity: sha512-i5dLDDxwkFCbhjvL2pNjShsojoL3XHyDwsGv1jqETUoW+lzpBKKqNTUWgQwVAOa0tUm4BwekT455ujafi8payA==}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -1911,12 +1896,6 @@ packages:
     peerDependencies:
       '@types/react': '>=18'
       react: '>=18'
-
-  react-md-editor@0.2.2:
-    resolution: {integrity: sha512-S0RcQJyYo+0ENCGCAN+QFr2EmXwfmIvISZU9uetVMnS8yMaDC1AM6/mRpEZQdEGtE7GcKlGk19BRSigO8c21ow==}
-    peerDependencies:
-      react: ^0.14.0 || ^15.0.0
-      react-dom: ^0.14.0 || ^15.0.0
 
   react-refresh@0.17.0:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
@@ -2957,15 +2936,6 @@ snapshots:
     dependencies:
       '@types/react': 19.1.2
 
-  '@types/react-select@5.0.0(@types/react@19.1.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
-    dependencies:
-      react-select: 5.10.1(@types/react@19.1.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-    transitivePeerDependencies:
-      - '@types/react'
-      - react
-      - react-dom
-      - supports-color
-
   '@types/react-transition-group@4.4.12(@types/react@19.1.2)':
     dependencies:
       '@types/react': 19.1.2
@@ -3194,11 +3164,7 @@ snapshots:
 
   chownr@3.0.0: {}
 
-  classnames@2.5.1: {}
-
   clsx@2.1.1: {}
-
-  codemirror@5.65.20: {}
 
   color-convert@2.0.1:
     dependencies:
@@ -4352,13 +4318,6 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
-
-  react-md-editor@0.2.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
-    dependencies:
-      classnames: 2.5.1
-      codemirror: 5.65.20
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
 
   react-refresh@0.17.0: {}
 

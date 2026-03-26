@@ -2,7 +2,6 @@ import { Navigate } from "react-router-dom";
 import { useAuthZustand } from "../hooks/useAuthZustand";
 import Loading from "../components/ux/Loading";
 
-// Redirigir al usuario segun su rol
 const RoleBasedRedirect = () => {
   const { user, isAuthenticated, isLoading } = useAuthZustand();
 

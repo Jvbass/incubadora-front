@@ -5,7 +5,7 @@ interface MobileMenuButtonProps {
   onClick: () => void;
 }
 
-export function MobileMenuButton({ isOpen, onClick }: MobileMenuButtonProps) {
+export function MobileMenuButton({ isOpen: _isOpen, onClick }: MobileMenuButtonProps) {
   return (
     <button
       onClick={onClick}

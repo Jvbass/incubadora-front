@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser } from "../api/queries";
+import { loginUser, registerUser } from "../api/authApi";
 import { useAuthStore } from "../stores/authStore";
 import type { RegisterRequest } from "../types";
 import toast from "react-hot-toast";

@@ -6,18 +6,18 @@ import RoleBasedRedirect from "./RoleBasedRedirect";
 import PublicRoute from "./PublicRoute";
 
 // Importamos las páginas que vamos a usar en nuestras rutas
-import LoginPage from "../pages/auth/LoginPage";
-import RegisterPage from "../pages/auth/RegisterPage";
-import DeveloperDashboard from "../pages/dashboard/DeveloperDashboard";
+import LoginPage from "../features/auth/pages/LoginPage";
+import RegisterPage from "../features/auth/pages/RegisterPage";
+import DeveloperDashboard from "../features/dashboard/pages/DeveloperDashboard";
 import NotFound from "../pages/NotFound";
-import HomePage from "../pages/HomePage";
+import HomePage from "../features/projects/pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
-import CreateProjectPage from "../pages/dashboard/CreateProjectPage";
-import ProjectDetailPage from "../pages/ProjectDetailPage";
-import ProfilePage from "../pages/profile/ProfilePage";
-import EditProfilePage from "../pages/profile/EditProfilePage";
-import AdminDashboard from "../pages/dashboard/AdminDashboard";
-import CreateMentorshipPage from "../pages/dashboard/CreateMentorshipPage";
+import CreateProjectPage from "../features/projects/pages/CreateProjectPage";
+import ProjectDetailPage from "../features/projects/pages/ProjectDetailPage";
+import ProfilePage from "../features/profile/pages/ProfilePage";
+import EditProfilePage from "../features/profile/pages/EditProfilePage";
+import AdminDashboard from "../features/admin/pages/AdminDashboard";
+import CreateMentorshipPage from "../features/mentoring/pages/CreateMentorshipPage";
 
 const AppRouter = () => {
   return (

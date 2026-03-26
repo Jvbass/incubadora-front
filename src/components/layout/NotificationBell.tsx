@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotifications } from "../../api/queries";
+import { fetchNotifications } from "../../api/notificationApi";
 import { Bell } from "lucide-react";
-import NotificationDropdown from "../ui/notification/NotificationDropdown";
+import NotificationDropdown from "../../features/notifications/components/NotificationDropdown";
 
 interface NotificationBellProps {
   iconSize?: number;

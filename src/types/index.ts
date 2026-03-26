@@ -281,7 +281,7 @@ export interface CreateMentorshipRequest {
   schedules: ScheduleSlotRequest[];
 }
 
-export interface MentorshipSummary {
+export interface MentorshipSummaryResponse {
   id: number;
   title: string;
   specialty: string;
@@ -295,7 +295,7 @@ export interface MentorshipSummary {
   totalBookings: number;
 }
 
-export interface MentorshipDetailResponse extends MentorshipSummary {
+export interface MentorshipDetailResponse extends MentorshipSummaryResponse {
   description: string;
   timezone: string;
   schedules: ScheduleSlotResponse[];
