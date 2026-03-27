@@ -13,18 +13,24 @@ import NotFound from "../pages/NotFound";
 import HomePage from "../features/projects/pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import CreateProjectPage from "../features/projects/pages/CreateProjectPage";
+import EditProjectPage from "../features/projects/pages/EditProjectPage";
 import ProjectDetailPage from "../features/projects/pages/ProjectDetailPage";
 import ProfilePage from "../features/profile/pages/ProfilePage";
 import EditProfilePage from "../features/profile/pages/EditProfilePage";
+import PortfolioPage from "../features/profile/pages/PortfolioPage";
 import AdminDashboard from "../features/admin/pages/AdminDashboard";
 import CreateMentorshipPage from "../features/mentoring/pages/CreateMentorshipPage";
+import MentoringListPage from "../features/mentoring/pages/MentoringListPage";
+import MentoringDetailPage from "../features/mentoring/pages/MentoringDetailPage";
+import EditMentorshipPage from "../features/mentoring/pages/EditMentorshipPage";
 
 const AppRouter = () => {
   return (
     <Routes>
       {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
       <Route path="/" element={<RoleBasedRedirect />} />
-      {/* RUTAS PÚBLICAS (PROTEGIDAS PARA USUARIOS LOGUEADOS) */}
+
+      {/* RUTAS PÚBLICAS (para usuarios no logueados) */}
       <Route
         path="/login"
         element={
@@ -41,6 +47,10 @@ const AppRouter = () => {
           </PublicRoute>
         }
       />
+
+      {/* RUTA PÚBLICA — Portfolio de usuario (sin autenticación requerida) */}
+      <Route path="/portfolio/:slug" element={<PortfolioPage />} />
+
       {/* RUTAS DE DASHBOARDS PROTEGIDAS */}
       <Route
         path="/dashboard"
@@ -52,6 +62,7 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+
       {/* RUTA DE ADMINISTRADOR */}
       <Route
         path="/admin"
@@ -63,19 +74,8 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-      {/**
-       * RUTAS DE PERFIL
-       */}
-      <Route
-        path="/profile/:slug"
-        element={
-          <ProtectedRoute>
-            <AuthenticatedLayout>
-              <ProfilePage />
-            </AuthenticatedLayout>
-          </ProtectedRoute>
-        }
-      />
+
+      {/* RUTAS DE PERFIL */}
       <Route
         path="/profile"
         element={
@@ -87,7 +87,7 @@ const AppRouter = () => {
         }
       />
       <Route
-        path="/profile/edit"
+        path="/settings"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
@@ -96,7 +96,8 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-      /** * RUTA DE INICIO */
+
+      {/* RUTA DE INICIO */}
       <Route
         path="/home"
         element={
@@ -107,9 +108,10 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+
       {/* RUTAS DE PROYECTOS */}
       <Route
-        path="/create-project"
+        path="/projects/new"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
@@ -119,7 +121,17 @@ const AppRouter = () => {
         }
       />
       <Route
-        path="/project/:projectSlug"
+        path="/projects/:slug/edit"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <EditProjectPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/proyect/:slug"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
@@ -128,9 +140,20 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-      {/* RUTA DE MENTORSHIP */}
+
+      {/* RUTAS DE MENTORING */}
       <Route
-        path="/create-mentorship"
+        path="/mentoring"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <MentoringListPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentoring/new"
         element={
           <ProtectedRoute>
             <AuthenticatedLayout>
@@ -139,6 +162,27 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/mentoring/:slug/edit"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <EditMentorshipPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mentoring/:slug"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <MentoringDetailPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -16,7 +16,7 @@ interface ProjectDetailPageProps {
 }
 
 const ProjectDetailPage = ({ slug }: ProjectDetailPageProps) => {
-  const { projectSlug: paramSlug } = useParams<{ projectSlug: string }>();
+  const { slug: paramSlug } = useParams<{ slug: string }>();
   const projectSlug = slug || paramSlug;
 
   // Query para obtener los detalles del proyecto

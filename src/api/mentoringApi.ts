@@ -3,6 +3,8 @@ import type {
   CreateMentorshipRequest,
   MentorshipSummaryResponse,
   MentorshipDetailResponse,
+  MentoringPublicDetailResponse,
+  PagedMentoringResponse,
 } from "../types";
 
 /**
@@ -59,6 +61,39 @@ export const updateMentorshipById = async (
  */
 export const deleteMentorship = async (mentorshipId: number): Promise<void> => {
   await apiService.delete(`/mentorships/${mentorshipId}`);
+};
+
+/**
+ * Obtiene el listado paginado de mentorías publicadas.
+ */
+export const fetchPublishedMentorings = async ({
+  page = 0,
+  size = 10,
+  tag,
+}: {
+  page?: number;
+  size?: number;
+  tag?: string;
+}): Promise<PagedMentoringResponse> => {
+  const params: Record<string, string | number> = { page, size };
+  if (tag) params.tag = tag;
+  const { data } = await apiService.get<PagedMentoringResponse>(
+    "/mentorings",
+    { params }
+  );
+  return data;
+};
+
+/**
+ * Obtiene el detalle público de una mentoría por su slug.
+ */
+export const fetchMentoringBySlug = async (
+  slug: string
+): Promise<MentoringPublicDetailResponse> => {
+  const { data } = await apiService.get<MentoringPublicDetailResponse>(
+    `/mentorings/${slug}`
+  );
+  return data;
 };
 
 /**

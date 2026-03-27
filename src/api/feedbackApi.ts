@@ -1,5 +1,5 @@
 import apiService from "./apiService";
-import type { FeedbackResponse, FeedbackRequest } from "../types";
+import type { FeedbackResponse, FeedbackRequest, Category } from "../types";
 
 /**
  * Obtiene todos los feedbacks para un proyecto específico.
@@ -52,4 +52,12 @@ export const updateFeedback = async ({
  */
 export const deleteFeedback = async (feedbackId: number): Promise<void> => {
   await apiService.delete(`/feedback/${feedbackId}`);
+};
+
+/**
+ * Obtiene la lista de categorías de feedback.
+ */
+export const fetchCategories = async (): Promise<Category[]> => {
+  const { data } = await apiService.get<Category[]>("/categories");
+  return data;
 };

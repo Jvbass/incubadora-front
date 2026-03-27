@@ -66,12 +66,16 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             </span>
           </Link>
 
-          <div className="flex items-center w-full p-2 text-gray-400 cursor-not-allowed rounded-lg transition-colors">
+          <Link
+            to="/mentoring"
+            className="flex items-center w-full p-2 text-white hover:text-yellow-400 hover:bg-bg-hoverdark rounded-lg transition-colors cursor-pointer"
+            onClick={onClose}
+          >
             <Brain size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Mentorías
             </span>
-          </div>
+          </Link>
 
           <div className="flex items-center w-full p-2 text-gray-400 cursor-not-allowed rounded-lg transition-colors">
             <Egg size={20} className="flex-shrink-0" />

@@ -34,3 +34,16 @@ export const fetchPublicProfileBySlug = async (
   const { data } = await apiService.get<ProfileResponse>(`/profiles/${slug}`);
   return data;
 };
+
+/**
+ * Obtiene el portfolio público de un usuario (sin autenticación requerida).
+ */
+export const fetchPublicPortfolio = async (
+  slug: string
+): Promise<ProfileResponse> => {
+  if (!slug) {
+    throw new Error("El slug del portfolio es requerido.");
+  }
+  const { data } = await apiService.get<ProfileResponse>(`/portfolio/${slug}`);
+  return data;
+};

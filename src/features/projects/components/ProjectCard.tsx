@@ -27,7 +27,7 @@ export const ProjectCard = React.memo(
     if (variant === "full") {
       return (
         <Link
-          to={`/project/${project.slug}`}
+          to={`/proyect/${project.slug}`}
           className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-border dark:hover:border-gray-500
         dark:hover:bg-bg-hoverdark"
         >

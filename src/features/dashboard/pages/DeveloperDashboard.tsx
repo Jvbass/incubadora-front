@@ -129,7 +129,7 @@ const DeveloperDashboard = () => {
             </div>
             {/* --- Botones ver y editar perfil--- */}
             <div className="flex space-x-4">
-              <Link to="/profile/edit">
+              <Link to="/settings">
                 <Cog
                   size={23}
                   className=" hover:text-yellow-400 transition-all duration-200 text-sm"
@@ -192,7 +192,7 @@ const DeveloperDashboard = () => {
           <div className="flex justify-between items-center border-b pb-2 mb-4 border-border">
             <h2 className="text-2xl font-semibold">Mis Proyectos</h2>
             <Link
-              to="/create-project"
+              to="/projects/new"
               className="text-sm font-semibold  shadow-sm flex items-center transition duration-200  hover:text-white border border-black hover:bg-yellow-500   rounded-lg  py-1 px-1.5 text-center  dark:border-white dark:hover:border-yellow-500  dark:hover:text-white dark:hover:bg-yellow-400"
             >
               <Lightbulb strokeWidth={2} size={23} /> <span>Crear</span>

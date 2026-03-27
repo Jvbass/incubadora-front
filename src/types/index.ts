@@ -172,6 +172,12 @@ export interface FeedbackResponse {
 export interface FeedbackRequest {
   feedbackDescription: string;
   rating: number;
+  categoryIds?: number[];
+}
+
+export interface Category {
+  id: number;
+  name: string;
 }
 
 /*===================================================
@@ -299,6 +305,40 @@ export interface MentorshipDetailResponse extends MentorshipSummaryResponse {
   description: string;
   timezone: string;
   schedules: ScheduleSlotResponse[];
+}
+
+/*===================================================
+ * Mentoring Public (published list/detail)
+ *===================================================*/
+export interface MentoringListItemResponse {
+  id: number;
+  slug: string;
+  title: string;
+  specialty: string;
+  durationMinutes: number;
+  platform: string;
+  price?: number;
+  isFree: boolean;
+  mentorUsername: string;
+  mentorSlug?: string;
+  tags?: string[];
+  sessionType?: "SINGLE" | "PACKAGE";
+  createdAt: string;
+}
+
+export interface MentoringPublicDetailResponse extends MentoringListItemResponse {
+  description: string;
+  timezone: string;
+  schedules: ScheduleSlotResponse[];
+}
+
+export interface PagedMentoringResponse {
+  content: MentoringListItemResponse[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 }
 
 export interface ScheduleSlotResponse {
