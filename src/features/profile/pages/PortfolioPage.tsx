@@ -88,6 +88,15 @@ const PortfolioPage = () => {
 
   if (!profile) return null;
 
+  const techStack = profile.techStack ?? [];
+  const languages = profile.languages ?? [];
+  const socialLinks = profile.socialLinks ?? [];
+  const workExperiences = profile.workExperiences ?? [];
+  const projects = profile.projects ?? [];
+  const kudosReceived = profile.kudosReceived ?? [];
+  const feedbackGiven = profile.feedbackGiven ?? [];
+  const certificates = profile.certificates ?? [];
+
   return (
     <div className="max-w-5xl mx-auto p-3 sm:p-6 lg:p-8">
       <header className="p-8 mb-8 min-h-64">
@@ -105,7 +114,7 @@ const PortfolioPage = () => {
 
             {/* Stack tecnológico */}
             <div className="flex flex-wrap justify-center md:justify-start gap-2">
-              {profile.techStack.map((tech) => (
+              {techStack.map((tech) => (
                 <div
                   key={tech.id}
                   style={{
@@ -121,7 +130,7 @@ const PortfolioPage = () => {
 
             {/* Idiomas */}
             <div className="flex justify-center md:justify-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-              {profile.languages.map((lang) => (
+              {languages.map((lang) => (
                 <span
                   key={lang.id}
                   className="px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-800"
@@ -140,7 +149,7 @@ const PortfolioPage = () => {
               >
                 <Mail size={20} />
               </span>
-              {profile.socialLinks.map((link) => (
+              {socialLinks.map((link) => (
                 <a
                   key={link.id}
                   href={link.url}
@@ -174,14 +183,14 @@ const PortfolioPage = () => {
 
       <main className="max-w-4xl mx-auto p-3 sm:p-6 lg:p-8 md:col-span-2 space-y-8">
         {/* Experiencia laboral */}
-        {profile.workExperiences.length > 0 && (
+        {workExperiences.length > 0 && (
           <section className="container">
             <div className="flex flex-col justify-baseline items-left mb-4 text-text-main dark:text-text-light">
               <h3 className="text-3xl font-semibold flex items-center gap-1 me-2">
                 <BriefcaseBusiness size={20} /> Experiencia laboral
               </h3>
               <div className="relative border-l border-gray-700 ml-4 mt-4">
-                {profile.workExperiences.map((exp) => (
+                {workExperiences.map((exp) => (
                   <div key={exp.id} className="mb-10 ml-6">
                     <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-cta-600"></span>
                     <h4 className="text-lg font-bold dark:text-cta-300 text-cta-600">
@@ -204,18 +213,18 @@ const PortfolioPage = () => {
         )}
 
         {/* Proyectos */}
-        {profile.projects.length > 0 && (
+        {projects.length > 0 && (
           <section className="container">
             <div className="flex text-3xl justify-baseline items-center mb-4 text-text-main dark:text-text-light">
               <h3 className="ml-2 font-semibold flex items-center gap-1 me-2">
                 <Rocket size={20} /> Proyectos{" "}
                 <span className="text-sm text-gray-500 ml-1">
-                  {profile.projects.length}
+                  {projects.length}
                 </span>
               </h3>
             </div>
             <div className="mt-4 space-y-4">
-              {profile.projects.map((project: ProjectSummary) => (
+              {projects.map((project: ProjectSummary) => (
                 <ProjectCard key={project.id} project={project} variant="full" />
               ))}
             </div>
@@ -223,7 +232,7 @@ const PortfolioPage = () => {
         )}
 
         {/* Kudos */}
-        {profile.kudosReceived.length > 0 && (
+        {kudosReceived.length > 0 && (
           <section className="container">
             <div className="flex justify-baseline items-center mb-4 text-text-main dark:text-text-light">
               <Heart size={20} />
@@ -231,7 +240,7 @@ const PortfolioPage = () => {
                 Kudos Recibidos
               </h3>
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {profile.kudosReceived.length}
+                {kudosReceived.length}
               </span>
               {/* Botón "Dar Kudo" solo para usuarios autenticados */}
               {isAuthenticated && (
@@ -247,7 +256,7 @@ const PortfolioPage = () => {
               )}
             </div>
 
-            {profile.kudosReceived.map((kudo) => (
+            {kudosReceived.map((kudo) => (
               <div
                 key={kudo.id}
                 className="flex justify-between mt-4 p-4 rounded-md dark:text-gray-300 border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md"
@@ -283,12 +292,12 @@ const PortfolioPage = () => {
               Feedback realizados
             </h3>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {profile.feedbackGiven.length === 0
+              {feedbackGiven.length === 0
                 ? "Este usuario no ha realizado feedback aún."
-                : profile.feedbackGiven.length}
+                : feedbackGiven.length}
             </span>
           </div>
-          {profile.feedbackGiven.map((feedback) => (
+          {feedbackGiven.map((feedback) => (
             <div
               key={feedback.id}
               className="mt-4 p-4 bg-gray-50 dark:bg-bg-dark rounded-md"
@@ -305,14 +314,14 @@ const PortfolioPage = () => {
         </section>
 
         {/* Certificados */}
-        {profile.certificates.length > 0 && (
+        {certificates.length > 0 && (
           <section className="container">
             <div className="flex text-3xl justify-baseline items-center mb-4 text-text-main dark:text-text-light">
               <GraduationCap size={20} />
               <h3 className="ml-2 font-semibold flex gap-1 me-2">Certificados</h3>
             </div>
             <div className="flex justify-center flex-wrap gap-4">
-              {profile.certificates.map((certificate) => (
+              {certificates.map((certificate) => (
                 <a
                   key={certificate.id}
                   href={certificate.certificateUrl}

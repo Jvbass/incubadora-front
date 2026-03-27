@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import React from "react";
 import { fetchProjects } from "../../../api/projectApi";
 import type { SortByType } from "../../../types";
 import Loading from "../../../components/ux/Loading";
@@ -41,25 +40,29 @@ export const ProjectList = ({ title, sortBy }: ProjectListProps) => {
     );
   }
 
+  const allProjects = data.pages.flatMap((page) => page.content ?? []);
+
   return (
     <section>
       <h2 className="text-xl text-zinc-900 dark:text-zinc-50 mb-6 font-semibold">
         {title}
       </h2>
+      {allProjects.length === 0 ? (
+        <p className="text-text-soft dark:text-text-light text-sm">
+          No hay proyectos disponibles aún.
+        </p>
+      ) : (
       <ul className="space-y-4">
-        {data.pages.map((page, i) => (
-          <React.Fragment key={i}>
-            {page.content.map((project) => (
+        {allProjects.map((project) => (
               <li
                 key={project.id}
                 className="block hover:opacity-90 transition-opacity"
               >
                 <ProjectCard project={project} variant="full" />
               </li>
-            ))}
-          </React.Fragment>
         ))}
       </ul>
+      )}
       <div className="flex items-center justify-center mt-6">
         {hasNextPage && (
           <button

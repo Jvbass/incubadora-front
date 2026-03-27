@@ -76,14 +76,14 @@ const MentoringListPage = () => {
       </div>
 
       {/* Lista de mentorías */}
-      {data?.content.length === 0 ? (
+      {(data?.content?.length ?? 0) === 0 ? (
         <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           No se encontraron mentorías
           {activeTag ? ` para el tag "${activeTag}"` : ""}.
         </div>
       ) : (
         <div className="space-y-4">
-          {data?.content.map((mentoring) => (
+          {(data?.content ?? []).map((mentoring) => (
             <Link
               key={mentoring.id}
               to={`/mentoring/${mentoring.slug}`}

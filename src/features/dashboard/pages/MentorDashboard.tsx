@@ -291,7 +291,7 @@ const MentorDashboard = () => {
           <div>
             <h3>Feedbacks enviados</h3>
             <ul>
-              {data.feedbackGiven.map((feedback) => (
+              {(data.feedbackGiven ?? []).map((feedback) => (
                 <li key={feedback.id}>
                   {feedback.relatedProjectTitle}
                   <span className="text-gray-500">
@@ -310,7 +310,7 @@ const MentorDashboard = () => {
           Reconocimientos/Kudos
         </h2>
         <ul>
-          {data.kudosReceived.map((kudo) => (
+          {(data.kudosReceived ?? []).map((kudo) => (
             <li key={kudo.id}>
               <span className="text-gray-500">{kudo.message}</span> -
               {kudo.senderUsername}
