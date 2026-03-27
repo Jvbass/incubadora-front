@@ -1,5 +1,11 @@
-import { Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import type { KudoPost, ProjectSummary } from "../../../types";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -64,11 +70,10 @@ export default function GiveKudoModal({
 
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={isOpen}>
         <Dialog as="div" className="relative z-50" onClose={onClose}>
           {/* Fondo oscuro */}
-          <Transition.Child
-            as={Fragment}
+          <TransitionChild
             enter="ease-out duration-200"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -77,12 +82,11 @@ export default function GiveKudoModal({
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-black/40" />
-          </Transition.Child>
+          </TransitionChild>
 
           {/* Contenedor modal */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Transition.Child
-              as={Fragment}
+            <TransitionChild
               enter="ease-out duration-200"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
@@ -90,10 +94,10 @@ export default function GiveKudoModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white dark:bg-bg-dark p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title className="text-lg font-semibold mb-4 dark:text-text-light">
+              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white dark:bg-bg-dark p-6 text-left align-middle shadow-xl transition-all">
+                <DialogTitle className="text-lg font-semibold mb-4 dark:text-text-light">
                   Enviar un Kudo a {profile.firstName}
-                </Dialog.Title>
+                </DialogTitle>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   {/* Textarea */}
                   <textarea
@@ -145,20 +149,19 @@ export default function GiveKudoModal({
                     </button>
                   </div>
                 </form>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </Dialog>
       </Transition>
       {/* Modal de éxito */}
-      <Transition appear show={isSuccessOpen} as={Fragment}>
+      <Transition appear show={isSuccessOpen}>
         <Dialog
           as="div"
           className="relative z-50"
           onClose={() => setIsSuccessOpen(false)}
         >
-          <Transition.Child
-            as={Fragment}
+          <TransitionChild
             enter="ease-out duration-200"
             enterFrom="opacity-0"
             enterTo="opacity-100"
@@ -167,11 +170,10 @@ export default function GiveKudoModal({
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-black/40" />
-          </Transition.Child>
+          </TransitionChild>
 
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Transition.Child
-              as={Fragment}
+            <TransitionChild
               enter="ease-out duration-200"
               enterFrom="opacity-0 scale-95"
               enterTo="opacity-100 scale-100"
@@ -179,10 +181,10 @@ export default function GiveKudoModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-sm rounded-xl bg-white dark:bg-bg-dark p-6 text-center shadow-xl transition-all">
-                <Dialog.Title className="text-lg font-semibold mb-2 dark:text-text-light">
+              <DialogPanel className="w-full max-w-sm rounded-xl bg-white dark:bg-bg-dark p-6 text-center shadow-xl transition-all">
+                <DialogTitle className="text-lg font-semibold mb-2 dark:text-text-light">
                   🎉 Kudo enviado con éxito
-                </Dialog.Title>
+                </DialogTitle>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   El kudo ha sido enviado y está a la espera que{" "}
                   <span className="font-medium">{profile.firstName}</span> lo
@@ -194,8 +196,8 @@ export default function GiveKudoModal({
                 >
                   Cerrar
                 </button>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </Dialog>
       </Transition>

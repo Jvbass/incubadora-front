@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchNotifications } from "../../api/notificationApi";
 import { Bell } from "lucide-react";
 import NotificationDropdown from "../../features/notifications/components/NotificationDropdown";
+import { queryKeys } from "../../api/queryKeys";
+import { NOTIFICATION_POLL_INTERVAL } from "../../config/constants";
 
 interface NotificationBellProps {
   iconSize?: number;
@@ -16,12 +18,12 @@ const NotificationBell = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Realizamos polling cada minuto para obtener nuevas notificaciones
+  // Realizamos polling periódico para obtener nuevas notificaciones
   const { data: notifications } = useQuery({
-    queryKey: ["notifications"],
+    queryKey: queryKeys.notifications(),
     queryFn: fetchNotifications,
     staleTime: 1000 * 60 * 5, // 5 minutos
-    refetchInterval: 1000 * 60 * 10, // 1 minuto
+    refetchInterval: NOTIFICATION_POLL_INTERVAL,
     refetchOnWindowFocus: true,
   });
 

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(cd:*)",
       "Bash(pnpm install:*)",
-      "Bash(pnpm run:*)"
+      "Bash(pnpm run:*)",
+      "Bash(grep -r \"components/ui/card/CommentCard\\\\|components/ui/project-detail\\\\|components/ui/modal/Modal\" src --include=*.ts --include=*.tsx -l)",
+      "Bash(grep -rn queryKey D:Incubadoradevfront-incubadorafront-react-incubadorasrc --include=*.ts --include=*.tsx)"
     ]
   }
 }
