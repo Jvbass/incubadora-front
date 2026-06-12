@@ -40,22 +40,19 @@ test.describe('Proyectos', () => {
     await page.waitForURL('/projects/new', { timeout: 15000 });
 
     const projectTitle = `${PREFIX} Test Project ${Date.now()}`;
+    const nextBtn = page.getByRole('button', { name: 'Siguiente' });
 
-    // Título (tiene id="title")
+    // ---- Wizard paso 1: básicos (rediseño v2, SDD §12.3 R5) ----
     await page.fill('#title', projectTitle);
-
-    // Subtítulo (tiene id="subtitle")
     await page.fill('#subtitle', 'E2E subtitle test');
+    await nextBtn.click();
 
-    // Estado del proyecto - seleccionar "published" (tiene id="status")
-    await page.selectOption('#status', 'published');
-
-    // Descripción (MDEditor - tiene name="description" y class .w-md-editor-text-input)
+    // ---- Wizard paso 2: descripción (MDEditor) ----
     const mdEditor = page.locator('.w-md-editor-text-input, textarea[name="description"]');
-    if (await mdEditor.count() > 0) {
-      await mdEditor.first().fill('## Descripción\n\nProyecto de prueba E2E.');
-    }
+    await mdEditor.first().fill('## Descripción\n\nProyecto de prueba E2E.');
+    await nextBtn.click();
 
+    // ---- Wizard paso 3: tecnologías y opciones ----
     // Tecnologías — usa react-select, necesitamos pressSequentially para activar el filtrado
     const techInput = page.getByRole('combobox').first();
     await techInput.click();
@@ -72,8 +69,11 @@ test.describe('Proyectos', () => {
       const option = page.locator('[class*="option"]').first();
       if (await option.count() > 0) await option.click();
     }
+    // Estado del proyecto - seleccionar "published" (tiene id="status")
+    await page.selectOption('#status', 'published');
+    await nextBtn.click();
 
-    // Enviar formulario — el botón dice "Publicar Proyecto" o similar
+    // ---- Wizard paso 4: revisión y envío ----
     await page.getByRole('button', { name: /publicar proyecto|crear proyecto|guardar/i }).click();
 
     // Después de crear, redirige al dashboard

@@ -6,6 +6,15 @@ import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 
 import { verifyEmail, resendVerificationCode } from "../../../api/authApi";
+import AuthLayout from "../components/AuthLayout";
+import {
+  authError,
+  authInput,
+  authLabel,
+  authLink,
+  authMuted,
+  authSubmit,
+} from "../components/authStyles";
 
 interface VerifyEmailForm {
   email: string;
@@ -17,7 +26,8 @@ const RESEND_COOLDOWN_SECONDS = 60;
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const emailFromRegister = (location.state as { email?: string } | null)?.email ?? "";
+  const emailFromRegister =
+    (location.state as { email?: string } | null)?.email ?? "";
 
   const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -37,7 +47,9 @@ const VerifyEmailPage = () => {
       navigate("/login");
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(error.response?.data?.message || "No se pudo verificar el código.");
+      toast.error(
+        error.response?.data?.message || "No se pudo verificar el código."
+      );
     },
   });
 
@@ -57,7 +69,9 @@ const VerifyEmailPage = () => {
       }, 1000);
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      toast.error(error.response?.data?.message || "No se pudo reenviar el código.");
+      toast.error(
+        error.response?.data?.message || "No se pudo reenviar el código."
+      );
     },
   });
 
@@ -75,88 +89,79 @@ const VerifyEmailPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-900">
-          Verifica tu Email
-        </h2>
-        <p className="text-sm text-center text-gray-600">
-          Te enviamos un código de 6 dígitos. Ingrésalo para activar tu cuenta.
-        </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Correo Electrónico
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email", {
-                required: "El correo electrónico es requerido",
-              })}
-              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="code" className="text-sm font-medium text-gray-700">
-              Código de Verificación
-            </label>
-            <input
-              id="code"
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="123456"
-              {...register("code", {
-                required: "El código es requerido",
-                pattern: {
-                  value: /^\d{6}$/,
-                  message: "El código debe ser de 6 dígitos",
-                },
-              })}
-              className="w-full px-3 py-2 mt-1 text-center text-lg tracking-[0.5em] border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            {errors.code && (
-              <p className="mt-1 text-xs text-red-600">{errors.code.message}</p>
-            )}
-          </div>
-          <button
-            type="submit"
-            disabled={verifyMutation.isPending}
-            className="w-full py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300"
-          >
-            {verifyMutation.isPending ? "Verificando..." : "Verificar"}
-          </button>
-        </form>
-        <div className="text-sm text-center text-gray-600">
-          ¿No recibiste el código?{" "}
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={resendMutation.isPending || resendCooldown > 0}
-            className="font-medium text-indigo-600 hover:text-indigo-500 disabled:text-gray-400"
-          >
-            {resendCooldown > 0
-              ? `Reenviar en ${resendCooldown}s`
-              : resendMutation.isPending
-                ? "Reenviando..."
-                : "Reenviar código"}
-          </button>
+    <AuthLayout
+      title="Verifica tu Email"
+      subtitle="Te enviamos un código de 6 dígitos. Ingrésalo para activar tu cuenta."
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div>
+          <label htmlFor="email" className={authLabel}>
+            Correo Electrónico
+          </label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            {...register("email", {
+              required: "El correo electrónico es requerido",
+            })}
+            className={authInput}
+          />
+          {errors.email && <p className={authError}>{errors.email.message}</p>}
         </div>
-        <p className="text-sm text-center text-gray-600">
-          ¿Ya verificaste tu cuenta?{" "}
-          <Link
-            to="/login"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Inicia sesión aquí
-          </Link>
-        </p>
+        <div>
+          <label htmlFor="code" className={authLabel}>
+            Código de Verificación
+          </label>
+          <input
+            id="code"
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            placeholder="123456"
+            {...register("code", {
+              required: "El código es requerido",
+              pattern: {
+                value: /^\d{6}$/,
+                message: "El código debe ser de 6 dígitos",
+              },
+            })}
+            className={`${authInput} text-center text-lg tracking-[0.5em]`}
+          />
+          {errors.code && <p className={authError}>{errors.code.message}</p>}
+        </div>
+        <button
+          type="submit"
+          disabled={verifyMutation.isPending}
+          className={authSubmit}
+        >
+          {verifyMutation.isPending ? "Verificando..." : "Verificar"}
+        </button>
+      </form>
+
+      <div className={`${authMuted} text-center`}>
+        ¿No recibiste el código?{" "}
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resendMutation.isPending || resendCooldown > 0}
+          className={`${authLink} disabled:text-text-soft disabled:no-underline disabled:cursor-not-allowed`}
+        >
+          {resendCooldown > 0
+            ? `Reenviar en ${resendCooldown}s`
+            : resendMutation.isPending
+              ? "Reenviando..."
+              : "Reenviar código"}
+        </button>
       </div>
-    </div>
+
+      <p className={`${authMuted} text-center`}>
+        ¿Ya verificaste tu cuenta?{" "}
+        <Link to="/login" className={authLink}>
+          Inicia sesión aquí
+        </Link>
+      </p>
+    </AuthLayout>
   );
 };
 

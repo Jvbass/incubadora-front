@@ -1,25 +1,32 @@
-import React, { useState } from "react";
+import { Suspense, useState } from "react";
+import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { Sidebar } from "./Sidebar";
-import { MobileMenuButton } from "./MenuButton";
+import { PageSkeleton } from "../ux/Skeleton";
 
-// Este componente sirve como plantilla para todas las páginas que requieren autenticación.
-const AuthenticatedLayout = ({ children }: { children: React.ReactNode }) => {
+// Layout-route para las páginas autenticadas (rediseño v2, SDD §12.3 R2):
+// renderiza <Outlet/> con su propio Suspense, de modo que la barra superior y
+// la sidebar permanecen montadas al navegar entre pantallas (solo cambia el
+// contenido, sin flicker de página completa).
+const AuthenticatedLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div>
-      <Navbar />
-      <MobileMenuButton
-        isOpen={isMobileMenuOpen}
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    <div className="min-h-screen bg-bg-light dark:bg-bg-darker">
+      <Navbar
+        onToggleMenu={() => setIsMobileMenuOpen((open) => !open)}
+        isMobileMenuOpen={isMobileMenuOpen}
       />
       <Sidebar
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
       />
-      <main className="pt-18 px-8 md:pl-20">
-        <div>{children}</div>
+      <main className="pt-14 md:pl-16">
+        <div className="px-4 sm:px-6 lg:px-8 py-6">
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
+        </div>
       </main>
     </div>
   );

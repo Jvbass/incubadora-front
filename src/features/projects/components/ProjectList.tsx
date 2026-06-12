@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchProjects } from "../../../api/projectApi";
 import type { SortByType } from "../../../types";
-import Loading from "../../../components/ux/Loading";
+import { ListSkeleton } from "../../../components/ux/Skeleton";
 import { ProjectCard } from "./ProjectCard";
 
 interface ProjectListProps {
@@ -29,7 +29,7 @@ export const ProjectList = ({ title, sortBy }: ProjectListProps) => {
   });
 
   if (status === "pending") {
-    return <Loading message={`Cargando ${title.toLowerCase()}...`} />;
+    return <ListSkeleton rows={3} />;
   }
 
   if (status === "error") {

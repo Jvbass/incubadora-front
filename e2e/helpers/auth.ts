@@ -85,8 +85,8 @@ export async function injectAuth(page: Page, token: string) {
  * Cierra sesión via UI y espera la redirección a /login.
  */
 export async function logoutUser(page: Page) {
-  // Abrir el dropdown del usuario en el Navbar
-  await page.locator('nav').getByText(/\w+/).first().click();
+  // Abrir el dropdown del usuario en el Navbar (el avatar es el único img[alt] del nav)
+  await page.locator('nav img[alt]').click();
   await page.getByText('Cerrar Sesión').click();
   await expect(page).toHaveURL('/login');
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { fetchPublishedMentorings } from "../../../api/mentoringApi";
-import Loading from "../../../components/ux/Loading";
+import { ListSkeleton } from "../../../components/ux/Skeleton";
 import { Clock, DollarSign, Search, Tag } from "lucide-react";
 
 const MentoringListPage = () => {
@@ -28,7 +28,13 @@ const MentoringListPage = () => {
     setPage(0);
   };
 
-  if (isLoading) return <Loading message="Cargando mentorías..." />;
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+        <ListSkeleton rows={4} />
+      </div>
+    );
+  }
 
   if (isError) {
     return (
@@ -54,12 +60,12 @@ const MentoringListPage = () => {
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               placeholder="Filtrar por tag..."
-              className="pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-bg-dark text-gray-700 dark:text-text-light focus:outline-none focus:border-indigo-500"
+              className="pl-8 pr-3 py-2 text-sm border border-gray-300 dark:border-border rounded-lg bg-white dark:bg-bg-dark text-gray-700 dark:text-text-light focus:outline-none focus:border-cta-600 dark:focus:border-cta-300"
             />
           </div>
           <button
             type="submit"
-            className="px-3 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700"
+            className="px-3 py-2 bg-cta-600 text-white text-sm rounded-lg hover:bg-cta-900 cursor-pointer"
           >
             <Search size={16} />
           </button>
@@ -87,7 +93,7 @@ const MentoringListPage = () => {
             <Link
               key={mentoring.id}
               to={`/mentoring/${mentoring.slug}`}
-              className="block p-5 rounded-lg border border-divider dark:border-border bg-bg-light dark:bg-bg-dark hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-200"
+              className="block p-5 rounded-lg border border-divider dark:border-border bg-bg-light dark:bg-bg-dark hover:shadow-md hover:border-cta-300 dark:hover:border-cta-600/70 transition-all duration-200"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex-grow min-w-0">
