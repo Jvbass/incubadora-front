@@ -12,8 +12,8 @@ import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 
 import { Trash2, Plus } from "lucide-react";
-import { useEffect } from "react";
-import { createMentorship, updateMentorshipById } from "../../../api/mentoringApi";
+import { useEffect, useState } from "react";
+import { createMentorship, updateMentorshipBySlug } from "../../../api/mentoringApi";
 import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
 import {
   type MentorshipDetailResponse,
@@ -23,13 +23,13 @@ import {
 } from "../../../types";
 
 interface MentorshipFormProps {
-  mentorshipId?: number;
+  mentorshipSlug?: string;
   initialData?: MentorshipDetailResponse;
   onClose?: () => void;
 }
 
 const MentorshipForm = ({
-  mentorshipId,
+  mentorshipSlug,
   initialData,
   onClose,
 }: MentorshipFormProps) => {
@@ -69,9 +69,13 @@ const MentorshipForm = ({
 
   const isFree = watch("isFree");
 
+  // Tags como texto separado por comas (se convierte a array al enviar)
+  const [tagsInput, setTagsInput] = useState("");
+
   // Llenar el formulario con datos iniciales si es edición
   useEffect(() => {
     if (initialData) {
+      setTagsInput((initialData.tags ?? []).join(", "));
       reset({
         title: initialData.title,
         description: initialData.description,
@@ -81,7 +85,7 @@ const MentorshipForm = ({
         timezone: initialData.timezone,
         price: initialData.price || 0,
         isFree: initialData.isFree,
-        schedules: initialData.schedules.map((s) => ({
+        schedules: (initialData.schedules ?? []).map((s) => ({
           dayOfWeek: s.dayOfWeek,
           startTime: s.startTime,
           endTime: s.endTime,
@@ -104,11 +108,16 @@ const MentorshipForm = ({
 
   const updateMutation = useMutation({
     mutationFn: (data: CreateMentorshipRequest) =>
-      updateMentorshipById(mentorshipId!, data),
+      updateMentorshipBySlug(mentorshipSlug!, data),
     onSuccess: () => {
       toast.success("¡Mentoría actualizada exitosamente!");
       queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
-      queryClient.invalidateQueries({ queryKey: ["mentorship", mentorshipId] });
+      queryClient.invalidateQueries({
+        queryKey: ["mentorship", mentorshipSlug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["mentorings", "detail", mentorshipSlug],
+      });
       if (onClose) onClose();
     },
     onError: (error: any) => {
@@ -117,12 +126,22 @@ const MentorshipForm = ({
   });
 
   const onSubmit: SubmitHandler<CreateMentorshipRequest> = (data) => {
-    // Si es gratuita, asegurarse de que el precio sea 0
+    // Si es gratuita se omite el precio: el backend rechaza price <= 0
     if (data.isFree) {
-      data.price = 0;
+      data.price = undefined;
     }
 
-    if (mentorshipId) {
+    // Convertir el texto de tags a array (máx. 10, sin vacíos ni duplicados)
+    data.tags = Array.from(
+      new Set(
+        tagsInput
+          .split(",")
+          .map((t) => t.trim().toLowerCase())
+          .filter(Boolean)
+      )
+    ).slice(0, 10);
+
+    if (mentorshipSlug) {
       updateMutation.mutate(data);
     } else {
       createMutation.mutate(data);
@@ -136,7 +155,7 @@ const MentorshipForm = ({
         className="p-6 bg-white dark:bg-bg-dark rounded-lg shadow-md space-y-8 border border-gray-300 dark:border-gray-600"
       >
         <h1 className="text-2xl font-bold text-gray-800 dark:text-text-light">
-          {mentorshipId ? "Editar Mentoría" : "Crear Nueva Mentoría"}
+          {mentorshipSlug ? "Editar Mentoría" : "Crear Nueva Mentoría"}
         </h1>
 
         {/* Información General */}
@@ -200,6 +219,27 @@ const MentorshipForm = ({
                 {errors.specialty.message}
               </p>
             )}
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label
+              htmlFor="tags"
+              className="block text-sm font-medium text-gray-700 dark:text-text-light"
+            >
+              Tags
+            </label>
+            <input
+              id="tags"
+              type="text"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:text-text-light text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300"
+              placeholder="Ej: react, typescript, arquitectura (separados por comas, máx. 10)"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Los tags ayudan a que encuentren tu mentoría en el listado.
+            </p>
           </div>
 
           {/* Descripción */}
@@ -486,7 +526,7 @@ const MentorshipForm = ({
           >
             {isSubmitting
               ? "Guardando..."
-              : mentorshipId
+              : mentorshipSlug
               ? "Guardar Cambios"
               : "Crear Mentoría"}
           </button>

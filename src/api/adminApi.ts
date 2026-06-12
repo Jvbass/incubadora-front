@@ -1,46 +1,42 @@
 import apiService from "./apiService";
-import type { MentorRequest, RejectRequest } from "../types";
+import type { MentorRequest } from "../types";
 
 /**
  * [DEV] Solicita el ascenso de rol a mentor.
  */
 export const requestMentorUpgrade = async (): Promise<void> => {
-  await apiService.patch("/me/profile/request-mentor-upgrade");
+  await apiService.post("/mentor-requests");
 };
 
 /**
- * [ADMIN] Obtiene la lista de solicitudes pendientes.
+ * [ADMIN] Obtiene la lista de solicitudes por estado (PENDING por defecto).
  */
-export const fetchMentorRequests = async (): Promise<MentorRequest[]> => {
+export const fetchMentorRequests = async (
+  status: "PENDING" | "APPROVED" | "REJECTED" = "PENDING"
+): Promise<MentorRequest[]> => {
   const { data } = await apiService.get<MentorRequest[]>(
-    "/dashboard/admin/mentor-requests"
+    "/admin/mentor-requests",
+    { params: { status } }
   );
   return data;
 };
 
 /**
- * [ADMIN] Aprueba una solicitud de ascenso a mentor.
+ * [ADMIN] Aprueba o rechaza una solicitud de ascenso a mentor.
+ * Si la decisión es "reject", el motivo (reason) es obligatorio.
  */
-export const approveMentorUpgrade = async (
-  userId: number
-): Promise<{ token: string }> => {
-  const { data } = await apiService.patch<{ token: string }>(
-    `/admin/mentor-requests/${userId}/approve`
-  );
-  return data;
-};
-
-/**
- * [ADMIN] Rechaza una solicitud de ascenso a mentor.
- */
-export const rejectMentorUpgrade = async ({
-  notificationId,
+export const decideMentorRequest = async ({
+  requestId,
+  decision,
   reason,
 }: {
-  notificationId: number;
-  reason: string;
-}): Promise<void> => {
-  await apiService.patch(`/admin/mentor-requests/${notificationId}/reject`, {
-    reason,
-  } as RejectRequest);
+  requestId: number;
+  decision: "approve" | "reject";
+  reason?: string;
+}): Promise<MentorRequest> => {
+  const { data } = await apiService.patch<MentorRequest>(
+    `/admin/mentor-requests/${requestId}`,
+    { decision, reason }
+  );
+  return data;
 };

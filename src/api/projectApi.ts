@@ -13,6 +13,21 @@ interface FetchProjectsParams {
   sortBy: SortByType;
 }
 
+/** Envoltorio paginado estándar del backend ({success, message, data, meta}). */
+interface BackendPagedResponse<T> {
+  success: boolean;
+  message: string;
+  data: T[];
+  meta: {
+    currentPage: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  };
+}
+
 /**
  * Obtiene una lista paginada de proyectos.
  */
@@ -20,7 +35,7 @@ export const fetchProjects = async ({
   pageParam = 0,
   sortBy,
 }: FetchProjectsParams): Promise<PagedResponse<ProjectSummary>> => {
-  const { data } = await apiService.get<PagedResponse<ProjectSummary>>(
+  const { data } = await apiService.get<BackendPagedResponse<ProjectSummary>>(
     "/projects",
     {
       params: {
@@ -30,7 +45,14 @@ export const fetchProjects = async ({
       },
     }
   );
-  return data;
+  return {
+    content: data.data,
+    pageNumber: data.meta.currentPage,
+    pageSize: data.meta.pageSize,
+    totalElements: data.meta.totalElements,
+    totalPages: data.meta.totalPages,
+    last: !data.meta.hasNext,
+  };
 };
 
 /**
@@ -88,4 +110,28 @@ export const updateProjectById = async (
     projectData
   );
   return data;
+};
+
+/**
+ * Un mentor se ofrece a mentorear el proyecto (notifica al dueño).
+ */
+export const offerMentoring = async (
+  projectSlug: string,
+  message: string
+): Promise<void> => {
+  await apiService.post(`/projects/${projectSlug}/mentoring-offers`, {
+    message,
+  });
+};
+
+/**
+ * Solicita colaborar en un proyecto colaborativo (notifica al dueño).
+ */
+export const requestCollaboration = async (
+  projectSlug: string,
+  message: string
+): Promise<void> => {
+  await apiService.post(`/projects/${projectSlug}/collaboration-requests`, {
+    message,
+  });
 };

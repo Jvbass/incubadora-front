@@ -90,20 +90,19 @@ test.describe('Navegación', () => {
   test('should show 404 page for unknown routes', async ({ page }) => {
     await page.goto('/ruta-que-no-existe-e2e-xyz');
 
-    // El router tiene <Route path="*"> → <NotFound />
-    await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
-
-    // La página NotFound debe mostrar algún mensaje de error 404
-    const has404 = await page.getByText(/404|no encontrada|not found|página no existe/i).count() > 0;
-    expect(has404).toBeTruthy();
+    // El router tiene <Route path="*"> → <NotFound /> (lazy: esperar con auto-retry
+    // a que el chunk cargue, no usar count() inmediato)
+    await expect(
+      page.getByText(/404|no encontrada|not found|página no existe/i).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('should show NotFound for authenticated user on unknown route', async ({ page }) => {
     await injectAuth(page, authToken);
     await page.goto('/esta-ruta-no-existe');
-    await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
 
-    const has404 = await page.getByText(/404|no encontrada|not found|página no existe/i).count() > 0;
-    expect(has404).toBeTruthy();
+    await expect(
+      page.getByText(/404|no encontrada|not found|página no existe/i).first()
+    ).toBeVisible({ timeout: 10000 });
   });
 });

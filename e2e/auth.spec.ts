@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { apiRegisterAndLogin, apiLogin } from './helpers/api';
-import { injectAuth } from './helpers/auth';
+import { apiRegisterAndLogin } from './helpers/api';
+import { injectAuth, verifyEmailViaUi } from './helpers/auth';
 
 // Prefijo único para este archivo
 const PREFIX = 'auth';
@@ -11,17 +11,26 @@ const CREDENTIALS = {
 };
 
 test.describe('Autenticación', () => {
-  test('should register a new user successfully', async ({ page }) => {
+  test('should register, verify email and login (flujo C4 completo)', async ({ page }) => {
     const username = `${PREFIX}_reg_${RUN_ID}`;
+    const email = `${username}@e2e.test`;
     await page.goto('/register');
     await page.fill('#username', username);
-    await page.fill('#email', `${username}@e2e.test`);
+    await page.fill('#email', email);
     await page.fill('#password', CREDENTIALS.password);
     await page.fill('#firstName', 'Auth');
     await page.fill('#lastName', 'Tester');
     await page.click('button[type="submit"]');
 
-    // El hook hace register + login y redirige a / → rol DEV → /home
+    // C4: el registro NO inicia sesión — redirige a /verify-email con el email precargado
+    await expect(page).toHaveURL(/\/verify-email/, { timeout: 15000 });
+    await expect(page.locator('#email')).toHaveValue(email);
+
+    // Completar la verificación con el código real y luego iniciar sesión
+    await verifyEmailViaUi(page, email);
+    await page.fill('#username', username);
+    await page.fill('#password', CREDENTIALS.password);
+    await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/\/(home|dashboard|admin)/, { timeout: 15000 });
   });
 

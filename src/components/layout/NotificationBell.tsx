@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotifications } from "../../api/notificationApi";
+import {
+  fetchNotifications,
+  fetchUnreadCount,
+} from "../../api/notificationApi";
 import { Bell } from "lucide-react";
 import NotificationDropdown from "../../features/notifications/components/NotificationDropdown";
 import { queryKeys } from "../../api/queryKeys";
@@ -18,16 +21,23 @@ const NotificationBell = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Realizamos polling periódico para obtener nuevas notificaciones
-  const { data: notifications } = useQuery({
-    queryKey: queryKeys.notifications(),
-    queryFn: fetchNotifications,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+  // Polling barato: solo el conteo de no leídas (GET /notifications/unread-count)
+  const { data: unreadCountData } = useQuery({
+    queryKey: queryKeys.notificationsUnreadCount(),
+    queryFn: fetchUnreadCount,
     refetchInterval: NOTIFICATION_POLL_INTERVAL,
     refetchOnWindowFocus: true,
   });
 
-  const unreadCount = notifications?.filter((n) => !n.read).length || 0;
+  // La lista completa solo se pide cuando el dropdown está abierto
+  const { data: notifications } = useQuery({
+    queryKey: queryKeys.notifications(),
+    queryFn: fetchNotifications,
+    enabled: isOpen,
+    staleTime: 1000 * 30,
+  });
+
+  const unreadCount = unreadCountData ?? 0;
 
   // Cierra el dropdown si se hace clic fuera de él
   useEffect(() => {

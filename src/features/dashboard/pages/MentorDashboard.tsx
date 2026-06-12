@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  deleteMentorship,
-  fetchMentorshipById,
+  archiveMentorship,
+  fetchMentoringBySlug,
   fetchMyMentorships,
-  updateMentorshipStatus,
+  publishMentorship,
 } from "../../../api/mentoringApi";
 import { fetchMyProjects } from "../../../api/projectApi";
 import { fetchUserProfile } from "../../../api/profileApi";
@@ -12,7 +12,7 @@ import { Cog, Eye, Lightbulb, Brain } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 
-import type { ProjectSummary, MentorshipSummaryResponse } from "../../../types";
+import type { ProjectSummary, MentorshipDetailResponse } from "../../../types";
 import { useState } from "react";
 import Modal from "../../../components/ui/modal/Modal";
 import ProjectForm from "../../projects/components/ProjectForm";
@@ -31,9 +31,9 @@ const MentorDashboard = () => {
   const [editingProjectSlug, setEditingProjectSlug] = useState<string | null>(
     null
   );
-  const [editingMentorshipId, setEditingMentorshipId] = useState<number | null>(
-    null
-  );
+  const [editingMentorshipSlug, setEditingMentorshipSlug] = useState<
+    string | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<"project" | "mentorship">(
     "project"
@@ -56,8 +56,8 @@ const MentorDashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handleMentorshipEdit = (mentorshipId: number) => {
-    setEditingMentorshipId(mentorshipId);
+  const handleMentorshipEdit = (mentorshipSlug: string) => {
+    setEditingMentorshipSlug(mentorshipSlug);
     setModalContent("mentorship");
     setIsModalOpen(true);
   };
@@ -66,7 +66,7 @@ const MentorDashboard = () => {
     setIsModalOpen(false);
     setViewingProjectSlug(null);
     setEditingProjectSlug(null);
-    setEditingMentorshipId(null);
+    setEditingMentorshipSlug(null);
   };
 
   const { data, isLoading, isError, error } = useQuery({
@@ -84,7 +84,7 @@ const MentorDashboard = () => {
   });
 
   const { data: mentorships, isLoading: isLoadingMentorships } = useQuery<
-    MentorshipSummaryResponse[]
+    MentorshipDetailResponse[]
   >({
     queryKey: ["myMentorships"],
     queryFn: fetchMyMentorships,
@@ -94,53 +94,45 @@ const MentorDashboard = () => {
   });
 
   const { data: editingMentorshipData } = useQuery({
-    queryKey: ["mentorship", editingMentorshipId],
-    queryFn: () => fetchMentorshipById(editingMentorshipId!),
-    enabled: !!editingMentorshipId,
+    queryKey: ["mentorship", editingMentorshipSlug],
+    queryFn: () => fetchMentoringBySlug(editingMentorshipSlug!),
+    enabled: !!editingMentorshipSlug,
   });
 
-  const deleteMentorshipMutation = useMutation({
-    mutationFn: deleteMentorship,
+  const archiveMentorshipMutation = useMutation({
+    mutationFn: archiveMentorship,
     onSuccess: () => {
-      toast.success("Mentoría eliminada correctamente");
+      toast.success("Mentoría archivada correctamente");
       queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
     },
     onError: (error: any) => {
-      toast.error(`Error al eliminar: ${error.message}`);
+      toast.error(`Error al archivar: ${error.message}`);
     },
   });
 
-  const toggleStatusMutation = useMutation({
-    mutationFn: ({
-      mentorshipId,
-      newStatus,
-    }: {
-      mentorshipId: number;
-      newStatus: "active" | "inactive" | "paused";
-    }) => updateMentorshipStatus(mentorshipId, newStatus),
-    onSuccess: () => {
-      toast.success("Estado actualizado");
-      queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
-    },
-    onError: (error: any) => {
-      toast.error(`Error al actualizar estado: ${error.message}`);
-    },
-  });
-
-  const handleMentorshipDelete = (mentorshipId: number) => {
+  const handleMentorshipArchive = (mentorshipSlug: string) => {
     if (
-      window.confirm("¿Estás seguro de que quieres eliminar esta mentoría?")
+      window.confirm(
+        "¿Estás seguro de que quieres archivar esta mentoría? Dejará de ser visible para los demás usuarios."
+      )
     ) {
-      deleteMentorshipMutation.mutate(mentorshipId);
+      archiveMentorshipMutation.mutate(mentorshipSlug);
     }
   };
 
-  const handleToggleStatus = (mentorshipId: number, currentStatus: string) => {
-    const newStatus = currentStatus === "active" ? "paused" : "active";
-    toggleStatusMutation.mutate({
-      mentorshipId,
-      newStatus: newStatus as "active" | "inactive" | "paused",
-    });
+  const publishMentorshipMutation = useMutation({
+    mutationFn: publishMentorship,
+    onSuccess: () => {
+      toast.success("Mentoría publicada correctamente");
+      queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
+    },
+    onError: (error: any) => {
+      toast.error(`Error al publicar: ${error.message}`);
+    },
+  });
+
+  const handleMentorshipPublish = (mentorshipSlug: string) => {
+    publishMentorshipMutation.mutate(mentorshipSlug);
   };
 
   if (isLoading) {
@@ -243,8 +235,8 @@ const MentorDashboard = () => {
                     key={mentorship.id}
                     mentorship={mentorship}
                     onEdit={handleMentorshipEdit}
-                    onDelete={handleMentorshipDelete}
-                    onToggleStatus={handleToggleStatus}
+                    onArchive={handleMentorshipArchive}
+                    onPublish={handleMentorshipPublish}
                   />
                 ))
               ) : (
@@ -353,11 +345,11 @@ const MentorDashboard = () => {
           />
         )}
         {modalContent === "mentorship" &&
-          editingMentorshipId &&
+          editingMentorshipSlug &&
           editingMentorshipData && (
             <MentorshipForm
-              mentorshipId={editingMentorshipId}
-              initialData={editingMentorshipData}
+              mentorshipSlug={editingMentorshipSlug}
+              initialData={editingMentorshipData as any}
               onClose={handleCloseModal}
             />
           )}

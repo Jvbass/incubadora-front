@@ -29,7 +29,7 @@ const EditMentorshipPage = () => {
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       <MentorshipForm
-        mentorshipId={mentoring.id}
+        mentorshipSlug={mentoring.slug}
         initialData={mentoring as any}
         onClose={() => navigate(-1)}
       />

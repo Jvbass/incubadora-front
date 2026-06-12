@@ -1,45 +1,39 @@
 import {
   Clock,
   DollarSign,
-  Users,
   Video,
   Edit,
-  Trash2,
-  Power,
-  Pause,
+  Archive,
+  Rocket,
 } from "lucide-react";
-import type { MentorshipSummaryResponse } from "../../../types";
+import type { MentorshipDetailResponse } from "../../../types";
 
 interface MentorshipCardProps {
-  mentorship: MentorshipSummaryResponse;
-  onEdit?: (id: number) => void;
-  onDelete?: (id: number) => void;
-  onToggleStatus?: (id: number, currentStatus: string) => void;
+  mentorship: MentorshipDetailResponse;
+  onEdit?: (slug: string) => void;
+  onArchive?: (slug: string) => void;
+  onPublish?: (slug: string) => void;
 }
 
-const getStatusStyles = (status: string) => {
-  switch (status) {
-    case "active":
+const getStatusStyles = (state: string) => {
+  switch (state) {
+    case "PUBLISHED":
       return "text-green-600 bg-green-50 border-green-200";
-    case "paused":
-      return "text-yellow-600 bg-yellow-50 border-yellow-200";
-    case "inactive":
+    case "ARCHIVED":
       return "text-gray-600 bg-gray-50 border-gray-200";
     default:
       return "text-gray-600 bg-gray-50 border-gray-200";
   }
 };
 
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "active":
-      return "Activa";
-    case "paused":
-      return "Pausada";
-    case "inactive":
-      return "Inactiva";
+const getStatusLabel = (state: string) => {
+  switch (state) {
+    case "PUBLISHED":
+      return "Publicada";
+    case "ARCHIVED":
+      return "Archivada";
     default:
-      return status;
+      return state;
   }
 };
 
@@ -50,8 +44,8 @@ const getPlatformIcon = (_platform: string) => {
 export const MentorshipCard = ({
   mentorship,
   onEdit,
-  onDelete,
-  onToggleStatus,
+  onArchive,
+  onPublish,
 }: MentorshipCardProps) => {
   return (
     <div className="bg-white text-text-main dark:bg-bg-dark dark:text-text-light p-4 rounded-lg border border-gray-400 dark:border-gray-700 hover:shadow-md transition-shadow">
@@ -65,18 +59,18 @@ export const MentorshipCard = ({
 
           {/* Detalles */}
           <div className="flex flex-wrap gap-3 text-sm text-gray-700 dark:text-gray-300">
-            <div className="flex items-center gap-1">
-              <Clock size={16} />
-              <span>{mentorship.durationMinutes} min</span>
-            </div>
-            <div className="flex items-center gap-1">
-              {getPlatformIcon(mentorship.platform)}
-              <span className="capitalize">{mentorship.platform}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users size={16} />
-              <span>{mentorship.totalBookings} reservas</span>
-            </div>
+            {mentorship.durationMinutes != null && (
+              <div className="flex items-center gap-1">
+                <Clock size={16} />
+                <span>{mentorship.durationMinutes} min</span>
+              </div>
+            )}
+            {mentorship.platform && (
+              <div className="flex items-center gap-1">
+                {getPlatformIcon(mentorship.platform)}
+                <span className="capitalize">{mentorship.platform}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1">
               <DollarSign size={16} />
               <span>
@@ -88,10 +82,12 @@ export const MentorshipCard = ({
           </div>
 
           {/* Fecha de creación */}
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Creada el{" "}
-            {new Date(mentorship.createdAt).toLocaleDateString("es-ES")}
-          </p>
+          {mentorship.createdAt && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Creada el{" "}
+              {new Date(mentorship.createdAt).toLocaleDateString("es-ES")}
+            </p>
+          )}
         </div>
 
         {/* Estado y Acciones */}
@@ -99,43 +95,39 @@ export const MentorshipCard = ({
           {/* Badge de Estado */}
           <span
             className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusStyles(
-              mentorship.status
+              mentorship.mentorshipState
             )}`}
           >
-            {getStatusLabel(mentorship.status)}
+            {getStatusLabel(mentorship.mentorshipState)}
           </span>
 
           {/* Botones de Acción */}
           <div className="flex gap-2">
-            {onToggleStatus && (
-              <button
-                onClick={() => onToggleStatus(mentorship.id, mentorship.status)}
-                className="p-2 text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-                title={mentorship.status === "active" ? "Pausar" : "Activar"}
-              >
-                {mentorship.status === "active" ? (
-                  <Pause size={18} />
-                ) : (
-                  <Power size={18} />
-                )}
-              </button>
-            )}
             {onEdit && (
               <button
-                onClick={() => onEdit(mentorship.id)}
+                onClick={() => onEdit(mentorship.slug)}
                 className="p-2 text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
                 title="Editar"
               >
                 <Edit size={18} />
               </button>
             )}
-            {onDelete && (
+            {onArchive && mentorship.mentorshipState === "PUBLISHED" && (
               <button
-                onClick={() => onDelete(mentorship.id)}
+                onClick={() => onArchive(mentorship.slug)}
                 className="p-2 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
-                title="Eliminar"
+                title="Archivar"
               >
-                <Trash2 size={18} />
+                <Archive size={18} />
+              </button>
+            )}
+            {onPublish && mentorship.mentorshipState === "ARCHIVED" && (
+              <button
+                onClick={() => onPublish(mentorship.slug)}
+                className="p-2 text-gray-600 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
+                title="Publicar"
+              >
+                <Rocket size={18} />
               </button>
             )}
           </div>

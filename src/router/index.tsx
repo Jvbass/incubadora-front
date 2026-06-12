@@ -1,31 +1,36 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 
 // Importamos nuestros componentes de ayuda para el enrutamiento
 import ProtectedRoute from "./ProtectedRoute";
 import RoleBasedRedirect from "./RoleBasedRedirect";
 import PublicRoute from "./PublicRoute";
-
-// Importamos las páginas que vamos a usar en nuestras rutas
-import LoginPage from "../features/auth/pages/LoginPage";
-import RegisterPage from "../features/auth/pages/RegisterPage";
-import DeveloperDashboard from "../features/dashboard/pages/DeveloperDashboard";
-import NotFound from "../pages/NotFound";
-import HomePage from "../features/projects/pages/HomePage";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
-import CreateProjectPage from "../features/projects/pages/CreateProjectPage";
-import EditProjectPage from "../features/projects/pages/EditProjectPage";
-import ProjectDetailPage from "../features/projects/pages/ProjectDetailPage";
-import ProfilePage from "../features/profile/pages/ProfilePage";
-import EditProfilePage from "../features/profile/pages/EditProfilePage";
-import PortfolioPage from "../features/profile/pages/PortfolioPage";
-import AdminDashboard from "../features/admin/pages/AdminDashboard";
-import CreateMentorshipPage from "../features/mentoring/pages/CreateMentorshipPage";
-import MentoringListPage from "../features/mentoring/pages/MentoringListPage";
-import MentoringDetailPage from "../features/mentoring/pages/MentoringDetailPage";
-import EditMentorshipPage from "../features/mentoring/pages/EditMentorshipPage";
+import Loading from "../components/ux/Loading";
+
+// Páginas con lazy loading (C9): cada ruta genera su propio chunk,
+// lo que reduce el bundle inicial (el editor markdown es especialmente pesado).
+const LoginPage = lazy(() => import("../features/auth/pages/LoginPage"));
+const RegisterPage = lazy(() => import("../features/auth/pages/RegisterPage"));
+const VerifyEmailPage = lazy(() => import("../features/auth/pages/VerifyEmailPage"));
+const DeveloperDashboard = lazy(() => import("../features/dashboard/pages/DeveloperDashboard"));
+const NotFound = lazy(() => import("../pages/NotFound"));
+const HomePage = lazy(() => import("../features/projects/pages/HomePage"));
+const CreateProjectPage = lazy(() => import("../features/projects/pages/CreateProjectPage"));
+const EditProjectPage = lazy(() => import("../features/projects/pages/EditProjectPage"));
+const ProjectDetailPage = lazy(() => import("../features/projects/pages/ProjectDetailPage"));
+const ProfilePage = lazy(() => import("../features/profile/pages/ProfilePage"));
+const EditProfilePage = lazy(() => import("../features/profile/pages/EditProfilePage"));
+const PortfolioPage = lazy(() => import("../features/profile/pages/PortfolioPage"));
+const AdminDashboard = lazy(() => import("../features/admin/pages/AdminDashboard"));
+const CreateMentorshipPage = lazy(() => import("../features/mentoring/pages/CreateMentorshipPage"));
+const MentoringListPage = lazy(() => import("../features/mentoring/pages/MentoringListPage"));
+const MentoringDetailPage = lazy(() => import("../features/mentoring/pages/MentoringDetailPage"));
+const EditMentorshipPage = lazy(() => import("../features/mentoring/pages/EditMentorshipPage"));
 
 const AppRouter = () => {
   return (
+    <Suspense fallback={<Loading message="Cargando" />}>
     <Routes>
       {/* RUTA DE ENTRADA - Maneja tanto usuarios autenticados como no autenticados */}
       <Route path="/" element={<RoleBasedRedirect />} />
@@ -44,6 +49,14 @@ const AppRouter = () => {
         element={
           <PublicRoute>
             <RegisterPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={
+          <PublicRoute>
+            <VerifyEmailPage />
           </PublicRoute>
         }
       />
@@ -186,6 +199,7 @@ const AppRouter = () => {
       {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 

@@ -5,7 +5,7 @@ import type { ProfileResponse, ProfileUpdateRequest } from "../types";
  * Obtiene el perfil del usuario autenticado.
  */
 export const fetchUserProfile = async (): Promise<ProfileResponse> => {
-  const { data } = await apiService.get<ProfileResponse>("/me/profile");
+  const { data } = await apiService.get<ProfileResponse>("/profile");
   return data;
 };
 
@@ -16,7 +16,7 @@ export const updateUserProfile = async (
   profileData: ProfileUpdateRequest
 ): Promise<ProfileResponse> => {
   const { data } = await apiService.put<ProfileResponse>(
-    "/me/profile",
+    "/profile",
     profileData
   );
   return data;
@@ -24,6 +24,7 @@ export const updateUserProfile = async (
 
 /**
  * Obtiene el perfil público de un usuario por su slug.
+ * El backend lo expone como portfolio público.
  */
 export const fetchPublicProfileBySlug = async (
   slug: string
@@ -31,7 +32,7 @@ export const fetchPublicProfileBySlug = async (
   if (!slug) {
     throw new Error("El slug del perfil es requerido.");
   }
-  const { data } = await apiService.get<ProfileResponse>(`/profiles/${slug}`);
+  const { data } = await apiService.get<ProfileResponse>(`/portfolio/${slug}`);
   return data;
 };
 

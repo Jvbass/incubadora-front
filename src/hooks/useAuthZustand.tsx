@@ -34,27 +34,15 @@ export const useAuthZustand = () => {
     },
   });
 
-  // Register and login mutation
-  const registerAndLoginMutation = useMutation({
-    mutationFn: async (data: RegisterRequest) => {
-      // Step 1: Register user
-      await registerUser(data);
-      // Step 2: Login with new credentials
-      const { username, password } = data;
-      const tokenData = await loginUser({ username, password });
-      return tokenData;
-    },
-    onMutate: () => {
-      setLoading(true);
-    },
+  // Register mutation: la cuenta queda pendiente de verificar email,
+  // por lo que ya no se hace login automático.
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterRequest) => registerUser(data),
     onSuccess: (data) => {
-      loginStore(data.token);
-      toast.success("¡Registro completado! Bienvenido.");
-      navigate("/");
+      toast.success(data.message || "Cuenta creada. Revisa tu email.");
+      navigate("/verify-email", { state: { email: data.email } });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      setLoading(false);
-      console.log("error", error)
       toast.error(error.response?.data?.message || "Ocurrió un error durante el registro.");
     }
   });
@@ -70,14 +58,14 @@ export const useAuthZustand = () => {
     // State
     user,
     isAuthenticated,
-    isLoading: isLoading || loginMutation.isPending || registerAndLoginMutation.isPending,
+    isLoading: isLoading || loginMutation.isPending || registerMutation.isPending,
 
     // Actions
     login: loginMutation.mutate,
     isLoggingIn: loginMutation.isPending,
 
-    registerAndLogin: registerAndLoginMutation.mutate,
-    isRegisteringAndLoggingIn: registerAndLoginMutation.isPending,
+    registerAccount: registerMutation.mutate,
+    isRegistering: registerMutation.isPending,
     
     logout,
   };

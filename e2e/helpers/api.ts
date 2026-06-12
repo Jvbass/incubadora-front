@@ -1,4 +1,5 @@
 import type { APIRequestContext } from '@playwright/test';
+import { execSync } from 'node:child_process';
 import { BASE_API_URL } from './constants';
 
 interface RegisterData {
@@ -46,6 +47,33 @@ export async function apiRegister(request: APIRequestContext, userData: Register
 }
 
 /**
+ * Lee el código de verificación de email directamente de la BD del backend
+ * en Docker (C4 + D-14: sin SMTP, el código solo existe en la BD y en el log).
+ */
+export function getVerificationCode(email: string): string {
+  return execSync(
+    `docker exec incubadora-db mysql -uincubadora_user -pincubadora_pass incubadora_dev -N -e "SELECT code FROM email_verification_codes WHERE email='${email}'"`,
+    { encoding: 'utf8' }
+  )
+    .replace(/mysql: \[Warning\].*\n?/, '')
+    .trim();
+}
+
+/**
+ * Verifica el email de una cuenta recién registrada (C4).
+ */
+export async function apiVerifyEmail(request: APIRequestContext, email: string) {
+  const code = getVerificationCode(email);
+  const response = await request.post(`${BASE_API_URL}/auth/verify-email`, {
+    data: { email, code },
+  });
+  if (response.status() !== 204) {
+    const body = await response.text();
+    throw new Error(`apiVerifyEmail failed (${response.status()}): ${body}`);
+  }
+}
+
+/**
  * Inicia sesión via API. Retorna el token JWT.
  */
 export async function apiLogin(request: APIRequestContext, credentials: LoginCredentials): Promise<string> {
@@ -61,13 +89,14 @@ export async function apiLogin(request: APIRequestContext, credentials: LoginCre
 }
 
 /**
- * Registra y luego hace login, retornando el token JWT.
+ * Registra, verifica el email (C4) y hace login, retornando el token JWT.
  */
 export async function apiRegisterAndLogin(
   request: APIRequestContext,
   userData: RegisterData
 ): Promise<string> {
   await apiRegister(request, userData);
+  await apiVerifyEmail(request, userData.email);
   return apiLogin(request, { username: userData.username, password: userData.password });
 }
 
@@ -147,6 +176,9 @@ export async function apiGetCategories(request: APIRequestContext, token: string
   const response = await request.get(`${BASE_API_URL}/categories`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (response.status() === 404) {
+    return []; // endpoint no implementado aún en el backend
+  }
   if (!response.ok()) {
     throw new Error(`apiGetCategories failed (${response.status()})`);
   }

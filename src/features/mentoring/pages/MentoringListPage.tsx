@@ -124,10 +124,12 @@ const MentoringListPage = () => {
                   </div>
 
                   {/* Duración */}
-                  <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                    <Clock size={13} />
-                    <span>{mentoring.durationMinutes} min</span>
-                  </div>
+                  {mentoring.durationMinutes != null && (
+                    <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                      <Clock size={13} />
+                      <span>{mentoring.durationMinutes} min</span>
+                    </div>
+                  )}
 
                   {/* Tipo de sesión */}
                   {mentoring.sessionType && (
@@ -152,9 +154,11 @@ const MentoringListPage = () => {
                     {mentoring.mentorUsername}
                   </span>
                 </div>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
-                  {new Date(mentoring.createdAt).toLocaleDateString()}
-                </span>
+                {mentoring.createdAt && (
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {new Date(mentoring.createdAt).toLocaleDateString()}
+                  </span>
+                )}
               </div>
             </Link>
           ))}

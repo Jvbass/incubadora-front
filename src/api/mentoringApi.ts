@@ -7,14 +7,22 @@ import type {
   PagedMentoringResponse,
 } from "../types";
 
+/** Forma cruda que emite el backend en /mentorings/published (getFree() → "free"). */
+interface BackendMentoringSummary
+  extends Omit<MentorshipSummaryResponse, "isFree"> {
+  free?: boolean;
+  isFree?: boolean;
+  mentorUsername?: string;
+}
+
 /**
  * Crea una nueva mentoría.
  */
 export const createMentorship = async (
   mentorshipData: CreateMentorshipRequest
-): Promise<CreateMentorshipRequest> => {
-  const { data } = await apiService.post<CreateMentorshipRequest>(
-    "/mentorships",
+): Promise<MentorshipDetailResponse> => {
+  const { data } = await apiService.post<MentorshipDetailResponse>(
+    "/mentorings",
     mentorshipData
   );
   return data;
@@ -23,48 +31,61 @@ export const createMentorship = async (
 /**
  * Obtiene la lista de mentorías del mentor autenticado.
  */
-export const fetchMyMentorships = async (): Promise<MentorshipSummaryResponse[]> => {
-  const { data } = await apiService.get<MentorshipSummaryResponse[]>(
-    "/mentorships/my-mentorships"
+export const fetchMyMentorships = async (): Promise<
+  MentorshipDetailResponse[]
+> => {
+  const { data } = await apiService.get<MentorshipDetailResponse[]>(
+    "/mentorings/my-mentorings"
   );
   return data;
 };
 
 /**
- * Obtiene los detalles completos de una mentoría por su ID.
+ * Actualiza una mentoría por su slug.
  */
-export const fetchMentorshipById = async (
-  mentorshipId: number
-): Promise<MentorshipDetailResponse> => {
-  const { data } = await apiService.get<MentorshipDetailResponse>(
-    `/mentorships/${mentorshipId}`
-  );
-  return data;
-};
-
-/**
- * Actualiza una mentoría por su ID.
- */
-export const updateMentorshipById = async (
-  mentorshipId: number,
+export const updateMentorshipBySlug = async (
+  slug: string,
   mentorshipData: CreateMentorshipRequest
 ): Promise<MentorshipDetailResponse> => {
   const { data } = await apiService.put<MentorshipDetailResponse>(
-    `/mentorships/${mentorshipId}`,
+    `/mentorings/${slug}`,
     mentorshipData
   );
   return data;
 };
 
 /**
- * Elimina una mentoría por su ID.
+ * Archiva una mentoría por su slug (soft delete).
  */
-export const deleteMentorship = async (mentorshipId: number): Promise<void> => {
-  await apiService.delete(`/mentorships/${mentorshipId}`);
+export const archiveMentorship = async (slug: string): Promise<void> => {
+  await apiService.patch(`/mentorings/${slug}/archive`);
 };
 
 /**
- * Obtiene el listado paginado de mentorías publicadas.
+ * Re-publica una mentoría archivada por su slug.
+ */
+export const publishMentorship = async (slug: string): Promise<void> => {
+  await apiService.patch(`/mentorings/${slug}/publish`);
+};
+
+/** Envoltorio paginado estándar del backend ({success, message, data, meta}). */
+interface BackendPagedResponse<T> {
+  success: boolean;
+  message: string;
+  data: T[];
+  meta: {
+    currentPage: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  };
+}
+
+/**
+ * Obtiene el listado paginado de mentorías publicadas, con filtro
+ * opcional por tag (GET /mentorings?page=&size=&tag=).
  */
 export const fetchPublishedMentorings = async ({
   page = 0,
@@ -77,15 +98,26 @@ export const fetchPublishedMentorings = async ({
 }): Promise<PagedMentoringResponse> => {
   const params: Record<string, string | number> = { page, size };
   if (tag) params.tag = tag;
-  const { data } = await apiService.get<PagedMentoringResponse>(
-    "/mentorings",
-    { params }
-  );
-  return data;
+  const { data } = await apiService.get<
+    BackendPagedResponse<BackendMentoringSummary>
+  >("/mentorings", { params });
+  const content = data.data.map((m) => ({
+    ...m,
+    isFree: m.isFree ?? m.free ?? false,
+    mentorUsername: m.mentorUsername ?? m.mentorName,
+  }));
+  return {
+    content,
+    pageNumber: data.meta.currentPage,
+    pageSize: data.meta.pageSize,
+    totalElements: data.meta.totalElements,
+    totalPages: data.meta.totalPages,
+    last: !data.meta.hasNext,
+  };
 };
 
 /**
- * Obtiene el detalle público de una mentoría por su slug.
+ * Obtiene el detalle de una mentoría por su slug.
  */
 export const fetchMentoringBySlug = async (
   slug: string
@@ -93,19 +125,8 @@ export const fetchMentoringBySlug = async (
   const { data } = await apiService.get<MentoringPublicDetailResponse>(
     `/mentorings/${slug}`
   );
-  return data;
-};
-
-/**
- * Cambia el estado de una mentoría (activa/inactiva/pausada).
- */
-export const updateMentorshipStatus = async (
-  mentorshipId: number,
-  status: "active" | "inactive" | "paused"
-): Promise<MentorshipSummaryResponse> => {
-  const { data } = await apiService.patch<MentorshipSummaryResponse>(
-    `/mentorships/${mentorshipId}/status`,
-    { status }
-  );
-  return data;
+  return {
+    ...data,
+    mentorUsername: data.mentorUsername ?? data.mentorName,
+  };
 };

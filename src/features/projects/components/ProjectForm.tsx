@@ -48,6 +48,7 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateProjectRequest>({
     defaultValues: {
@@ -128,6 +129,11 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
 
   const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 
+  const TITLE_MAX = 50;
+  const SUBTITLE_MAX = 100;
+  const titleLength = watch("title")?.length ?? 0;
+  const subtitleLength = watch("subtitle")?.length ?? 0;
+
   return (
     <div className="md:col-span-3 ">
       <form
@@ -150,22 +156,30 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
               <input
                 id="title"
                 type="text"
+                maxLength={TITLE_MAX}
                 {...register("title", {
                   required: "El título es obligatorio",
                   maxLength: {
-                    value: 50,
-                    message: "El título no puede exceder los 50 caracteres",
+                    value: TITLE_MAX,
+                    message: `El título no puede exceder los ${TITLE_MAX} caracteres`,
                   },
                 })}
                 onFocus={() => setActiveField("title")}
                 onBlur={() => setActiveField(null)}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
-              {errors.title && (
-                <p className="text-xs text-red-600 mt-1">
-                  {errors.title.message}
-                </p>
-              )}
+              <div className="flex justify-between items-start mt-1">
+                {errors.title ? (
+                  <p className="text-xs text-red-600">
+                    {errors.title.message}
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <span className="text-xs text-gray-400">
+                  {titleLength}/{TITLE_MAX}
+                </span>
+              </div>
             </div>
             {/* ====================================subttitulo =========================*/}
             <div>
@@ -178,21 +192,29 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
               <input
                 type="text"
                 id="subtitle"
+                maxLength={SUBTITLE_MAX}
                 {...register("subtitle", {
                   maxLength: {
-                    value: 100,
-                    message: "El subtítulo no puede exceder los 100 caracteres",
+                    value: SUBTITLE_MAX,
+                    message: `El subtítulo no puede exceder los ${SUBTITLE_MAX} caracteres`,
                   },
                 })}
                 onFocus={() => setActiveField("subtitle")}
                 onBlur={() => setActiveField(null)}
                 className="mt-1 block w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:placeholder:text-gray-400 dark:text-accent-100 text-sm border border-border rounded-md px-3 py-2 transition duration-200 ease focus:outline-none focus:border-blue-500 hover:border-blue-300 focus:shadow-sm"
               />
-              {errors.subtitle && (
-                <p className="text-xs text-red-600 mt-1">
-                  {errors.subtitle.message}
-                </p>
-              )}
+              <div className="flex justify-between items-start mt-1">
+                {errors.subtitle ? (
+                  <p className="text-xs text-red-600">
+                    {errors.subtitle.message}
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <span className="text-xs text-gray-400">
+                  {subtitleLength}/{SUBTITLE_MAX}
+                </span>
+              </div>
             </div>
 
             {/* =========================textarea de descripcion============================ */}

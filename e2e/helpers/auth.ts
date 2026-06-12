@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { getVerificationCode } from './api';
 
 interface UserData {
   username: string;
@@ -38,16 +39,29 @@ export async function loginUser(page: Page, credentials: LoginCredentials) {
 }
 
 /**
- * Registra un usuario via UI y luego hace login.
+ * Completa la página /verify-email con el código real leído de la BD (C4).
+ * Asume que el email ya viene precargado (location.state del registro).
  */
-export async function registerAndLogin(page: Page, userData: UserData) {
-  await registerUser(page, userData);
-  // Después del registro exitoso, el usuario es redirigido automáticamente
-  // (el hook registerAndLogin hace register + login en secuencia)
+export async function verifyEmailViaUi(page: Page, email: string) {
+  await page.waitForURL(/\/verify-email/, { timeout: 15000 });
+  const code = getVerificationCode(email);
+  await page.fill('#code', code);
+  await page.click('button[type="submit"]');
+  await page.waitForURL(/\/login/, { timeout: 15000 });
 }
 
 /**
- * Registra, hace login via UI, y espera a que la página de inicio cargue.
+ * Registra un usuario via UI, verifica su email (C4) y hace login.
+ * Desde C4 el registro NO inicia sesión: redirige a /verify-email.
+ */
+export async function registerAndLogin(page: Page, userData: UserData) {
+  await registerUser(page, userData);
+  await verifyEmailViaUi(page, userData.email);
+  await loginUser(page, { username: userData.username, password: userData.password });
+}
+
+/**
+ * Registra, verifica, hace login via UI, y espera a que la página de inicio cargue.
  */
 export async function setupAuthenticatedUser(page: Page, userData: UserData) {
   await registerAndLogin(page, userData);

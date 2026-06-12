@@ -68,7 +68,7 @@ test.describe('Kudos', () => {
     await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
 
     // Buscar el botón de dar kudo
-    const kudoBtn = page.getByRole('button', { name: /kudo|reconocer|dar kudo/i });
+    const kudoBtn = page.getByRole('button', { name: /kudo|reconoce|dar kudo/i });
     if (await kudoBtn.count() === 0) {
       // El botón puede tener otro texto
       test.skip();

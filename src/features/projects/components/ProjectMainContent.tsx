@@ -44,11 +44,17 @@ export const ProjectMainContent = ({
 
           <p className="text-lg text-gray-600 dark:text-text-light mb-4">
             Creado por{" "}
-            <Link to="/home">
-              <span className="font-semibold text-gray-700 dark:text-brand-100 hover:text-blue-500 transition duration-200">
+            {project.developerSlug ? (
+              <Link to={`/portfolio/${project.developerSlug}`}>
+                <span className="font-semibold text-gray-700 dark:text-brand-100 hover:text-blue-500 transition duration-200">
+                  {project.developerUsername}
+                </span>
+              </Link>
+            ) : (
+              <span className="font-semibold text-gray-700 dark:text-brand-100">
                 {project.developerUsername}
               </span>
-            </Link>
+            )}
           </p>
 
           {/* Rating and Reviews */}
@@ -64,8 +70,8 @@ export const ProjectMainContent = ({
         </div>
       </div>
 
-      {/* Project Description */}
-      <div className="mt-8 prose prose-lg max-w-none prose-p:text-gray-600 text-gray-800 dark:text-text-light">
+      {/* Project Description — las imágenes del markdown se adaptan al contenedor */}
+      <div className="mt-8 prose prose-lg max-w-none prose-p:text-gray-600 text-gray-800 dark:text-text-light [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:mx-auto">
         <MDEditor.Markdown
           source={project.description}
           style={{

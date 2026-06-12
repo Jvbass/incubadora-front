@@ -21,6 +21,11 @@ export interface RegisterRequest {
   lastName: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -140,6 +145,7 @@ export interface ProjectDetailResponse {
   projectUrl: string;
   createdAt: string;
   developerUsername: string;
+  developerSlug?: string;
   technologies: Technology[];
   status: string;
   isCollaborative: boolean;
@@ -248,21 +254,13 @@ export interface PagedResponse<T> {
  *===================================================*/
 
 export interface MentorRequest {
-  notificationId: number;
-  type: string;
-  applicant: {
-    username: string;
-    slug: string;
-  };
-  message: string;
-  status: string;
-  approveLink: string;
-  rejectLink: string;
+  id: number;
+  userSlug: string;
+  username: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejectionReason: string | null;
+  publishedProjectCount: number;
   createdAt: string;
-}
-
-export interface RejectRequest {
-  reason: string;
 }
 
 /*===================================================
@@ -284,27 +282,31 @@ export interface CreateMentorshipRequest {
   timezone: string;
   price?: number;
   isFree: boolean;
+  tags?: string[];
   schedules: ScheduleSlotRequest[];
 }
 
 export interface MentorshipSummaryResponse {
   id: number;
+  slug: string;
+  mentorName: string;
   title: string;
+  mentorshipState: "PUBLISHED" | "ARCHIVED";
   specialty: string;
-  durationMinutes: number;
-  platform: string;
   price?: number;
-  isFree: boolean;
-  mentorUsername: string;
-  createdAt: string;
-  status: "active" | "inactive" | "paused";
-  totalBookings: number;
+  isFree?: boolean;
+  tags?: string[];
 }
 
 export interface MentorshipDetailResponse extends MentorshipSummaryResponse {
+  mentorId?: number;
   description: string;
+  durationMinutes: number;
+  platform: string;
   timezone: string;
-  schedules: ScheduleSlotResponse[];
+  createdAt?: string;
+  updatedAt?: string;
+  schedules?: ScheduleSlotResponse[];
 }
 
 /*===================================================
@@ -315,21 +317,22 @@ export interface MentoringListItemResponse {
   slug: string;
   title: string;
   specialty: string;
-  durationMinutes: number;
-  platform: string;
+  mentorName?: string;
+  durationMinutes?: number;
+  platform?: string;
   price?: number;
   isFree: boolean;
   mentorUsername: string;
   mentorSlug?: string;
   tags?: string[];
   sessionType?: "SINGLE" | "PACKAGE";
-  createdAt: string;
+  createdAt?: string;
 }
 
 export interface MentoringPublicDetailResponse extends MentoringListItemResponse {
   description: string;
   timezone: string;
-  schedules: ScheduleSlotResponse[];
+  schedules?: ScheduleSlotResponse[];
 }
 
 export interface PagedMentoringResponse {

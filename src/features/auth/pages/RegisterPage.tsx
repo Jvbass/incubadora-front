@@ -11,10 +11,10 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm<RegisterRequest>();
 
-  const { registerAndLogin, isRegisteringAndLoggingIn } = useAuthZustand();
+  const { registerAccount, isRegistering } = useAuthZustand();
 
   const onSubmit: SubmitHandler<RegisterRequest> = (data) => {
-    registerAndLogin(data);
+    registerAccount(data);
   };
 
   return (
@@ -130,10 +130,10 @@ const RegisterPage = () => {
           </div>
           <button
             type="submit"
-            disabled={isRegisteringAndLoggingIn}
+            disabled={isRegistering}
             className="w-full py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300"
           >
-            {isRegisteringAndLoggingIn ? "Registrando..." : "Registrarse"}
+            {isRegistering ? "Registrando..." : "Registrarse"}
           </button>
         </form>
         <p className="text-sm text-center text-gray-600">

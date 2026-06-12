@@ -121,10 +121,11 @@ test.describe('Admin', () => {
       return;
     }
 
-    // Aprobar la solicitud
+    // Aprobar la solicitud (contrato real: PATCH /{id} con {decision})
     const approveRes = await request.patch(
-      `${BASE_API_URL}/admin/mentor-requests/${pending.userId || pending.id}/approve`,
+      `${BASE_API_URL}/admin/mentor-requests/${pending.id}`,
       {
+        data: { decision: 'approve' },
         headers: { Authorization: `Bearer ${adminToken}` },
       }
     );
@@ -188,11 +189,11 @@ test.describe('Admin', () => {
       return;
     }
 
-    // Rechazar la solicitud
+    // Rechazar la solicitud (contrato real: PATCH /{id} con {decision, reason})
     const rejectRes = await request.patch(
-      `${BASE_API_URL}/admin/mentor-requests/${pending.notificationId || pending.id}/reject`,
+      `${BASE_API_URL}/admin/mentor-requests/${pending.id}`,
       {
-        data: { reason: 'Rechazado por tests E2E automatizados.' },
+        data: { decision: 'reject', reason: 'Rechazado por tests E2E automatizados.' },
         headers: { Authorization: `Bearer ${adminToken}` },
       }
     );

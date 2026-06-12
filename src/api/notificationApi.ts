@@ -10,6 +10,16 @@ export const fetchNotifications = async (): Promise<Notification[]> => {
 };
 
 /**
+ * Obtiene solo el conteo de notificaciones no leídas (barato para polling).
+ */
+export const fetchUnreadCount = async (): Promise<number> => {
+  const { data } = await apiService.get<{ count: number }>(
+    "/notifications/unread-count"
+  );
+  return data.count;
+};
+
+/**
  * Marca una notificación específica como leída.
  */
 export const markNotificationAsRead = async (

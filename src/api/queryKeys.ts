@@ -37,6 +37,7 @@ export const queryKeys = {
 
   // Notificaciones
   notifications: () => ["notifications"] as const,
+  notificationsUnreadCount: () => ["notifications", "unread-count"] as const,
 
   // Admin
   mentorRequests: (filter?: string) =>

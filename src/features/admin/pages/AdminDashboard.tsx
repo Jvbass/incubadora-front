@@ -3,45 +3,35 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   fetchMentorRequests,
-  approveMentorUpgrade,
-  rejectMentorUpgrade,
+  decideMentorRequest,
 } from "../../../api/adminApi";
 import Loading from "../../../components/ux/Loading";
 import { Button } from "../../../components/button/RoundedButton";
-import { useAuthStore } from "../../../stores/authStore";
 import { useState } from "react";
 import Modal from "../../../components/ui/modal/Modal";
 import type { MentorRequest } from "../../../types";
 
 const AdminDashboard = () => {
   const queryClient = useQueryClient();
-  useAuthStore((state) => state.login);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
-  const [rejectNotificationId, setRejectNotificationId] = useState<
-    number | null
-  >(null);
+  const [rejectRequestId, setRejectRequestId] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-  const [filter] = useState("PENDING"); // Opcional: para futuras expansiones
 
   // Query para obtener las solicitudes pendientes
   const { data: requests, isLoading } = useQuery<MentorRequest[]>({
-    queryKey: ["mentorRequests", filter],
-    queryFn: fetchMentorRequests,
+    queryKey: ["mentorRequests", "PENDING"],
+    queryFn: () => fetchMentorRequests("PENDING"),
     staleTime: 1000 * 60 * 5,
   });
 
   // Mutación para APROBAR
   const approveMutation = useMutation({
-    mutationFn: (userId: number) => approveMentorUpgrade(userId),
-    onSuccess: (_data, userId) => {
-      // El backend devuelve el nuevo token JWT. Se debe actualizar el token del usuario APROBADO si es el admin quien lo está haciendo.
-      // Aquí simplemente invalidamos las solicitudes para quitarlas de la lista del admin.
+    mutationFn: (requestId: number) =>
+      decideMentorRequest({ requestId, decision: "approve" }),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["mentorRequests"] });
-
-      // Opcional: Si el admin está logueado con el mismo usuario que aprobó (caso improbable) actualizaría el token
-      // Pero lo importante es que el USUARIO DEV reciba su token actualizado al volver a loguearse.
       toast.success(
-        `Usuario ${userId} aprobado. Recibirá notificación con su nuevo token.`
+        `Solicitud de ${data.username} aprobada. El usuario debe volver a iniciar sesión para usar su nuevo rol.`
       );
     },
     onError: () => {
@@ -51,13 +41,19 @@ const AdminDashboard = () => {
 
   // Mutación para RECHAZAR
   const rejectMutation = useMutation({
-    mutationFn: rejectMentorUpgrade,
+    mutationFn: ({
+      requestId,
+      reason,
+    }: {
+      requestId: number;
+      reason: string;
+    }) => decideMentorRequest({ requestId, decision: "reject", reason }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mentorRequests"] });
       toast.success("Solicitud rechazada. El usuario ha sido notificado.");
       setIsRejectModalOpen(false);
       setRejectReason("");
-      setRejectNotificationId(null);
+      setRejectRequestId(null);
     },
     onError: () => {
       toast.error("Error al rechazar la solicitud.");
@@ -65,15 +61,15 @@ const AdminDashboard = () => {
   });
 
   // Handlers para el modal de rechazo
-  const handleRejectClick = (notificationId: number) => {
-    setRejectNotificationId(notificationId);
+  const handleRejectClick = (requestId: number) => {
+    setRejectRequestId(requestId);
     setIsRejectModalOpen(true);
   };
 
   const handleRejectSubmit = () => {
-    if (rejectNotificationId && rejectReason.length >= 10) {
+    if (rejectRequestId && rejectReason.length >= 10) {
       rejectMutation.mutate({
-        notificationId: rejectNotificationId,
+        requestId: rejectRequestId,
         reason: rejectReason,
       });
     } else {
@@ -95,52 +91,48 @@ const AdminDashboard = () => {
             No hay solicitudes pendientes de revisión.
           </p>
         ) : (
-          requests?.map((req) => {
-            // Extraer el userId del enlace de aprobación para la mutación
-            const userIdMatch = req.approveLink.match(/\/(\d+)\/approve/);
-            const userId = userIdMatch ? parseInt(userIdMatch[1]) : null;
-
-            return (
-              <div
-                key={req.notificationId}
-                className="flex justify-between items-center p-4 bg-white dark:bg-bg-dark rounded-lg shadow border border-divider dark:border-gray-700"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold dark:text-text-light">
-                    {req.applicant.username}
-                  </p>
-                  <p className="text-sm text-gray-500 truncate">
-                    {req.message}
-                  </p>
-                  <Link
-                    to={`/profile/${req.applicant.slug}`}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    Ver Perfil de {req.applicant.username}
-                  </Link>
-                </div>
-                <div className="flex space-x-3 ml-4 flex-shrink-0">
-                  <Button
-                    variant="primary"
-                    size="small"
-                    onClick={() => userId && approveMutation.mutate(userId)}
-                    disabled={approveMutation.isPending}
-                  >
-                    {approveMutation.isPending ? "Aprobando..." : "Aprobar"}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    className="bg-red-500 hover:bg-red-600"
-                    onClick={() => handleRejectClick(req.notificationId)}
-                    disabled={rejectMutation.isPending}
-                  >
-                    Rechazar
-                  </Button>
-                </div>
+          requests?.map((req) => (
+            <div
+              key={req.id}
+              className="flex justify-between items-center p-4 bg-white dark:bg-bg-dark rounded-lg shadow border border-divider dark:border-gray-700"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold dark:text-text-light">
+                  {req.username}
+                </p>
+                <p className="text-sm text-gray-500 truncate">
+                  {req.publishedProjectCount} proyecto(s) publicado(s) ·
+                  Solicitada el{" "}
+                  {new Date(req.createdAt).toLocaleDateString("es-ES")}
+                </p>
+                <Link
+                  to={`/portfolio/${req.userSlug}`}
+                  className="text-xs text-blue-600 hover:underline"
+                >
+                  Ver Portfolio de {req.username}
+                </Link>
               </div>
-            );
-          })
+              <div className="flex space-x-3 ml-4 flex-shrink-0">
+                <Button
+                  variant="primary"
+                  size="small"
+                  onClick={() => approveMutation.mutate(req.id)}
+                  disabled={approveMutation.isPending}
+                >
+                  {approveMutation.isPending ? "Aprobando..." : "Aprobar"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="small"
+                  className="bg-red-500 hover:bg-red-600"
+                  onClick={() => handleRejectClick(req.id)}
+                  disabled={rejectMutation.isPending}
+                >
+                  Rechazar
+                </Button>
+              </div>
+            </div>
+          ))
         )}
       </div>
 
