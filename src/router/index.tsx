@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 
 // Importamos nuestros componentes de ayuda para el enrutamiento
 import ProtectedRoute from "./ProtectedRoute";
@@ -15,6 +15,7 @@ const LoginPage = lazy(routeImports.login);
 const RegisterPage = lazy(routeImports.register);
 const VerifyEmailPage = lazy(routeImports.verifyEmail);
 const DeveloperDashboard = lazy(routeImports.developerDashboard);
+const MentorDashboard = lazy(routeImports.mentorDashboard);
 const NotFound = lazy(routeImports.notFound);
 const HomePage = lazy(routeImports.home);
 const CreateProjectPage = lazy(routeImports.createProject);
@@ -28,6 +29,11 @@ const CreateMentorshipPage = lazy(routeImports.createMentorship);
 const MentoringListPage = lazy(routeImports.mentoringList);
 const MentoringDetailPage = lazy(routeImports.mentoringDetail);
 const EditMentorshipPage = lazy(routeImports.editMentorship);
+
+const LegacyProjectRedirect = () => {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/project/${slug}`} replace />;
+};
 
 const AppRouter = () => {
   return (
@@ -75,13 +81,17 @@ const AppRouter = () => {
           }
         >
           <Route path="/dashboard" element={<DeveloperDashboard />} />
+          <Route path="/mentor-dashboard" element={<MentorDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<EditProfilePage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/projects/new" element={<CreateProjectPage />} />
           <Route path="/projects/:slug/edit" element={<EditProjectPage />} />
-          <Route path="/proyect/:slug" element={<ProjectDetailPage />} />
+          <Route path="/project/:slug" element={<ProjectDetailPage />} />
+          {/* Redirección legacy: notificaciones antiguas guardadas en la BD
+              apuntan a /proyect/{slug} (typo corregido el 2026-06-12) */}
+          <Route path="/proyect/:slug" element={<LegacyProjectRedirect />} />
           <Route path="/mentoring" element={<MentoringListPage />} />
           <Route path="/mentoring/new" element={<CreateMentorshipPage />} />
           <Route

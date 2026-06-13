@@ -21,7 +21,7 @@ const RoleBasedRedirect = () => {
   // Redireccionar segun rol del usuario.
   const roleToPathMap: { [key: string]: string } = {
     DEV: "/home",
-    MENTOR: "/dashboard",
+    MENTOR: "/mentor-dashboard",
     ADMINISTRATOR: "/admin",
     // RECRUITER: "/recruiter",
   };
