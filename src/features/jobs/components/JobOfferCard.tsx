@@ -1,4 +1,4 @@
-import { Briefcase, MapPin, DollarSign, Archive, Rocket } from "lucide-react";
+import { MapPin, DollarSign, Archive, Rocket } from "lucide-react";
 import type { JobOffer } from "../../../types";
 
 interface JobOfferCardProps {
