@@ -29,6 +29,8 @@ const CreateMentorshipPage = lazy(routeImports.createMentorship);
 const MentoringListPage = lazy(routeImports.mentoringList);
 const MentoringDetailPage = lazy(routeImports.mentoringDetail);
 const EditMentorshipPage = lazy(routeImports.editMentorship);
+const RecruiterDashboard = lazy(routeImports.recruiterDashboard);
+const JobsListPage = lazy(routeImports.jobsList);
 
 const LegacyProjectRedirect = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -99,6 +101,8 @@ const AppRouter = () => {
             element={<EditMentorshipPage />}
           />
           <Route path="/mentoring/:slug" element={<MentoringDetailPage />} />
+          <Route path="/jobs" element={<JobsListPage />} />
+          <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
         </Route>
 
         {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}

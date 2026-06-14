@@ -26,4 +26,7 @@ export const routeImports = {
     import("../features/mentoring/pages/MentoringDetailPage"),
   editMentorship: () =>
     import("../features/mentoring/pages/EditMentorshipPage"),
+  recruiterDashboard: () =>
+    import("../features/jobs/pages/RecruiterDashboard"),
+  jobsList: () => import("../features/jobs/pages/JobsListPage"),
 } as const;

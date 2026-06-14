@@ -229,6 +229,35 @@ export interface AdminReport {
 }
 
 /*===================================================
+ * Jobs / Recruiter
+ *===================================================*/
+
+export type JobOfferStatus = "DRAFT" | "PUBLISHED" | "CLOSED";
+
+export interface JobOffer {
+  id: number;
+  title: string;
+  description: string;
+  company: string;
+  location: string;
+  salaryRange: string | null;
+  requirements: string | null;
+  status: JobOfferStatus;
+  recruiterUsername: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateJobOfferRequest {
+  title: string;
+  description: string;
+  company: string;
+  location: string;
+  salaryRange?: string;
+  requirements?: string;
+}
+
+/*===================================================
  * Kudos
  *===================================================*/
 

@@ -1,4 +1,4 @@
-import { Package, ClipboardPen, Brain, Egg } from "lucide-react";
+import { Package, ClipboardPen, Brain, Egg, Briefcase } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { routeImports } from "../../router/routeImports";
 
@@ -69,6 +69,19 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             <Brain size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Mentorías
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/jobs"
+            className={itemClass}
+            onClick={onClose}
+            onMouseEnter={() => routeImports.jobsList()}
+            onFocus={() => routeImports.jobsList()}
+          >
+            <Briefcase size={20} className="flex-shrink-0" />
+            <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Empleos
             </span>
           </NavLink>
 

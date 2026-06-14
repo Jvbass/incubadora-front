@@ -23,7 +23,7 @@ const RoleBasedRedirect = () => {
     DEV: "/home",
     MENTOR: "/mentor-dashboard",
     ADMINISTRATOR: "/admin",
-    // RECRUITER: "/recruiter",
+    RECRUITER: "/recruiter-dashboard",
   };
 
   // Si el rol no existe en nuestro mapa, lo mandamos al login por seguridad.
