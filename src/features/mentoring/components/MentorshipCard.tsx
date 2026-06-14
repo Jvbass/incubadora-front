@@ -19,6 +19,8 @@ const getStatusStyles = (state: string) => {
   switch (state) {
     case "PUBLISHED":
       return "text-green-600 bg-green-50 border-green-200";
+    case "DRAFT":
+      return "text-yellow-700 bg-yellow-50 border-yellow-200";
     case "ARCHIVED":
       return "text-gray-600 bg-gray-50 border-gray-200";
     default:
@@ -30,6 +32,8 @@ const getStatusLabel = (state: string) => {
   switch (state) {
     case "PUBLISHED":
       return "Publicada";
+    case "DRAFT":
+      return "Borrador";
     case "ARCHIVED":
       return "Archivada";
     default:
@@ -121,7 +125,7 @@ export const MentorshipCard = ({
                 <Archive size={18} />
               </button>
             )}
-            {onPublish && mentorship.mentorshipState === "ARCHIVED" && (
+            {onPublish && mentorship.mentorshipState !== "PUBLISHED" && (
               <button
                 onClick={() => onPublish(mentorship.slug)}
                 className="p-2 text-gray-600 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"

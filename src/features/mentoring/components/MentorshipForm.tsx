@@ -1,6 +1,5 @@
 import {
   useForm,
-  useFieldArray,
   Controller,
   type SubmitHandler,
 } from "react-hook-form";
@@ -11,14 +10,12 @@ import { useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 
-import { Trash2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createMentorship, updateMentorshipBySlug } from "../../../api/mentoringApi";
 import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
 import {
   type MentorshipDetailResponse,
   PLATFORM_OPTIONS,
-  DAYS_OF_WEEK,
   type CreateMentorshipRequest,
 } from "../../../types";
 
@@ -54,17 +51,7 @@ const MentorshipForm = ({
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       price: 0,
       isFree: true,
-      schedules: [],
     },
-  });
-
-  const {
-    fields: scheduleFields,
-    append: appendSchedule,
-    remove: removeSchedule,
-  } = useFieldArray({
-    control,
-    name: "schedules",
   });
 
   const isFree = watch("isFree");
@@ -85,11 +72,6 @@ const MentorshipForm = ({
         timezone: initialData.timezone,
         price: initialData.price || 0,
         isFree: initialData.isFree,
-        schedules: (initialData.schedules ?? []).map((s) => ({
-          dayOfWeek: s.dayOfWeek,
-          startTime: s.startTime,
-          endTime: s.endTime,
-        })),
       });
     }
   }, [initialData, reset]);
@@ -99,7 +81,7 @@ const MentorshipForm = ({
     onSuccess: () => {
       toast.success("¡Mentoría creada exitosamente!");
       queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
-      navigate("/dashboard");
+      navigate("/mentor-dashboard");
     },
     onError: (error: any) => {
       toast.error(`Error al crear la mentoría: ${error.message}`);
@@ -426,86 +408,6 @@ const MentorshipForm = ({
               )}
             </div>
           )}
-        </section>
-
-        {/* Horarios Disponibles */}
-        <section className="space-y-4">
-          <h3 className="text-xl font-semibold border-b border-gray-300 dark:border-gray-600 pb-2 mb-4 text-gray-700 dark:text-text-light">
-            Horarios Disponibles
-          </h3>
-
-          {scheduleFields.map((field, index) => (
-            <div
-              key={field.id}
-              className="p-4 border border-gray-300 dark:border-gray-600 rounded-md space-y-3 relative"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {/* Día */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-text-light">
-                    Día
-                  </label>
-                  <select
-                    {...register(`schedules.${index}.dayOfWeek`)}
-                    className="mt-1 block w-full bg-white dark:bg-bg-dark text-slate-700 dark:text-text-light text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2"
-                  >
-                    {DAYS_OF_WEEK.map((day) => (
-                      <option key={day.value} value={day.value}>
-                        {day.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Hora Inicio */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-text-light">
-                    Hora Inicio
-                  </label>
-                  <input
-                    type="time"
-                    {...register(`schedules.${index}.startTime`)}
-                    className="mt-1 block w-full bg-transparent text-slate-700 dark:text-text-light text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2"
-                  />
-                </div>
-
-                {/* Hora Fin */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-text-light">
-                    Hora Fin
-                  </label>
-                  <input
-                    type="time"
-                    {...register(`schedules.${index}.endTime`)}
-                    className="mt-1 block w-full bg-transparent text-slate-700 dark:text-text-light text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => removeSchedule(index)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
-          ))}
-
-          <button
-            type="button"
-            onClick={() =>
-              appendSchedule({
-                dayOfWeek: "MONDAY",
-                startTime: "09:00",
-                endTime: "10:00",
-              })
-            }
-            className="flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-          >
-            <Plus size={18} />
-            Añadir Horario
-          </button>
         </section>
 
         {/* Botones */}
