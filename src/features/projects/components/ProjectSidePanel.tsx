@@ -14,6 +14,7 @@ import { useAuthStore } from "../../../stores/authStore";
 import ProjectInteractionModal, {
   type ProjectInteractionMode,
 } from "./ProjectInteractionModal";
+import ReportFlagButton from "../../reports/components/ReportFlagButton";
 
 interface ProjectSidePanelProps {
   project: ProjectDetailResponse;
@@ -145,6 +146,18 @@ export const ProjectSidePanel = ({
             )}
           </div>
         )}
+
+        {/* Reportar proyecto (discreto, oculto para el dueño) */}
+        <div className="flex justify-end pt-1">
+          <ReportFlagButton
+            contentType="PROJECT"
+            contentId={project.id}
+            contentLabel={project.title}
+            ownerUsername={project.developerUsername}
+            label="Reportar"
+            size={14}
+          />
+        </div>
       </div>
 
       {/* Modal de interacción */}

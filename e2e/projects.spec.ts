@@ -77,7 +77,7 @@ test.describe('Proyectos', () => {
     await page.getByRole('button', { name: /publicar proyecto|crear proyecto|guardar/i }).click();
 
     // Después de crear, redirige al dashboard
-    await expect(page).toHaveURL(/\/(dashboard|proyect\/)/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/(dashboard|project\/)/, { timeout: 15000 });
   });
 
   test('should show my projects in dashboard', async ({ page, request }) => {
@@ -109,7 +109,7 @@ test.describe('Proyectos', () => {
     projectSlug = project.slug;
 
     await injectAuth(page, authToken);
-    await page.goto(`/proyect/${projectSlug}`);
+    await page.goto(`/project/${projectSlug}`);
 
     await expect(page.getByText(project.title)).toBeVisible({ timeout: 10000 });
   });

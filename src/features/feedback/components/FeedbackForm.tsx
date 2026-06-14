@@ -50,7 +50,11 @@ export const FeedbackForm = ({ projectSlug }: FeedbackFormProps) => {
       toast.error("Debes seleccionar una calificación.");
       return;
     }
-    if (!data.categoryIds || data.categoryIds.length === 0) {
+    // Solo exigir categoría si la lista cargó y hay opciones que elegir;
+    // si el endpoint falla o viene vacío, no bloquear el envío (el backend
+    // acepta feedback sin categorías).
+    const hasCategories = !!categories && categories.length > 0;
+    if (hasCategories && (!data.categoryIds || data.categoryIds.length === 0)) {
       toast.error("Debes seleccionar al menos una categoría.");
       return;
     }

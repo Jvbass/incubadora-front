@@ -10,6 +10,7 @@ import { Button } from "../../../components/button/RoundedButton";
 import { useState } from "react";
 import Modal from "../../../components/ui/modal/Modal";
 import type { MentorRequest } from "../../../types";
+import ReportsPanel from "../components/ReportsPanel";
 
 const AdminDashboard = () => {
   const queryClient = useQueryClient();
@@ -80,10 +81,14 @@ const AdminDashboard = () => {
   if (isLoading) return <Loading message="Cargando solicitudes" />;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
+    <div className="max-w-4xl mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold dark:text-text-light">
-        Panel de Administración - Solicitudes de Mentoría
+        Panel de Administración
       </h1>
+
+      <h2 className="text-2xl font-bold dark:text-text-light">
+        Solicitudes de Mentoría
+      </h2>
 
       <div className="space-y-4">
         {requests?.length === 0 ? (
@@ -135,6 +140,9 @@ const AdminDashboard = () => {
           ))
         )}
       </div>
+
+      {/* Reportes de contenido (2ª pasada del sistema de reportes) */}
+      <ReportsPanel />
 
       {/* Modal de Rechazo */}
       <Modal

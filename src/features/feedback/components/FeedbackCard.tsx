@@ -4,18 +4,16 @@ import type { FeedbackResponse, CommentResponse } from "../../../types";
 import { CommentThread } from "./CommentThread";
 import { fetchCommentsForFeedback } from "../../../api/commentApi";
 import { ChevronDown, ChevronUp, MessageSquareText } from "lucide-react";
+import ReportFlagButton from "../../reports/components/ReportFlagButton";
 
 // Un pequeño componente para mostrar la calificación de forma visual y numérica
 const RatingDisplay = ({ rating }: { rating: number }) => {
-  const percentage = (rating / 10) * 100;
+  
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2.5">
-      <div
-        className="bg-blue-600 h-2.5 rounded-full"
-        style={{ width: `${percentage}%` }}
-      ></div>
+    <div className="w-full ">
+
       <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 mt-1 block text-right">
-        Calificación: {rating}/10
+        Calificación: {rating}/5
       </span>
     </div>
   );
@@ -76,9 +74,17 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
             {feedback.author}
           </span>
         </div>
-        <time className="text-sm text-gray-500 dark:text-gray-300">
-          {formattedDate}
-        </time>
+        <div className="flex items-center gap-3">
+          <time className="text-sm text-gray-500 dark:text-gray-300">
+            {formattedDate}
+          </time>
+          <ReportFlagButton
+            contentType="FEEDBACK"
+            contentId={feedback.id}
+            contentLabel={`Feedback de ${feedback.author}`}
+            ownerUsername={feedback.author}
+          />
+        </div>
       </header>
 
       {/* Cuerpo de la tarjeta con la descripción y la calificación */}

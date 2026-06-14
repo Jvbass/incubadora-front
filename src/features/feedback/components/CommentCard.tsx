@@ -1,6 +1,7 @@
 import { Edit, MessageSquare, Trash2 } from "lucide-react";
 import type { CommentResponse } from "../../../types";
 import { useAuthZustand } from "../../../hooks/useAuthZustand";
+import ReportFlagButton from "../../reports/components/ReportFlagButton";
 
 interface CommentCardProps {
   comment: CommentResponse;
@@ -40,7 +41,7 @@ export const CommentCard = ({ comment, onReply }: CommentCardProps) => {
             </span>
             <span className="text-xs text-gray-500"> · {formattedDate}</span>
           </div>
-          {isOwner && (
+          {isOwner ? (
             <div className="flex items-center space-x-3">
               <button
                 className="text-gray-500 hover:text-blue-600 transition-colors"
@@ -55,6 +56,13 @@ export const CommentCard = ({ comment, onReply }: CommentCardProps) => {
                 <Trash2 size={14} />
               </button>
             </div>
+          ) : (
+            <ReportFlagButton
+              contentType="FEEDBACK_COMMENT"
+              contentId={comment.id}
+              contentLabel={`Comentario de ${comment.author.username}`}
+              ownerUsername={comment.author.username}
+            />
           )}
         </div>
         <p className="mt-1 text-gray-700 leading-relaxed">{comment.content}</p>

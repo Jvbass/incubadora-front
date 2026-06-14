@@ -4,7 +4,6 @@ import { fetchPublicProfileBySlug, fetchUserProfile } from "../../../api/profile
 import Loading from "../../../components/ux/Loading";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 import {
-  BriefcaseBusiness,
   GraduationCap,
   Heart,
   Mail,
@@ -17,6 +16,12 @@ import type { ProjectSummary } from "../../../types";
 import { useState } from "react";
 import GiveKudoModal from "../../kudos/components/GiveKudoModal";
 import toast from "react-hot-toast";
+import { useInlineProfileEdit } from "../hooks/useInlineProfileEdit";
+import EditableText from "../components/EditableText";
+import EditableTechStack from "../components/EditableTechStack";
+import EditableLanguages from "../components/EditableLanguages";
+import EditableSocialLinks from "../components/EditableSocialLinks";
+import WorkExperienceSection from "../components/WorkExperienceSection";
 
 const ProfilePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -52,6 +57,12 @@ const ProfilePage = () => {
   // La comparación con el slug del perfil del propio usuario,
   // obtenido del primer hook.
   const isOwnProfile = !isPublicProfileView || ownProfileData?.slug === slug;
+
+  // Edición inline: el body del PUT se arma sobre el perfil autenticado
+  // (no sobre la vista pública) para no perder campos como publicProfile.
+  const { saveProfile, isSaving } = useInlineProfileEdit(
+    isOwnProfile ? ownProfileData ?? profile : undefined
+  );
 
   // copiar correo
   const copyToClipboard = async () => {
@@ -115,37 +126,36 @@ const ProfilePage = () => {
               <span className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
                 Hola! Soy {profile.firstName} {profile.lastName}
               </span>
-              <p className="text-lg md:text-xl dark:text-gray-300 text-gray-600 text-left mt-3">
-                {profile.headline || "Desarrollador"}
-              </p>
+              <EditableText
+                value={profile.headline ?? ""}
+                canEdit={isOwnProfile}
+                isSaving={isSaving}
+                onSave={(headline) => saveProfile({ headline })}
+                placeholder="Tu titular profesional"
+                maxLength={150}
+              >
+                <p className="text-lg md:text-xl dark:text-gray-300 text-gray-600 text-left mt-3">
+                  {profile.headline || "Desarrollador"}
+                </p>
+              </EditableText>
             </div>
 
             {/* stack */}
-            <div className="flex flex-wrap justify-center md:justify-start gap-2">
-              {techStack.map((tech) => (
-                <div
-                  key={tech.id}
-                  style={{
-                    borderColor: tech.techColor,
-                    backgroundColor: tech.techColor + "2A", // Opacidad
-                  }}
-                  className="px-2 py-0.5 border-1 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
-                >
-                  <span>{tech.name}</span>
-                </div>
-              ))}
-            </div>
+            <EditableTechStack
+              techStack={techStack}
+              canEdit={isOwnProfile}
+              isSaving={isSaving}
+              onSave={(techStackIds) => saveProfile({ techStackIds })}
+            />
 
             {/* Idiomas */}
             <div className="flex justify-center md:justify-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-              {languages.map((lang) => (
-                <span
-                  key={lang.id}
-                  className="px-2 py-0.5 rounded bg-gray-200 dark:bg-gray-800"
-                >
-                  {lang.language} ({lang.proficiency})
-                </span>
-              ))}
+              <EditableLanguages
+                languages={languages}
+                canEdit={isOwnProfile}
+                isSaving={isSaving}
+                onSave={(langs) => saveProfile({ languages: langs })}
+              />
             </div>
 
             {/* Redes */}
@@ -158,15 +168,12 @@ const ProfilePage = () => {
                 <Mail size={20} />{" "}
               </span>
 
-              {socialLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  className="text-indigo-600 hover:underline text-sm"
-                >
-                  {link.platform}
-                </a>
-              ))}
+              <EditableSocialLinks
+                socialLinks={socialLinks}
+                canEdit={isOwnProfile}
+                isSaving={isSaving}
+                onSave={(links) => saveProfile({ socialLinks: links })}
+              />
             </div>
           </div>
           {/* Imagen */}
@@ -204,39 +211,13 @@ const ProfilePage = () => {
       </header>
 
       <main className="max-w-4xl mx-auto p-3 sm:p-6 lg:p-8 md:col-span-2 space-y-8">
-        {/* Experiencia laboral */}
-        {workExperiences.length > 0 && (
-          <section className="container">
-            <div className="flex flex-col justify-baseline items-left mb-4 text-text-main dark:text-text-light">
-              <h3 className="text-3xl font-semibold flex items-center gap-1 me-2">
-                <BriefcaseBusiness size={20} /> Experiencia laboral{" "}
-              </h3>
-              <div className="relative border-l border-gray-700 ml-4 mt-4">
-                {workExperiences.map((exp) => (
-                  <div key={exp.id} className="mb-10 ml-6 ">
-                    {/* Punto en la línea */}
-                    <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-cta-600 "></span>
-
-                    {/* Contenido */}
-                    <h4 className="text-lg font-bold dark:text-cta-300 text-cta-600">
-                      {exp.position}
-                    </h4>
-                    <p className="text-gray-800 dark:text-gray-200 font-semibold">
-                      {exp.companyName}
-                    </p>
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      {exp.startYear} -{" "}
-                      {exp.endYear ? exp.endYear : "Actualmente"}
-                    </span>
-                    <p className="mt-2 text-gray-800 dark:text-gray-200 max-w-2xl">
-                      {exp.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        {/* Experiencia laboral (editable in-place si es el perfil propio) */}
+        <WorkExperienceSection
+          experiences={workExperiences}
+          canEdit={isOwnProfile}
+          isSaving={isSaving}
+          onSave={(exps) => saveProfile({ workExperiences: exps })}
+        />
 
         {/* Proyectos */}
         {projects.length > 0 && (
@@ -431,9 +412,21 @@ const ProfilePage = () => {
             <h3 className="ml-2 font-semibold flex gap-1 me-2">Sobre mí</h3>
           </div>
           <div className="flex flex-col-reverse md:flex-row justify-between items-center gap-4">
-            <p className="mt-2 text-gray-800 dark:text-gray-200 max-w-2/3 text-pretty">
-              {profile.bio}
-            </p>
+            <div className="w-full md:max-w-2/3">
+              <EditableText
+                value={profile.bio ?? ""}
+                canEdit={isOwnProfile}
+                isSaving={isSaving}
+                onSave={(bio) => saveProfile({ bio })}
+                multiline
+                placeholder="Cuéntanos sobre ti"
+                maxLength={2000}
+              >
+                <p className="mt-2 text-gray-800 dark:text-gray-200 text-pretty">
+                  {profile.bio || (isOwnProfile ? "Añade tu biografía" : "")}
+                </p>
+              </EditableText>
+            </div>
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/0/04/Julian_Assange_26C3.jpg"
               alt=""

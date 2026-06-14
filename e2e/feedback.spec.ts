@@ -48,7 +48,7 @@ test.describe('Feedback', () => {
 
   test('should give feedback with stars and categories', async ({ page, request }) => {
     await injectAuth(page, token2);
-    await page.goto(`/proyect/${projectSlug}`);
+    await page.goto(`/project/${projectSlug}`);
 
     // Esperar a que cargue el formulario de feedback
     await expect(page.getByRole('heading', { name: /Deja tu Feedback/i })).toBeVisible({ timeout: 15000 });
@@ -95,7 +95,7 @@ test.describe('Feedback', () => {
 
     // Verificar también en UI que el formulario está oculto o no es enviable
     await injectAuth(page, token1);
-    await page.goto(`/proyect/${projectSlug}`);
+    await page.goto(`/project/${projectSlug}`);
     await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible({ timeout: 10000 });
 
     const feedbackForm = page.locator('textarea[name="feedbackDescription"]');
@@ -123,7 +123,7 @@ test.describe('Feedback', () => {
     }
 
     await injectAuth(page, token1);
-    await page.goto(`/proyect/${projectSlug}`);
+    await page.goto(`/project/${projectSlug}`);
     await expect(page.locator('body')).toBeVisible({ timeout: 10000 });
 
     // La lista de feedbacks debe mostrar al menos un feedback
@@ -148,7 +148,7 @@ test.describe('Feedback', () => {
     }
 
     await injectAuth(page, token1);
-    await page.goto(`/proyect/${projectSlug}`);
+    await page.goto(`/project/${projectSlug}`);
 
     // Buscar el botón de comentar en el feedback
     const commentBtn = page.getByRole('button', { name: /comentar|comment|responder/i }).first();

@@ -220,6 +220,34 @@ const EditProfilePage = () => {
                 placeholder="Cargo"
                 className="block w-full border-gray-300 rounded-md"
               />
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  {...register(`workExperiences.${index}.startYear`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? undefined : Number(v),
+                  })}
+                  placeholder="Año inicio"
+                  min={1950}
+                  max={new Date().getFullYear()}
+                  className="w-32 border-gray-300 rounded-md"
+                />
+                <span className="text-sm text-gray-500">—</span>
+                <input
+                  type="number"
+                  {...register(`workExperiences.${index}.endYear`, {
+                    setValueAs: (v) =>
+                      v === "" || v == null ? undefined : Number(v),
+                  })}
+                  placeholder="Año fin"
+                  min={1950}
+                  max={new Date().getFullYear() + 1}
+                  className="w-32 border-gray-300 rounded-md"
+                />
+                <span className="text-xs text-gray-500">
+                  (vacío = Actualmente)
+                </span>
+              </div>
               <textarea
                 {...register(`workExperiences.${index}.description`)}
                 placeholder="Descripción de tus tareas"

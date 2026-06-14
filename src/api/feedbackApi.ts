@@ -56,8 +56,11 @@ export const deleteFeedback = async (feedbackId: number): Promise<void> => {
 
 /**
  * Obtiene la lista de categorías de feedback.
+ * El backend envuelve la respuesta en ApiResponse: {success, message, data}.
  */
 export const fetchCategories = async (): Promise<Category[]> => {
-  const { data } = await apiService.get<Category[]>("/categories");
-  return data;
+  const { data } = await apiService.get<
+    { data: Category[] } | Category[]
+  >("/categories");
+  return Array.isArray(data) ? data : data.data ?? [];
 };
