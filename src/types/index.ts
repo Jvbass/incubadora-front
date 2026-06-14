@@ -187,6 +187,48 @@ export interface Category {
 }
 
 /*===================================================
+ * Reportes de contenido
+ *===================================================*/
+
+export type ReportContentType =
+  | "PROJECT"
+  | "FEEDBACK"
+  | "FEEDBACK_COMMENT"
+  | "KUDO_COMMENT";
+
+export type ReportReason =
+  | "SPAM"
+  | "CONTENIDO_INAPROPIADO"
+  | "PLAGIO"
+  | "INFORMACION_FALSA"
+  | "OTRO";
+
+export interface CreateReportRequest {
+  contentType: ReportContentType;
+  contentId: number;
+  reason: ReportReason;
+  description: string;
+}
+
+export type ReportStatus = "PENDING" | "REVIEWED" | "DISMISSED";
+
+/** Vista admin de un reporte, con el contenido resuelto por el backend. */
+export interface AdminReport {
+  id: number;
+  reporterUsername: string;
+  contentType: ReportContentType;
+  contentId: number;
+  reason: ReportReason;
+  description: string;
+  status: ReportStatus;
+  createdAt: string;
+  contentLabel: string;
+  contentLink: string | null;
+  contentAuthorUsername: string | null;
+  adminMessage?: string | null;
+}
+
+/*===================================================
  * Kudos
  *===================================================*/
 
