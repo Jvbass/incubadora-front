@@ -66,10 +66,17 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
       {/* Encabezado de la tarjeta con autor y fecha */}
       <header className="flex items-center justify-between mb-4 border-b border-gray-400  dark:border-gray-700 pb-3">
         <div className="flex items-center gap-3">
-          {/* Avatar Placeholder */}
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
-            {feedback.author.charAt(0).toUpperCase()}
-          </div>
+          {feedback.authorAvatarThumbnailUrl ? (
+            <img
+              src={feedback.authorAvatarThumbnailUrl}
+              alt={feedback.author}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
+              {feedback.author.charAt(0).toUpperCase()}
+            </div>
+          )}
           <span className="font-bold text-gray-800 dark:text-gray-200">
             {feedback.author}
           </span>

@@ -41,6 +41,9 @@ export interface ProfileResponse {
   lastName: string;
   headline: string;
   bio: string;
+  avatarUrl?: string;
+  avatarThumbnailUrl?: string;
+  bioImageUrl?: string;
   email: string;
   publicProfile: boolean;
   techStack: Technology[];
@@ -51,6 +54,11 @@ export interface ProfileResponse {
   projects: ProjectSummary[];
   kudosReceived: KudoResponse[];
   feedbackGiven: FeedbackResponse[];
+}
+
+export interface ImageUploadResponse {
+  imageUrl: string;
+  thumbnailUrl: string | null;
 }
 
 export interface UserResponse {
@@ -118,6 +126,7 @@ export interface ProjectSummary {
   developmentProgress: number;
   feedbackCount: number;
   averageRating: number;
+  imageThumbnailUrl?: string;
 }
 
 export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
@@ -151,6 +160,8 @@ export interface ProjectDetailResponse {
   isCollaborative: boolean;
   needMentoring: boolean;
   developmentProgress: number;
+  imageUrl?: string;
+  imageThumbnailUrl?: string;
 }
 
 export interface Technology {
@@ -167,6 +178,7 @@ export interface FeedbackResponse {
   feedbackDescription: string;
   rating: number;
   author: string;
+  authorAvatarThumbnailUrl?: string;
   relatedProjectSlug: string;
   relatedProjectTitle: string;
   authorId: number;
@@ -267,6 +279,7 @@ export interface KudoResponse {
   isPublic: boolean;
   createdAt: string;
   senderUsername: string;
+  senderAvatarThumbnailUrl?: string;
   receiverUsername: string;
   relatedProjectSlug: string;
   relatedProjectTitle: string;
@@ -283,6 +296,8 @@ export interface KudoPost {
  *===================================================*/
 export interface CommentAuthor {
   username: string;
+  slug?: string;
+  avatarThumbnailUrl?: string;
 }
 
 export interface CommentResponse {
@@ -367,6 +382,8 @@ export interface MentorshipSummaryResponse {
   price?: number;
   isFree?: boolean;
   tags?: string[];
+  imageUrl?: string;
+  imageThumbnailUrl?: string;
 }
 
 export interface MentorshipDetailResponse extends MentorshipSummaryResponse {
@@ -398,6 +415,7 @@ export interface MentoringListItemResponse {
   tags?: string[];
   sessionType?: "SINGLE" | "PACKAGE";
   createdAt?: string;
+  imageThumbnailUrl?: string;
 }
 
 export interface MentoringPublicDetailResponse extends MentoringListItemResponse {

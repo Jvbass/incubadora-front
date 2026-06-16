@@ -29,9 +29,17 @@ export const CommentCard = ({ comment, onReply }: CommentCardProps) => {
   return (
     <article className="flex items-start space-x-3 py-4">
       <div className="flex-shrink-0">
-        <div className="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center font-bold text-indigo-600">
-          {comment.author.username.charAt(0).toUpperCase()}
-        </div>
+        {comment.author.avatarThumbnailUrl ? (
+          <img
+            src={comment.author.avatarThumbnailUrl}
+            alt={comment.author.username}
+            className="w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center font-bold text-indigo-600">
+            {comment.author.username.charAt(0).toUpperCase()}
+          </div>
+        )}
       </div>
       <div className="flex-grow">
         <div className="flex items-center justify-between">

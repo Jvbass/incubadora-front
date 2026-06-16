@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fetchUserProfile, updateUserProfile } from "../../../api/profileApi";
 import { fetchTechnologies } from "../../../api/projectApi";
-import type { ProfileUpdateRequest, Technology } from "../../../types";
+import type { ImageUploadResponse, ProfileUpdateRequest, Technology } from "../../../types";
 import Loading from "../../../components/ux/Loading";
 import MultiSelect from "../../projects/components/MultiSelect";
+import ImageUpload from "../../../components/ui/ImageUpload";
 import { useEffect, useMemo } from "react";
 import { Trash2 } from "lucide-react";
 
@@ -140,8 +141,54 @@ const EditProfilePage = () => {
     return <Loading message="Cargando formulario de edición..." />;
   }
 
+  const invalidateProfile = () =>
+    queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+
+  const handleAvatarUpload = (_urls: ImageUploadResponse) => {
+    toast.success("Avatar actualizado correctamente.");
+    invalidateProfile();
+  };
+
+  const handleAvatarDelete = () => {
+    toast.success("Avatar eliminado.");
+    invalidateProfile();
+  };
+
+  const handleBioImageUpload = (_urls: ImageUploadResponse) => {
+    toast.success("Imagen de banner actualizada correctamente.");
+    invalidateProfile();
+  };
+
+  const handleBioImageDelete = () => {
+    toast.success("Imagen de banner eliminada.");
+    invalidateProfile();
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      {/* Imágenes del perfil (se guardan inmediatamente, fuera del form principal) */}
+      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6">
+        <h2 className="text-xl font-bold text-gray-800">Imágenes del perfil</h2>
+        <ImageUpload
+          label="Avatar"
+          aspectHint="1:1, 400×400"
+          currentImageUrl={profileData?.avatarUrl}
+          endpoint="/profile/avatar"
+          deleteEndpoint="/profile/avatar"
+          onUploadSuccess={handleAvatarUpload}
+          onDeleteSuccess={handleAvatarDelete}
+        />
+        <ImageUpload
+          label="Imagen de banner"
+          aspectHint="3:1, 1200×400"
+          currentImageUrl={profileData?.bioImageUrl}
+          endpoint="/profile/bio-image"
+          deleteEndpoint="/profile/bio-image"
+          onUploadSuccess={handleBioImageUpload}
+          onDeleteSuccess={handleBioImageDelete}
+        />
+      </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded-lg shadow-md space-y-8 border border-gray-200"

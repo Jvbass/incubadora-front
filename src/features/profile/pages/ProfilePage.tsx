@@ -305,19 +305,32 @@ const ProfilePage = () => {
                 key={kudo.id}
                 className="flex justify-between mt-4 p-4 rounded-md dark:text-gray-300 border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600"
               >
-                <div>
-                  <p className="text-gray-700 dark:text-gray-200">
-                    {kudo.message}
-                  </p>
-                  <div className="mt-2 text-sm text-gray-500">
-                    Dado por {kudo.senderUsername} el{" "}
-                    {new Date(kudo.createdAt).toLocaleDateString()}
-                  </div>
-                  {kudo.relatedProjectTitle && (
-                    <div className="mt-2">
-                      Proyecto: {kudo.relatedProjectTitle}
+                <div className="flex items-start gap-3">
+                  {kudo.senderAvatarThumbnailUrl ? (
+                    <img
+                      src={kudo.senderAvatarThumbnailUrl}
+                      alt={kudo.senderUsername}
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 flex-shrink-0 mt-1">
+                      {kudo.senderUsername.charAt(0).toUpperCase()}
                     </div>
                   )}
+                  <div>
+                    <p className="text-gray-700 dark:text-gray-200">
+                      {kudo.message}
+                    </p>
+                    <div className="mt-2 text-sm text-gray-500">
+                      Dado por {kudo.senderUsername} el{" "}
+                      {new Date(kudo.createdAt).toLocaleDateString()}
+                    </div>
+                    {kudo.relatedProjectTitle && (
+                      <div className="mt-2">
+                        Proyecto: {kudo.relatedProjectTitle}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 {!kudo.isPublic && (
                   <div className="text-gray-700 dark:text-gray-200 text-sm">

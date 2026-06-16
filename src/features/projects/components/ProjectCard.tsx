@@ -31,13 +31,16 @@ export const ProjectCard = React.memo(
           className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-cta-300 dark:hover:border-cta-600/70
         dark:hover:bg-bg-hoverdark"
         >
-          {/* 1. Avatar del Proyecto */}
+          {/* 1. Imagen del Proyecto */}
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-              project.title
-            )}&background=1e3a8a&color=f3f4f6&size=64&rounded=true&font-size=0.33`}
-            alt={`Avatar de ${project.title}`}
-            className="w-16 h-16 rounded-full flex-shrink-0"
+            src={
+              project.imageThumbnailUrl ??
+              `https://placehold.co/64x64/1e3a8a/f3f4f6?text=${encodeURIComponent(
+                project.title.charAt(0).toUpperCase()
+              )}`
+            }
+            alt={`Imagen de ${project.title}`}
+            className="w-16 h-16 rounded-md object-cover flex-shrink-0"
           />
 
           {/* 2. Contenido Principal (Título, Descripción, Etiquetas) */}

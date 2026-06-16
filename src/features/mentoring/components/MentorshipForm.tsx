@@ -17,7 +17,9 @@ import {
   type MentorshipDetailResponse,
   PLATFORM_OPTIONS,
   type CreateMentorshipRequest,
+  type ImageUploadResponse,
 } from "../../../types";
+import ImageUpload from "../../../components/ui/ImageUpload";
 
 interface MentorshipFormProps {
   mentorshipSlug?: string;
@@ -409,6 +411,36 @@ const MentorshipForm = ({
             </div>
           )}
         </section>
+
+        {/* Imagen de la mentoría — solo disponible en modo edición */}
+        {mentorshipSlug && (
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold border-b border-gray-300 dark:border-gray-600 pb-2 mb-4 text-gray-700 dark:text-text-light">
+              Imagen de la mentoría
+            </h3>
+            <ImageUpload
+              label="Imagen representativa"
+              aspectHint="4:3, 800×600"
+              currentImageUrl={initialData?.imageUrl}
+              endpoint={`/mentorings/${mentorshipSlug}/image`}
+              deleteEndpoint={`/mentorings/${mentorshipSlug}/image`}
+              onUploadSuccess={(_urls: ImageUploadResponse) => {
+                toast.success("Imagen de mentoría actualizada.");
+                queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
+                queryClient.invalidateQueries({
+                  queryKey: ["mentorings", "detail", mentorshipSlug],
+                });
+              }}
+              onDeleteSuccess={() => {
+                toast.success("Imagen de mentoría eliminada.");
+                queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
+                queryClient.invalidateQueries({
+                  queryKey: ["mentorings", "detail", mentorshipSlug],
+                });
+              }}
+            />
+          </section>
+        )}
 
         {/* Botones */}
         <div className="flex justify-end gap-4">

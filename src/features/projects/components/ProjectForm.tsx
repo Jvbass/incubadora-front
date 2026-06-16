@@ -8,9 +8,10 @@ import {
   fetchProjectById,
   updateProjectById,
 } from "../../../api/projectApi";
-import type { CreateProjectRequest } from "../../../types";
+import type { CreateProjectRequest, ImageUploadResponse } from "../../../types";
 import { useMemo, useEffect } from "react";
 import MultiSelect from "./MultiSelect";
+import ImageUpload from "../../../components/ui/ImageUpload";
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
@@ -449,6 +450,34 @@ const ProjectForm = ({ projectSlug, onClose }: ProjectFormProps) => {
             />
           </div>
         </section>
+
+        {/* Imagen del proyecto — solo disponible en modo edición */}
+        {projectSlug && (
+          <section>
+            <h3 className="text-xl font-semibold border-b border-border pb-2 mb-4 dark:text-brand-100 text-text-main">
+              Imagen del proyecto
+            </h3>
+            <ImageUpload
+              label="Imagen representativa"
+              aspectHint="4:3, 800×600"
+              currentImageUrl={projectData?.imageUrl}
+              endpoint={`/projects/${projectSlug}/image`}
+              deleteEndpoint={`/projects/${projectSlug}/image`}
+              onUploadSuccess={(_urls: ImageUploadResponse) => {
+                toast.success("Imagen del proyecto actualizada.");
+                queryClient.invalidateQueries({
+                  queryKey: ["projectDetail", projectSlug],
+                });
+              }}
+              onDeleteSuccess={() => {
+                toast.success("Imagen del proyecto eliminada.");
+                queryClient.invalidateQueries({
+                  queryKey: ["projectDetail", projectSlug],
+                });
+              }}
+            />
+          </section>
+        )}
 
         <div className="flex justify-end gap-4">
           {onClose && (
