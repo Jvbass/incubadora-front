@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { fetchPublicProfileBySlug, fetchUserProfile } from "../../../api/profileApi";
 import Loading from "../../../components/ux/Loading";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 import {
+  Camera,
   GraduationCap,
   Heart,
   Mail,
@@ -12,8 +13,8 @@ import {
   Star,
   UserRoundCheck,
 } from "lucide-react";
-import type { ProjectSummary } from "../../../types";
-import { useState } from "react";
+import type { ImageUploadResponse, ProjectSummary } from "../../../types";
+import { useRef, useState } from "react";
 import GiveKudoModal from "../../kudos/components/GiveKudoModal";
 import toast from "react-hot-toast";
 import { useInlineProfileEdit } from "../hooks/useInlineProfileEdit";
@@ -23,11 +24,55 @@ import EditableLanguages from "../components/EditableLanguages";
 import EditableSocialLinks from "../components/EditableSocialLinks";
 import WorkExperienceSection from "../components/WorkExperienceSection";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
+import apiService from "../../../api/apiService";
 
 const ProfilePage = () => {
   const { slug } = useParams<{ slug: string }>();
 
   const [isKudoModalOpen, setIsKudoModalOpen] = useState(false);
+
+  // ── Edición inline del avatar ─────────────────────────────────────────────
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tamaño (máx. 1 MB)
+    if (file.size > 1 * 1024 * 1024) {
+      toast.error("El archivo supera 1 MB. Comprímelo e inténtalo de nuevo.");
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+      return;
+    }
+
+    // Preview local inmediato
+    setAvatarPreview(URL.createObjectURL(file));
+    setIsUploadingAvatar(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const { data } = await apiService.post<ImageUploadResponse>(
+        "/profile/avatar",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      // Refrescar el perfil en toda la app (navbar, dashboard, profile)
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      toast.success("Avatar actualizado.");
+      // Actualizar el preview con la URL definitiva de Cloudinary
+      setAvatarPreview(data.thumbnailUrl ?? data.imageUrl);
+    } catch {
+      toast.error("No se pudo subir el avatar. Inténtalo de nuevo.");
+      setAvatarPreview(null);
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+    }
+  };
 
   // Hook #1: Obtiene y cachea el perfil del usuario autenticado.
   // Usaremos este dato para saber el slug del usuario actual y compararlo.
@@ -179,14 +224,43 @@ const ProfilePage = () => {
           </div>
           {/* Imagen */}
           <div className="relative w-full md:w-1/4 flex items-center justify-center md:justify-end align-center flex-col">
-            {/* Avatar real o iniciales como fallback */}
-            <AvatarUsuario
-              src={profile.avatarUrl ?? profile.avatarThumbnailUrl}
-              nombre={`${profile.firstName} ${profile.lastName}`}
-              tamano="w-32 h-32 md:w-40 md:h-40"
-              forma="rounded-full"
-              className="shadow-md"
-            />
+            {/* Avatar real o iniciales como fallback — con affordance de edición inline */}
+            <div className="relative group">
+              <AvatarUsuario
+                src={avatarPreview ?? profile.avatarUrl ?? profile.avatarThumbnailUrl}
+                nombre={`${profile.firstName} ${profile.lastName}`}
+                tamano="w-32 h-32 md:w-40 md:h-40"
+                forma="rounded-full"
+                className="shadow-md"
+              />
+              {/* Botón cámara: solo visible al hover y solo si es el perfil propio */}
+              {isOwnProfile && (
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={isUploadingAvatar}
+                  title="Cambiar foto de perfil"
+                  aria-label="Cambiar foto de perfil"
+                  className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer disabled:cursor-not-allowed"
+                >
+                  {isUploadingAvatar ? (
+                    <span className="text-white text-xs font-medium">Subiendo…</span>
+                  ) : (
+                    <Camera size={28} className="text-white" />
+                  )}
+                </button>
+              )}
+            </div>
+            {/* Input oculto para selección de archivo */}
+            {isOwnProfile && (
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarFileChange}
+              />
+            )}
             {/* mostrar el rol del usuario */}
             <span className="absolute bottom-12 left-40 w-full text-3xl">
               ✔️

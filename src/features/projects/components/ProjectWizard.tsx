@@ -3,10 +3,12 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { createProject, fetchTechnologies } from "../../../api/projectApi";
-import type { CreateProjectRequest } from "../../../types";
+import type { CreateProjectRequest, ImageUploadResponse } from "../../../types";
 import { useMemo, useState } from "react";
 import MultiSelect from "./MultiSelect";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import apiService from "../../../api/apiService";
+import ImageUpload from "../../../components/ui/ImageUpload";
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
@@ -51,6 +53,10 @@ const ProjectWizard = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // Imagen diferida: se selecciona en el wizard y se sube DESPUÉS de crear el proyecto
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
+
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
     queryFn: fetchTechnologies,
@@ -83,10 +89,32 @@ const ProjectWizard = () => {
 
   const createMutation = useMutation({
     mutationFn: createProject,
-    onSuccess: (data) => {
-      toast.success(`Proyecto "${data.title}" creado exitosamente!`);
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["myProjects"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+
+      // Si hay una imagen pendiente, subirla ahora que tenemos el slug
+      if (pendingImageFile && data.slug) {
+        try {
+          const formData = new FormData();
+          formData.append("file", pendingImageFile);
+          await apiService.post<ImageUploadResponse>(
+            `/projects/${data.slug}/image`,
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
+          );
+          toast.success(`Proyecto "${data.title}" creado con imagen exitosamente!`);
+        } catch {
+          // El proyecto ya fue creado; solo avisar al usuario que la imagen falló
+          toast.error(
+            `Proyecto creado, pero no se pudo subir la imagen. Podés agregarla desde "Editar proyecto".`,
+            { duration: 6000 }
+          );
+        }
+      } else {
+        toast.success(`Proyecto "${data.title}" creado exitosamente!`);
+      }
+
       navigate("/dashboard");
     },
     onError: (error) => {
@@ -459,6 +487,25 @@ const ProjectWizard = () => {
                 )}
               />
             </div>
+
+            {/* Imagen del proyecto (modo diferido: se sube tras crear) */}
+            <div>
+              <p className={`${labelClass} mb-1`}>Imagen del proyecto (opcional)</p>
+              <p className="text-xs text-text-soft mb-2">
+                Se sube automáticamente al publicar el proyecto.
+              </p>
+              <ImageUpload
+                deferred
+                label=""
+                aspectHint="4:3, 800×600"
+                currentImageUrl={pendingImagePreview}
+                maxSizeMB={1}
+                onFileSelected={(file) => {
+                  setPendingImageFile(file);
+                  setPendingImagePreview(URL.createObjectURL(file));
+                }}
+              />
+            </div>
           </section>
         )}
 
@@ -561,6 +608,21 @@ const ProjectWizard = () => {
                     {values.needMentoring ? "Sí" : "No"}
                   </dd>
                 </div>
+              </div>
+              {/* Preview de la imagen seleccionada */}
+              <div>
+                <dt className="font-semibold text-text-main dark:text-text-light">
+                  Imagen
+                </dt>
+                {pendingImagePreview ? (
+                  <img
+                    src={pendingImagePreview}
+                    alt="Preview de la imagen del proyecto"
+                    className="mt-2 max-h-32 rounded-md border border-border object-cover"
+                  />
+                ) : (
+                  <dd className="text-text-soft">Sin imagen (opcional)</dd>
+                )}
               </div>
             </dl>
           </section>

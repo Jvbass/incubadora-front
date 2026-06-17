@@ -56,12 +56,12 @@ export const fetchProjects = async ({
 };
 
 /**
- * Crea un nuevo proyecto.
+ * Crea un nuevo proyecto. El backend devuelve el proyecto creado con su slug.
  */
 export const createProject = async (
   projectData: CreateProjectRequest
-): Promise<CreateProjectRequest> => {
-  const { data } = await apiService.post<CreateProjectRequest>(
+): Promise<ProjectDetailResponse> => {
+  const { data } = await apiService.post<ProjectDetailResponse>(
     "/projects",
     projectData
   );
