@@ -14,6 +14,7 @@ import ProjectDetailPage from "../../projects/pages/ProjectDetailPage";
 import { Button } from "../../../components/button/RoundedButton";
 import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import toast from "react-hot-toast";
+import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 
 const DeveloperDashboard = () => {
   const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>( // Estado para el proyecto que se está viendo
@@ -121,11 +122,20 @@ const DeveloperDashboard = () => {
         dark:hover:bg-bg-hoverdark dark:text-text-dark-text"
         >
           <div className="flex justify-between items-center border-b border-border pb-2">
-            <div className="flex justify-center items-baseline gap-3">
-              <h2 className="text-2xl font-semibold ">Mi Perfil</h2>
-              <span className="text-xs text-yellow-800 dark:text-yellow-400">
-                {data.publicProfile ? "Publico" : "Privado"}
-              </span>
+            <div className="flex justify-center items-center gap-3">
+              {/* Avatar del usuario: imagen real o inicial como fallback */}
+              <AvatarUsuario
+                src={data.avatarThumbnailUrl ?? data.avatarUrl}
+                nombre={`${data.firstName} ${data.lastName}`}
+                tamano="w-12 h-12"
+                forma="rounded-full"
+              />
+              <div>
+                <h2 className="text-2xl font-semibold">Mi Perfil</h2>
+                <span className="text-xs text-yellow-800 dark:text-yellow-400">
+                  {data.publicProfile ? "Publico" : "Privado"}
+                </span>
+              </div>
             </div>
             {/* --- Botones ver y editar perfil--- */}
             <div className="flex space-x-4">

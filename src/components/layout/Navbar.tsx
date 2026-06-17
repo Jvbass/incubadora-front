@@ -5,6 +5,9 @@ import { useAuthZustand } from "../../hooks/useAuthZustand";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useState, useEffect, useRef } from "react";
 import { routeImports } from "../../router/routeImports";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserProfile } from "../../api/profileApi";
+import AvatarUsuario from "../ui/AvatarUsuario";
 
 interface NavbarProps {
   /** Abre/cierra la sidebar en móvil (la hamburguesa vive en esta barra). */
@@ -20,6 +23,16 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
   const { user, logout } = useAuthZustand();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Obtiene el perfil para acceder al avatar real del usuario autenticado.
+  // staleTime alto para no generar requests innecesarios en cada re-render.
+  const { data: perfil } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: fetchUserProfile,
+    staleTime: 1000 * 60 * 60,
+    refetchOnWindowFocus: false,
+    enabled: !!user,
+  });
 
   const dashboardHref =
     user?.role === "ADMINISTRATOR" ? "/admin" : "/dashboard";
@@ -110,12 +123,11 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex items-center gap-2 cursor-pointer p-1.5 rounded-md transition-colors duration-200 text-text-main dark:text-text-light hover:bg-gray-100 dark:hover:bg-bg-hoverdark"
           >
-            <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                user?.username || "User"
-              )}&background=c0392b&color=ffffff&size=32&rounded=true`}
-              alt={user?.username}
-              className="w-8 h-8 rounded-md"
+            {/* Avatar real del usuario o inicial como fallback */}
+            <AvatarUsuario
+              src={perfil?.avatarThumbnailUrl ?? perfil?.avatarUrl}
+              nombre={user?.username || "User"}
+              tamano="w-8 h-8"
             />
             <div className="text-right hidden lg:block">
               <span className="block text-sm font-medium leading-tight">

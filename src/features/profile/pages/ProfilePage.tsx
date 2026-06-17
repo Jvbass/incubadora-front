@@ -22,6 +22,7 @@ import EditableTechStack from "../components/EditableTechStack";
 import EditableLanguages from "../components/EditableLanguages";
 import EditableSocialLinks from "../components/EditableSocialLinks";
 import WorkExperienceSection from "../components/WorkExperienceSection";
+import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 
 const ProfilePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -178,10 +179,13 @@ const ProfilePage = () => {
           </div>
           {/* Imagen */}
           <div className="relative w-full md:w-1/4 flex items-center justify-center md:justify-end align-center flex-col">
-            <img
-              src="https://mitsloanreview.mx/wp-content/uploads/2024/02/quien-es-julian-assange.jpg"
-              alt="Avatar"
-              className="w-32 h-32 object-cover md:w-40 md:h-40 rounded-full shadow-md"
+            {/* Avatar real o iniciales como fallback */}
+            <AvatarUsuario
+              src={profile.avatarUrl ?? profile.avatarThumbnailUrl}
+              nombre={`${profile.firstName} ${profile.lastName}`}
+              tamano="w-32 h-32 md:w-40 md:h-40"
+              forma="rounded-full"
+              className="shadow-md"
             />
             {/* mostrar el rol del usuario */}
             <span className="absolute bottom-12 left-40 w-full text-3xl">
@@ -440,11 +444,14 @@ const ProfilePage = () => {
                 </p>
               </EditableText>
             </div>
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/0/04/Julian_Assange_26C3.jpg"
-              alt=""
-              className="w-full h-auto object-cover max-h-48 max-w-1/3 rounded-lg rotate-4 hover:scale-110 hover:rotate-2 transition-all duration-300 ring-3 ring-gray-200 dark:ring-gray-700 "
-            />
+            {/* Imagen de biografía: usa bioImageUrl del perfil si existe */}
+            {profile.bioImageUrl && (
+              <img
+                src={profile.bioImageUrl}
+                alt=""
+                className="w-full h-auto object-cover max-h-48 max-w-1/3 rounded-lg rotate-4 hover:scale-110 hover:rotate-2 transition-all duration-300 ring-3 ring-gray-200 dark:ring-gray-700"
+              />
+            )}
           </div>
         </section>
       </main>
