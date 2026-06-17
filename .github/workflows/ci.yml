@@ -1,0 +1,27 @@
+name: CI
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck + build
+        run: pnpm build
+      - name: Lint (no bloqueante hasta limpiar los 25 errores pre-existentes)
+        run: pnpm lint
+        continue-on-error: true
+      - name: Audit (informativo)
+        run: pnpm audit --prod
+        continue-on-error: true
