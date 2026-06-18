@@ -57,6 +57,7 @@ export interface ProfileResponse {
   kudosGiven: KudoResponse[];
   feedbackReceived: FeedbackResponse[];
   stats?: ProfileStats;
+  role?: string;
 }
 
 export interface ProfileStats {

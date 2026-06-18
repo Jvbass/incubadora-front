@@ -38,7 +38,6 @@ const DeveloperDashboard = () => {
 
   const queryClient = useQueryClient();
   const { user } = useAuthZustand();
-  const isMentor = user?.role === "MENTOR" || user?.role === "ADMINISTRATOR";
 
   const handleProjectView = (slug: string) => {
     setViewingProjectSlug(slug);
@@ -74,6 +73,11 @@ const DeveloperDashboard = () => {
     staleTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
   });
+
+  // Rol en vivo desde el perfil (F-17): tras una degradación, la pestaña de
+  // mentorías se oculta sin re-login (el rol del JWT queda obsoleto).
+  const liveRole = data?.role ?? user?.role;
+  const isMentor = liveRole === "MENTOR" || liveRole === "ADMINISTRATOR";
 
   const { data: projects } = useQuery<ProjectSummary[]>({
     queryKey: ["myProjects"],
@@ -308,9 +312,25 @@ const DeveloperDashboard = () => {
                   variant="compact"
                   onEdit={handleProjectEdit}
                   onView={handleProjectView}
-                  onStatusChange={(slug, status) =>
-                    statusMutation.mutate({ slug, status })
-                  }
+                  onStatusChange={(slug, status) => {
+                    const p = allProjects.find((x) => x.slug === slug);
+                    const publishedCount = allProjects.filter(
+                      (x) => x.status === "published"
+                    ).length;
+                    // F-17: aviso si al despublicar cae por debajo del mínimo de mentor.
+                    if (
+                      isMentor &&
+                      p?.status === "published" &&
+                      status !== "published" &&
+                      publishedCount <= 3 &&
+                      !window.confirm(
+                        "Necesitas al menos 3 proyectos publicados para mantener el rol de mentor. Si continúas, perderás el rol y tus mentorías publicadas pasarán a no publicadas. ¿Continuar?"
+                      )
+                    ) {
+                      return;
+                    }
+                    statusMutation.mutate({ slug, status });
+                  }}
                 />
               ))}
             </ul>
