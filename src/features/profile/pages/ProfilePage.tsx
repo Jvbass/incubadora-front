@@ -1,9 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { fetchPublicProfileBySlug, fetchUserProfile } from "../../../api/profileApi";
 import Loading from "../../../components/ux/Loading";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 import {
+  ArrowLeft,
   Camera,
   GraduationCap,
   Heart,
@@ -28,6 +29,7 @@ import apiService from "../../../api/apiService";
 
 const ProfilePage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
 
   const [isKudoModalOpen, setIsKudoModalOpen] = useState(false);
 
@@ -163,15 +165,26 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-3 sm:p-6 lg:p-8">
+      {/* Botón volver: discreto, no invade el diseño (F-07) */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="mb-2 inline-flex items-center gap-1 text-sm text-text-soft hover:text-cta-600 dark:text-gray-400 dark:hover:text-cta-300 transition-colors"
+      >
+        <ArrowLeft size={16} /> Volver
+      </button>
       <header className="p-8 mb-8 min-h-64">
         <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-8">
           {/* Texto */}
           <div className="w-full md:w-3/4 flex flex-col gap-4 ">
             {/* Nombre y título */}
             <div>
-              <span className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
-                Hola! Soy {profile.firstName} {profile.lastName}
-              </span>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
+                {profile.firstName} {profile.lastName}
+              </h1>
+              <p className="mt-1 text-sm text-text-soft dark:text-gray-400 text-center md:text-left">
+                @{profile.slug}
+              </p>
               <EditableText
                 value={profile.headline ?? ""}
                 canEdit={isOwnProfile}

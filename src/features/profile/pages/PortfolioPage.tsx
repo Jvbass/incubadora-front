@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchPublicPortfolio } from "../../../api/profileApi";
 import Loading from "../../../components/ux/Loading";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 import {
+  ArrowLeft,
   BriefcaseBusiness,
   GraduationCap,
   Heart,
@@ -21,6 +22,7 @@ import { useAuthStore } from "../../../stores/authStore";
 
 const PortfolioPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [isKudoModalOpen, setIsKudoModalOpen] = useState(false);
 
   // Verifica si hay usuario autenticado sin hacer requests
@@ -99,14 +101,25 @@ const PortfolioPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-3 sm:p-6 lg:p-8">
+      {/* Botón volver: discreto, no invade el diseño (F-07) */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="mb-2 inline-flex items-center gap-1 text-sm text-text-soft hover:text-cta-600 dark:text-gray-400 dark:hover:text-cta-300 transition-colors"
+      >
+        <ArrowLeft size={16} /> Volver
+      </button>
       <header className="p-8 mb-8 min-h-64">
         <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-8">
           {/* Texto */}
           <div className="w-full md:w-3/4 flex flex-col gap-4">
             <div>
-              <span className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
-                Hola! Soy {profile.firstName} {profile.lastName}
-              </span>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light text-center md:text-left">
+                {profile.firstName} {profile.lastName}
+              </h1>
+              <p className="mt-1 text-sm text-text-soft dark:text-gray-400 text-center md:text-left">
+                @{slug}
+              </p>
               <p className="text-lg md:text-xl dark:text-gray-300 text-gray-600 text-left mt-3">
                 {profile.headline || "Desarrollador"}
               </p>
@@ -231,8 +244,8 @@ const PortfolioPage = () => {
           </section>
         )}
 
-        {/* Kudos */}
-        {kudosReceived.length > 0 && (
+        {/* Kudos: visible si hay kudos o si un visitante autenticado puede dar uno (F-08) */}
+        {(kudosReceived.length > 0 || isAuthenticated) && (
           <section className="container">
             <div className="flex justify-baseline items-center mb-4 text-text-main dark:text-text-light">
               <Heart size={20} />
