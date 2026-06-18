@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProjectById } from "../../../api/projectApi";
 import { fetchFeedbackForProject } from "../../../api/feedbackApi";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 
 // Importamos todos los componentes que hemos creado
 import { ProjectMainContent } from "../components/ProjectMainContent";
@@ -38,6 +39,9 @@ const ProjectDetailPage = ({ slug }: ProjectDetailPageProps) => {
     enabled: !!projectSlug,
     staleTime: 1000 * 60 * 5,
   });
+
+  // Título contextual del navbar con el nombre real del proyecto (F-03)
+  usePageTitle(project?.title ? `Proyecto: ${project.title}` : null);
 
   // --- Renderizado ---
 

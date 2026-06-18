@@ -19,6 +19,7 @@ import { useState } from "react";
 import GiveKudoModal from "../../kudos/components/GiveKudoModal";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../../stores/authStore";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 
 const PortfolioPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -46,6 +47,9 @@ const PortfolioPage = () => {
       return failureCount < 2;
     },
   });
+
+  // Título contextual del navbar con el nombre del dueño del perfil (F-03)
+  usePageTitle(profile?.firstName ? `Perfil de ${profile.firstName}` : null);
 
   // copiar correo
   const copyToClipboard = async () => {

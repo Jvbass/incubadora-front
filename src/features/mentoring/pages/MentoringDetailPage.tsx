@@ -4,6 +4,7 @@ import { fetchMentoringBySlug } from "../../../api/mentoringApi";
 import Loading from "../../../components/ux/Loading";
 import { Clock, DollarSign, Globe, Tag, Calendar } from "lucide-react";
 import { DAYS_OF_WEEK, PLATFORM_OPTIONS } from "../../../types";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 
 const MentoringDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -14,6 +15,9 @@ const MentoringDetailPage = () => {
     enabled: !!slug,
     staleTime: 1000 * 60 * 5,
   });
+
+  // Título contextual del navbar con el nombre real de la mentoría (F-03)
+  usePageTitle(mentoring?.title ? `Mentoría: ${mentoring.title}` : null);
 
   if (isLoading) return <Loading message="Cargando mentoría..." />;
 

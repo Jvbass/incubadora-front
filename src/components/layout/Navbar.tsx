@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
-import { LayoutDashboard, Lightbulb, Menu, User, X } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Lightbulb, Menu, User, X } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { useState, useEffect, useRef } from "react";
@@ -8,6 +8,7 @@ import { routeImports } from "../../router/routeImports";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../../api/profileApi";
 import AvatarUsuario from "../ui/AvatarUsuario";
+import { usePageTitleStore } from "../../stores/pageTitleStore";
 
 interface NavbarProps {
   /** Abre/cierra la sidebar en móvil (la hamburguesa vive en esta barra). */
@@ -71,7 +72,9 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
   }, []);
 
   const { pathname } = useLocation();
-  const sectionTitle = getSectionTitle(pathname);
+  // Título dinámico de la página de detalle (F-03); fallback al título por ruta.
+  const dynamicTitle = usePageTitleStore((s) => s.title);
+  const sectionTitle = dynamicTitle ?? getSectionTitle(pathname);
 
   return (
     <nav className="fixed top-0 inset-x-0 h-14 z-50 flex items-center justify-between gap-2 px-3 sm:px-5 bg-bg-light dark:bg-bg-dark border-b border-divider dark:border-border shadow-sm">
@@ -99,6 +102,19 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
 
       {/* Derecha: acciones + avatar */}
       <div className="flex items-center gap-1 sm:gap-2">
+        {/* Crear mentoría: solo para MENTOR (F-04). Es <Link>, no <button>,
+            para no romper el contrato E2E (la campana es el primer <button>). */}
+        {user?.role === "MENTOR" && (
+          <Link
+            to="/mentoring/new"
+            onMouseEnter={() => routeImports.createMentorship()}
+            onFocus={() => routeImports.createMentorship()}
+            className="flex items-center gap-1 text-sm font-semibold rounded-md py-1.5 px-2.5 border transition duration-200 text-cta-600 border-cta-600 hover:bg-cta-600 hover:text-white dark:text-cta-300 dark:border-cta-300 dark:hover:bg-cta-600 dark:hover:border-cta-600 dark:hover:text-white"
+          >
+            <GraduationCap strokeWidth={2} size={18} />
+            <span className="hidden sm:inline">Crear mentoría</span>
+          </Link>
+        )}
         <Link
           to="/projects/new"
           onMouseEnter={() => routeImports.createProject()}
