@@ -28,7 +28,7 @@ export const ProjectCard = React.memo(
       return (
         <Link
           to={`/project/${project.slug}`}
-          className="flex flex-wrap justify-between items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-cta-300 dark:hover:border-cta-600/70
+          className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-between sm:items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-cta-300 dark:hover:border-cta-600/70
         dark:hover:bg-bg-hoverdark"
         >
           {/* 1. Imagen del Proyecto */}
@@ -44,8 +44,8 @@ export const ProjectCard = React.memo(
           />
 
           {/* 2. Contenido Principal (Título, Descripción, Etiquetas) */}
-          <div className="flex-grow">
-            <h3 className="text-lg  text-text-main dark:text-text-light">
+          <div className="flex-grow min-w-0">
+            <h3 className="text-lg  text-text-main dark:text-text-light truncate">
               {project.title}
             </h3>
             <p className="text-sm text-bg-dark dark:text-brand-100 truncate">
