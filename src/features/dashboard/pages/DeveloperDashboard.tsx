@@ -2,11 +2,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchMyProjects, updateProjectStatus } from "../../../api/projectApi";
 import { fetchUserProfile } from "../../../api/profileApi";
 import { requestMentorUpgrade } from "../../../api/adminApi";
+import {
+  fetchMyMentorships,
+  archiveMentorship,
+  publishMentorship,
+  fetchMentoringBySlug,
+} from "../../../api/mentoringApi";
 import Loading from "../../../components/ux/Loading";
-import { Cog, Eye, Lightbulb, MessageSquare, Heart, FolderGit2, Users } from "lucide-react";
+import { Cog, Eye, Lightbulb, MessageSquare, Heart, FolderGit2, Users, Brain } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProjectCard } from "../../projects/components/ProjectCard";
-import type { ProjectSummary } from "../../../types";
+import { MentorshipCard } from "../../mentoring/components/MentorshipCard";
+import MentorshipForm from "../../mentoring/components/MentorshipForm";
+import type { ProjectSummary, MentorshipDetailResponse } from "../../../types";
 import { useState } from "react";
 import Modal from "../../../components/ui/modal/Modal";
 import ProjectForm from "../../projects/components/ProjectForm";
@@ -16,15 +24,7 @@ import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import toast from "react-hot-toast";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 
-const TABS = [
-  { key: "resumen", label: "Resumen" },
-  { key: "proyectos", label: "Proyectos" },
-  { key: "feedback", label: "Feedback" },
-  { key: "kudos", label: "Kudos" },
-  { key: "social", label: "Social" },
-] as const;
-
-type TabKey = (typeof TABS)[number]["key"];
+type TabKey = "resumen" | "proyectos" | "mentorias" | "feedback" | "kudos" | "social";
 
 const cardClass =
   "p-5 rounded-lg border bg-bg-light dark:bg-bg-dark border-divider dark:border-border text-text-main dark:text-text-light";
@@ -32,21 +32,32 @@ const cardClass =
 const DeveloperDashboard = () => {
   const [viewingProjectSlug, setViewingProjectSlug] = useState<string | null>(null);
   const [editingProjectSlug, setEditingProjectSlug] = useState<string | null>(null);
+  const [editingMentorshipSlug, setEditingMentorshipSlug] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tab, setTab] = useState<TabKey>("resumen");
 
   const queryClient = useQueryClient();
   const { user } = useAuthZustand();
+  const isMentor = user?.role === "MENTOR" || user?.role === "ADMINISTRATOR";
 
   const handleProjectView = (slug: string) => {
     setViewingProjectSlug(slug);
     setEditingProjectSlug(null);
+    setEditingMentorshipSlug(null);
     setIsModalOpen(true);
   };
 
   const handleProjectEdit = (slug: string) => {
     setEditingProjectSlug(slug);
     setViewingProjectSlug(null);
+    setEditingMentorshipSlug(null);
+    setIsModalOpen(true);
+  };
+
+  const handleMentorshipEdit = (slug: string) => {
+    setEditingMentorshipSlug(slug);
+    setViewingProjectSlug(null);
+    setEditingProjectSlug(null);
     setIsModalOpen(true);
   };
 
@@ -54,6 +65,7 @@ const DeveloperDashboard = () => {
     setIsModalOpen(false);
     setViewingProjectSlug(null);
     setEditingProjectSlug(null);
+    setEditingMentorshipSlug(null);
   };
 
   const { data, isLoading, isError, error } = useQuery({
@@ -68,6 +80,22 @@ const DeveloperDashboard = () => {
     queryFn: fetchMyProjects,
     staleTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
+  });
+
+  const { data: mentorships, isLoading: isLoadingMentorships } = useQuery<
+    MentorshipDetailResponse[]
+  >({
+    queryKey: ["myMentorships"],
+    queryFn: fetchMyMentorships,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    enabled: isMentor,
+  });
+
+  const { data: editingMentorshipData } = useQuery({
+    queryKey: ["mentorship", editingMentorshipSlug],
+    queryFn: () => fetchMentoringBySlug(editingMentorshipSlug!),
+    enabled: !!editingMentorshipSlug,
   });
 
   const requestMentorMutation = useMutation({
@@ -100,6 +128,34 @@ const DeveloperDashboard = () => {
       toast.error(err.response?.data?.message || "No se pudo cambiar el estado."),
   });
 
+  const archiveMentorshipMutation = useMutation({
+    mutationFn: archiveMentorship,
+    onSuccess: () => {
+      toast.success("Mentoría archivada correctamente");
+      queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
+    },
+    onError: (err: any) => toast.error(`Error al archivar: ${err.message}`),
+  });
+
+  const publishMentorshipMutation = useMutation({
+    mutationFn: publishMentorship,
+    onSuccess: () => {
+      toast.success("Mentoría publicada correctamente");
+      queryClient.invalidateQueries({ queryKey: ["myMentorships"] });
+    },
+    onError: (err: any) => toast.error(`Error al publicar: ${err.message}`),
+  });
+
+  const handleMentorshipArchive = (slug: string) => {
+    if (
+      window.confirm(
+        "¿Archivar esta mentoría? Dejará de ser visible para los demás usuarios."
+      )
+    ) {
+      archiveMentorshipMutation.mutate(slug);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -122,7 +178,15 @@ const DeveloperDashboard = () => {
   const stats = data.stats;
   const allProjects = projects ?? [];
 
-  // Tarjeta de estadística (pestaña Resumen)
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: "resumen", label: "Resumen" },
+    { key: "proyectos", label: "Proyectos" },
+    ...(isMentor ? [{ key: "mentorias" as TabKey, label: "Mentorías" }] : []),
+    { key: "feedback", label: "Feedback" },
+    { key: "kudos", label: "Kudos" },
+    { key: "social", label: "Social" },
+  ];
+
   const StatCard = ({ label, value }: { label: string; value: number | string }) => (
     <div className={`${cardClass} flex flex-col gap-1`}>
       <span className="text-3xl font-bold text-cta-600 dark:text-cta-300">{value}</span>
@@ -159,7 +223,6 @@ const DeveloperDashboard = () => {
               </span>
             )}
           </div>
-          {/* Solicitud de cambio a mentor (regla: 3 proyectos) */}
           {user?.role === "DEV" && (
             <div className="mt-2">
               {allProjects.length < 3 ? (
@@ -191,9 +254,9 @@ const DeveloperDashboard = () => {
         </div>
       </div>
 
-      {/* ── Tabs (F-14) ────────────────────────────────────────────────── */}
+      {/* ── Tabs (F-14 / F-16) ─────────────────────────────────────────── */}
       <div className="flex gap-1 border-b border-divider dark:border-border overflow-x-auto">
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button
             key={t.key}
             type="button"
@@ -251,6 +314,41 @@ const DeveloperDashboard = () => {
                 />
               ))}
             </ul>
+          )}
+        </div>
+      )}
+
+      {tab === "mentorias" && isMentor && (
+        <div className={cardClass}>
+          <div className="flex justify-between items-center border-b border-divider dark:border-border pb-2 mb-4">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Brain size={20} /> Mis Mentorías
+            </h2>
+            <Link
+              to="/mentoring/new"
+              className="flex items-center gap-1 text-sm font-semibold rounded-md py-1 px-2 border border-cta-600 text-cta-600 hover:bg-cta-600 hover:text-white transition-colors dark:border-cta-300 dark:text-cta-300"
+            >
+              <Brain strokeWidth={2} size={18} /> Crear mentoría
+            </Link>
+          </div>
+          {isLoadingMentorships ? (
+            <Loading message="mentorías" />
+          ) : mentorships && mentorships.length > 0 ? (
+            <div className="space-y-4">
+              {mentorships.map((mentorship) => (
+                <MentorshipCard
+                  key={mentorship.id}
+                  mentorship={mentorship}
+                  onEdit={handleMentorshipEdit}
+                  onArchive={handleMentorshipArchive}
+                  onPublish={(slug) => publishMentorshipMutation.mutate(slug)}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-text-soft dark:text-gray-400">
+              No tienes mentorías creadas aún. ¡Crea tu primera mentoría!
+            </p>
           )}
         </div>
       )}
@@ -344,15 +442,28 @@ const DeveloperDashboard = () => {
         </div>
       )}
 
-      {/* Modales de ver/editar proyecto */}
+      {/* Modal: ver/editar proyecto o editar mentoría */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingProjectSlug ? "Editar Proyecto" : "Detalles del Proyecto"}
+        title={
+          editingMentorshipSlug
+            ? "Editar Mentoría"
+            : editingProjectSlug
+            ? "Editar Proyecto"
+            : "Detalles del Proyecto"
+        }
       >
         {viewingProjectSlug && <ProjectDetailPage slug={viewingProjectSlug} />}
         {editingProjectSlug && (
           <ProjectForm projectSlug={editingProjectSlug} onClose={handleCloseModal} />
+        )}
+        {editingMentorshipSlug && editingMentorshipData && (
+          <MentorshipForm
+            mentorshipSlug={editingMentorshipSlug}
+            initialData={editingMentorshipData as any}
+            onClose={handleCloseModal}
+          />
         )}
       </Modal>
     </div>

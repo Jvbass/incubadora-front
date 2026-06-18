@@ -15,7 +15,6 @@ const LoginPage = lazy(routeImports.login);
 const RegisterPage = lazy(routeImports.register);
 const VerifyEmailPage = lazy(routeImports.verifyEmail);
 const DeveloperDashboard = lazy(routeImports.developerDashboard);
-const MentorDashboard = lazy(routeImports.mentorDashboard);
 const NotFound = lazy(routeImports.notFound);
 const HomePage = lazy(routeImports.home);
 const CreateProjectPage = lazy(routeImports.createProject);
@@ -83,7 +82,8 @@ const AppRouter = () => {
           }
         >
           <Route path="/dashboard" element={<DeveloperDashboard />} />
-          <Route path="/mentor-dashboard" element={<MentorDashboard />} />
+          {/* Fusión (F-16): el dashboard de mentor ahora es el unificado. */}
+          <Route path="/mentor-dashboard" element={<DeveloperDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<EditProfilePage />} />
