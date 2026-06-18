@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProjectById } from "../../../api/projectApi";
 import { fetchFeedbackForProject } from "../../../api/feedbackApi";
 import { usePageTitle } from "../../../hooks/usePageTitle";
+import FollowButton from "../../../components/ui/FollowButton";
+import { useAuthZustand } from "../../../hooks/useAuthZustand";
 
 // Importamos todos los componentes que hemos creado
 import { ProjectMainContent } from "../components/ProjectMainContent";
@@ -19,6 +21,7 @@ interface ProjectDetailPageProps {
 const ProjectDetailPage = ({ slug }: ProjectDetailPageProps) => {
   const { slug: paramSlug } = useParams<{ slug: string }>();
   const projectSlug = slug || paramSlug;
+  const { user } = useAuthZustand();
 
   // Query para obtener los detalles del proyecto
   const {
@@ -73,6 +76,11 @@ const ProjectDetailPage = ({ slug }: ProjectDetailPageProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-8">
         {/* --- Columna Izquierda (Contenido Principal) --- */}
         <main className="lg:col-span-3 space-y-12">
+          {user && projectSlug && (
+            <div className="flex justify-end">
+              <FollowButton kind="project" slug={projectSlug} />
+            </div>
+          )}
           <ProjectMainContent project={project} feedbackList={feedbackList} />
           <FeedbackForm projectSlug={projectSlug!} />
 

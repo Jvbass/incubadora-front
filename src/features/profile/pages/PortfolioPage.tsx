@@ -20,6 +20,7 @@ import GiveKudoModal from "../../kudos/components/GiveKudoModal";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../../stores/authStore";
 import { usePageTitle } from "../../../hooks/usePageTitle";
+import FollowButton from "../../../components/ui/FollowButton";
 
 const PortfolioPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -127,6 +128,11 @@ const PortfolioPage = () => {
               <p className="text-lg md:text-xl dark:text-gray-300 text-gray-600 text-left mt-3">
                 {profile.headline || "Desarrollador"}
               </p>
+              {isAuthenticated && (
+                <div className="mt-3">
+                  <FollowButton kind="user" slug={slug!} />
+                </div>
+              )}
             </div>
 
             {/* Stack tecnológico */}

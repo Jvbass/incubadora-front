@@ -23,6 +23,7 @@ import { Button } from "../../../components/button/RoundedButton";
 import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import toast from "react-hot-toast";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
+import { getFollowedUsers, getFollowedProjects, type FollowedUser } from "../../../api/followApi";
 
 type TabKey = "resumen" | "proyectos" | "mentorias" | "feedback" | "kudos" | "social";
 
@@ -100,6 +101,20 @@ const DeveloperDashboard = () => {
     queryKey: ["mentorship", editingMentorshipSlug],
     queryFn: () => fetchMentoringBySlug(editingMentorshipSlug!),
     enabled: !!editingMentorshipSlug,
+  });
+
+  const { data: followedUsers } = useQuery<FollowedUser[]>({
+    queryKey: ["followedUsers"],
+    queryFn: getFollowedUsers,
+    enabled: tab === "social",
+    staleTime: 1000 * 60,
+  });
+
+  const { data: followedProjects } = useQuery<ProjectSummary[]>({
+    queryKey: ["followedProjects"],
+    queryFn: getFollowedProjects,
+    enabled: tab === "social",
+    staleTime: 1000 * 60,
   });
 
   const requestMentorMutation = useMutation({
@@ -453,12 +468,51 @@ const DeveloperDashboard = () => {
       )}
 
       {tab === "social" && (
-        <div className={`${cardClass} flex flex-col items-center gap-2 py-10 text-center`}>
-          <Users size={32} className="text-text-soft dark:text-gray-500" />
-          <p className="font-medium">Social</p>
-          <p className="text-sm text-text-soft dark:text-gray-400">
-            Próximamente: usuarios y proyectos que sigues.
-          </p>
+        <div className="space-y-6">
+          <section className={cardClass}>
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <Users size={18} /> Usuarios que sigo
+            </h3>
+            {(followedUsers ?? []).length === 0 ? (
+              <p className="text-sm text-text-soft dark:text-gray-400">Todavía no sigues a nadie.</p>
+            ) : (
+              <ul className="space-y-3">
+                {followedUsers!.map((u) => (
+                  <li key={u.slug}>
+                    <Link
+                      to={`/portfolio/${u.slug}`}
+                      className="flex items-center gap-3 hover:text-cta-600 transition-colors"
+                    >
+                      <AvatarUsuario
+                        src={u.avatarUrl}
+                        nombre={`${u.firstName} ${u.lastName}`}
+                        tamano="w-9 h-9"
+                        forma="rounded-full"
+                      />
+                      <div>
+                        <p className="font-medium">{u.firstName} {u.lastName}</p>
+                        <p className="text-xs text-text-soft dark:text-gray-400">@{u.slug}</p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section className={cardClass}>
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <FolderGit2 size={18} /> Proyectos que sigo
+            </h3>
+            {(followedProjects ?? []).length === 0 ? (
+              <p className="text-sm text-text-soft dark:text-gray-400">Todavía no sigues proyectos.</p>
+            ) : (
+              <div className="space-y-4">
+                {followedProjects!.map((p) => (
+                  <ProjectCard key={p.slug} project={p} variant="full" />
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       )}
 
