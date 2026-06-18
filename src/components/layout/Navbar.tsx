@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 import { LayoutDashboard, Lightbulb, Menu, User, X } from "lucide-react";
 import { useAuthZustand } from "../../hooks/useAuthZustand";
@@ -14,6 +14,22 @@ interface NavbarProps {
   onToggleMenu?: () => void;
   isMobileMenuOpen?: boolean;
 }
+
+// Título de la sección según la ruta actual (F-03). Los títulos dinámicos
+// (ej. "Proyecto {título}") requerirán un store de page-title (follow-up).
+const getSectionTitle = (pathname: string): string => {
+  if (pathname.startsWith("/projects/new")) return "Nuevo proyecto";
+  if (pathname.startsWith("/project/")) return "Proyecto";
+  if (pathname.startsWith("/mentoring/new")) return "Nueva mentoría";
+  if (pathname === "/mentoring") return "Mentorías";
+  if (pathname.startsWith("/mentoring/")) return "Mentoría";
+  if (pathname.startsWith("/portfolio") || pathname.startsWith("/profile")) return "Perfil";
+  if (pathname.startsWith("/admin")) return "Panel";
+  if (pathname.startsWith("/mentor-dashboard")) return "Panel";
+  if (pathname.startsWith("/dashboard")) return "Panel";
+  if (pathname.startsWith("/home")) return "Proyectos";
+  return "";
+};
 
 // Barra superior full-width (rediseño v2, SDD §12.3 R2).
 // OJO contrato E2E: un solo img[alt] dentro de <nav> (el avatar), el primer
@@ -54,12 +70,8 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 ${
-      isActive
-        ? "text-cta-600 dark:text-cta-300 bg-cta-100/60 dark:bg-cta-900/20"
-        : "text-text-main dark:text-text-light hover:text-cta-600 dark:hover:text-cta-300 hover:bg-gray-100 dark:hover:bg-bg-hoverdark"
-    }`;
+  const { pathname } = useLocation();
+  const sectionTitle = getSectionTitle(pathname);
 
   return (
     <nav className="fixed top-0 inset-x-0 h-14 z-50 flex items-center justify-between gap-2 px-3 sm:px-5 bg-bg-light dark:bg-bg-dark border-b border-divider dark:border-border shadow-sm">
@@ -77,24 +89,12 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-1 ml-8">
-          <NavLink
-            to="/home"
-            onMouseEnter={() => routeImports.home()}
-            onFocus={() => routeImports.home()}
-            className={navLinkClass}
-          >
-            Proyectos
-          </NavLink>
-          <NavLink
-            to="/mentoring"
-            onMouseEnter={() => routeImports.mentoringList()}
-            onFocus={() => routeImports.mentoringList()}
-            className={navLinkClass}
-          >
-            Mentorías
-          </NavLink>
-        </div>
+        {/* Título de la sección actual — reemplaza los links Proyectos/Mentorías (F-02/F-03) */}
+        {sectionTitle && (
+          <span className="hidden md:block ml-8 text-sm font-semibold text-text-soft dark:text-text-light truncate">
+            {sectionTitle}
+          </span>
+        )}
       </div>
 
       {/* Derecha: acciones + avatar */}
