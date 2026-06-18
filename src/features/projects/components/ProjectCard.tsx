@@ -15,6 +15,8 @@ interface ProjectCardProps {
   onView?: (slug: string) => void;
   onEdit?: (slug: string) => void;
   onDelete?: (slug: string) => void;
+  /** Si se provee, el estado se vuelve editable inline (F-15). */
+  onStatusChange?: (slug: string, status: string) => void;
 }
 
 const getStatusStyles = (status: string): string => {
@@ -22,7 +24,7 @@ const getStatusStyles = (status: string): string => {
 };
 
 export const ProjectCard = React.memo(
-  ({ project, variant, onView, onEdit, onDelete }: ProjectCardProps) => {
+  ({ project, variant, onView, onEdit, onDelete, onStatusChange }: ProjectCardProps) => {
     // Vista Detallada para el HomePage ---
     if (variant === "full") {
       return (
@@ -141,17 +143,28 @@ export const ProjectCard = React.memo(
 
           {/* Estado y Acciones */}
           <div className="flex flex-col justify-between items-center">
-            <div className="flex">
-              <span
-                className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}
-              >
-                {project.status}
-              </span>
-              {project.status == "published" ? (
+            <div className="flex items-center gap-1">
+              {onStatusChange ? (
+                <select
+                  value={project.status}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => onStatusChange(project.slug, e.target.value)}
+                  className="text-xs rounded-md border border-divider dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light px-1 py-0.5 cursor-pointer"
+                >
+                  <option value="published">published</option>
+                  <option value="pending">pending</option>
+                  <option value="archived">archived</option>
+                </select>
+              ) : (
+                <span className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}>
+                  {project.status}
+                </span>
+              )}
+              {project.status === "published" && (
                 <span className="relative flex size-2">
                   <span className="absolute h-full w-full animate-pulse rounded-full bg-red-600 opacity-100 "></span>
                 </span>
-              ) : null}
+              )}
             </div>
 
             <div className="mt-2 flex items-center gap-4">

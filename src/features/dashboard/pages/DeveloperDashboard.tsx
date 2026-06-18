@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchMyProjects } from "../../../api/projectApi";
+import { fetchMyProjects, updateProjectStatus } from "../../../api/projectApi";
 import { fetchUserProfile } from "../../../api/profileApi";
 import { requestMentorUpgrade } from "../../../api/adminApi";
 import Loading from "../../../components/ux/Loading";
@@ -85,6 +85,19 @@ const DeveloperDashboard = () => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ slug, status }: { slug: string; status: string }) =>
+      updateProjectStatus(slug, status),
+    onSuccess: () => {
+      toast.success("Estado del proyecto actualizado");
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    },
+    onError: (err: any) =>
+      toast.error(err.response?.data?.message || "No se pudo cambiar el estado."),
   });
 
   if (isLoading) {
@@ -232,6 +245,9 @@ const DeveloperDashboard = () => {
                   variant="compact"
                   onEdit={handleProjectEdit}
                   onView={handleProjectView}
+                  onStatusChange={(slug, status) =>
+                    statusMutation.mutate({ slug, status })
+                  }
                 />
               ))}
             </ul>

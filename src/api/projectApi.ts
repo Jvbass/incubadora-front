@@ -113,6 +113,20 @@ export const updateProjectById = async (
 };
 
 /**
+ * Cambia solo el estado de un proyecto (F-15). Puede degradar el rol mentor.
+ */
+export const updateProjectStatus = async (
+  projectSlug: string,
+  status: string
+): Promise<ProjectDetailResponse> => {
+  const { data } = await apiService.patch<ProjectDetailResponse>(
+    `/projects/${projectSlug}/status`,
+    { status }
+  );
+  return data;
+};
+
+/**
  * Un mentor se ofrece a mentorear el proyecto (notifica al dueño).
  */
 export const offerMentoring = async (
