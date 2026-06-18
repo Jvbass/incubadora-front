@@ -167,8 +167,8 @@ const EditProfilePage = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Imágenes del perfil (se guardan inmediatamente, fuera del form principal) */}
-      <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200 space-y-6">
-        <h2 className="text-xl font-bold text-gray-800">Imágenes del perfil</h2>
+      <div className="p-6 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-lg shadow-md border border-divider dark:border-border space-y-6">
+        <h2 className="text-xl font-bold text-text-main dark:text-text-light">Imágenes del perfil</h2>
         <ImageUpload
           label="Avatar"
           aspectHint="1:1, 400×400"
@@ -191,9 +191,9 @@ const EditProfilePage = () => {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded-lg shadow-md space-y-8 border border-gray-200"
+        className="p-6 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-lg shadow-md space-y-8 border border-divider dark:border-border"
       >
-        <h1 className="text-2xl font-bold text-gray-800">Editar Perfil</h1>
+        <h1 className="text-2xl font-bold text-text-main dark:text-text-light">Editar Perfil</h1>
 
         {/* Información Básica */}
         <section className="space-y-4">
@@ -202,7 +202,7 @@ const EditProfilePage = () => {
             <input
               id="headline"
               {...register("headline")}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md shadow-sm"
             />
           </div>
           <div>
@@ -210,7 +210,7 @@ const EditProfilePage = () => {
             <input
               id="slug"
               {...register("slug")}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md shadow-sm"
             />
           </div>
           <div>
@@ -219,7 +219,7 @@ const EditProfilePage = () => {
               id="bio"
               rows={5}
               {...register("bio")}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md shadow-sm"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -260,12 +260,12 @@ const EditProfilePage = () => {
               <input
                 {...register(`workExperiences.${index}.companyName`)}
                 placeholder="Empresa"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <input
                 {...register(`workExperiences.${index}.position`)}
                 placeholder="Cargo"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <div className="flex items-center gap-2">
                 <input
@@ -277,7 +277,7 @@ const EditProfilePage = () => {
                   placeholder="Año inicio"
                   min={1950}
                   max={new Date().getFullYear()}
-                  className="w-32 border-gray-300 rounded-md"
+                  className="w-32 border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
                 />
                 <span className="text-sm text-gray-500">—</span>
                 <input
@@ -289,7 +289,7 @@ const EditProfilePage = () => {
                   placeholder="Año fin"
                   min={1950}
                   max={new Date().getFullYear() + 1}
-                  className="w-32 border-gray-300 rounded-md"
+                  className="w-32 border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
                 />
                 <span className="text-xs text-gray-500">
                   (vacío = Actualmente)
@@ -298,7 +298,7 @@ const EditProfilePage = () => {
               <textarea
                 {...register(`workExperiences.${index}.description`)}
                 placeholder="Descripción de tus tareas"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <button
                 type="button"
@@ -336,12 +336,12 @@ const EditProfilePage = () => {
               <input
                 {...register(`socialLinks.${index}.platform`)}
                 placeholder="Plataforma (ej: LinkedIn, Twitter)"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <input
                 {...register(`socialLinks.${index}.url`)}
                 placeholder="URL del perfil"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <button
                 type="button"
@@ -372,11 +372,11 @@ const EditProfilePage = () => {
               <input
                 {...register(`languages.${index}.language`)}
                 placeholder="Idioma"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <select
                 {...register(`languages.${index}.proficiency`)}
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               >
                 <option value="">Selecciona el nivel</option>
                 <option value="Básico">Básico</option>
@@ -413,17 +413,17 @@ const EditProfilePage = () => {
               <input
                 {...register(`certificates.${index}.name`)}
                 placeholder="Nombre de la certificación"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <input
                 {...register(`certificates.${index}.imageUrl`)}
                 placeholder="URL de la imagen"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <input
                 {...register(`certificates.${index}.certificateUrl`)}
                 placeholder="URL de la certificación"
-                className="block w-full border-gray-300 rounded-md"
+                className="block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md"
               />
               <button
                 type="button"
