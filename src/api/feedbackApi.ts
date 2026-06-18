@@ -54,6 +54,13 @@ export const deleteFeedback = async (feedbackId: number): Promise<void> => {
   await apiService.delete(`/feedback/${feedbackId}`);
 };
 
+/** Upvote / quitar upvote de un feedback (G-03). Devuelve el feedback actualizado. */
+export const upvoteFeedback = async (feedbackId: number): Promise<FeedbackResponse> =>
+  (await apiService.post<FeedbackResponse>(`/feedback/${feedbackId}/upvote`)).data;
+
+export const removeFeedbackUpvote = async (feedbackId: number): Promise<FeedbackResponse> =>
+  (await apiService.delete<FeedbackResponse>(`/feedback/${feedbackId}/upvote`)).data;
+
 /**
  * Obtiene la lista de categorías de feedback.
  * El backend envuelve la respuesta en ApiResponse: {success, message, data}.

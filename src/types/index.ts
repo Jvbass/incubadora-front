@@ -199,6 +199,9 @@ export interface FeedbackResponse {
   projectId: number;
   createdAt: string;
   updatedAt?: string;
+  upvoteCount: number;
+  upvotedByMe: boolean;
+  markedByOwner: boolean;
 }
 
 export interface FeedbackRequest {

@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FeedbackResponse, CommentResponse } from "../../../types";
 import { CommentThread } from "./CommentThread";
 import { fetchCommentsForFeedback } from "../../../api/commentApi";
-import { ChevronDown, ChevronUp, MessageSquareText } from "lucide-react";
+import { upvoteFeedback, removeFeedbackUpvote } from "../../../api/feedbackApi";
+import { ChevronDown, ChevronUp, MessageSquareText, ThumbsUp, Check } from "lucide-react";
+import toast from "react-hot-toast";
 import ReportFlagButton from "../../reports/components/ReportFlagButton";
 
 // Un pequeño componente para mostrar la calificación de forma visual y numérica
@@ -37,6 +39,17 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
     queryFn: () => fetchCommentsForFeedback(feedback.id),
     enabled: commentsVisible, // Only fetch comments when commentsVisible is true
     staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  // Upvotes (G-03)
+  const queryClient = useQueryClient();
+  const upvoteMutation = useMutation({
+    mutationFn: () =>
+      feedback.upvotedByMe ? removeFeedbackUpvote(feedback.id) : upvoteFeedback(feedback.id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["feedback", feedback.relatedProjectSlug] }),
+    onError: (e: any) =>
+      toast.error(e.response?.data?.message || "No se pudo registrar el voto."),
   });
 
   // Calculate total comment count (including replies)
@@ -82,6 +95,27 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          {feedback.markedByOwner && (
+            <span
+              title="El dueño del proyecto tomará en cuenta este feedback"
+              className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400"
+            >
+              <Check size={14} /> Tomado en cuenta
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => upvoteMutation.mutate()}
+            disabled={upvoteMutation.isPending}
+            aria-label={feedback.upvotedByMe ? "Quitar upvote" : "Dar upvote"}
+            className={`flex items-center gap-1 text-sm transition-colors disabled:opacity-50 ${
+              feedback.upvotedByMe
+                ? "text-cta-600 dark:text-cta-300"
+                : "text-gray-500 dark:text-gray-400 hover:text-cta-600"
+            }`}
+          >
+            <ThumbsUp size={16} /> {feedback.upvoteCount}
+          </button>
           <time className="text-sm text-gray-500 dark:text-gray-300">
             {formattedDate}
           </time>
