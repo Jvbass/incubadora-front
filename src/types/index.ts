@@ -54,6 +54,19 @@ export interface ProfileResponse {
   projects: ProjectSummary[];
   kudosReceived: KudoResponse[];
   feedbackGiven: FeedbackResponse[];
+  kudosGiven: KudoResponse[];
+  feedbackReceived: FeedbackResponse[];
+  stats?: ProfileStats;
+}
+
+export interface ProfileStats {
+  totalProjects: number;
+  totalFeedbacksGiven: number;
+  totalFeedbacksReceived: number;
+  totalKudosReceived: number;
+  totalKudosGiven: number;
+  avgProjectRating: number;
+  score: number;
 }
 
 export interface ImageUploadResponse {
