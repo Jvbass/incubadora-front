@@ -8,8 +8,6 @@ export const routeImports = {
   verifyEmail: () => import("../features/auth/pages/VerifyEmailPage"),
   developerDashboard: () =>
     import("../features/dashboard/pages/DeveloperDashboard"),
-  mentorDashboard: () =>
-    import("../features/dashboard/pages/MentorDashboard"),
   notFound: () => import("../pages/NotFound"),
   home: () => import("../features/projects/pages/HomePage"),
   createProject: () => import("../features/projects/pages/CreateProjectPage"),
