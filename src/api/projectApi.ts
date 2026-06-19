@@ -127,6 +127,21 @@ export const updateProjectStatus = async (
 };
 
 /**
+ * Cambia la versión actual de un proyecto (G-02). Solo el dueño.
+ * Acepta una nota opcional describiendo los cambios de la versión.
+ */
+export const updateProjectVersion = async (
+  projectSlug: string,
+  payload: { version: string; note?: string }
+): Promise<ProjectDetailResponse> => {
+  const { data } = await apiService.patch<ProjectDetailResponse>(
+    `/projects/${projectSlug}/version`,
+    payload
+  );
+  return data;
+};
+
+/**
  * Un mentor se ofrece a mentorear el proyecto (notifica al dueño).
  */
 export const offerMentoring = async (

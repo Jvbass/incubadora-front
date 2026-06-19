@@ -176,6 +176,7 @@ export interface ProjectDetailResponse {
   developmentProgress: number;
   imageUrl?: string;
   imageThumbnailUrl?: string;
+  currentVersion?: string | null;
 }
 
 export interface Technology {
@@ -202,6 +203,7 @@ export interface FeedbackResponse {
   upvoteCount: number;
   upvotedByMe: boolean;
   markedByOwner: boolean;
+  projectVersion?: string | null;
 }
 
 export interface FeedbackRequest {

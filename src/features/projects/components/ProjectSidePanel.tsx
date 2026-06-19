@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import type { ProjectDetailResponse, FeedbackResponse } from "../../../types";
 import {
   Star,
@@ -8,13 +10,20 @@ import {
   Lightbulb,
   TrendingUp,
   HeartHandshake,
+  Tag,
 } from "lucide-react";
 import { useProjectRating } from "../../../hooks/useProjectRating";
 import { useAuthStore } from "../../../stores/authStore";
+import { updateProjectVersion } from "../../../api/projectApi";
 import ProjectInteractionModal, {
   type ProjectInteractionMode,
 } from "./ProjectInteractionModal";
 import ReportFlagButton from "../../reports/components/ReportFlagButton";
+
+// Mismo patrón de validación que el backend: vX.Y(.Z), máx. 30 caracteres.
+const VERSION_PATTERN = /^v?\d+\.\d+(\.\d+)?$/;
+const MAX_VERSION_LENGTH = 30;
+const MAX_NOTE_LENGTH = 500;
 
 interface ProjectSidePanelProps {
   project: ProjectDetailResponse;
@@ -41,6 +50,119 @@ const InfoRow = ({
     </span>
   </div>
 );
+
+// Editor de versión visible solo para el dueño del proyecto (G-02).
+const VersionEditor = ({ project }: { project: ProjectDetailResponse }) => {
+  const queryClient = useQueryClient();
+  const [version, setVersion] = useState(project.currentVersion ?? "");
+  const [note, setNote] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const mutation = useMutation({
+    mutationFn: (payload: { version: string; note?: string }) =>
+      updateProjectVersion(project.slug, payload),
+    onSuccess: () => {
+      toast.success("Versión del proyecto actualizada");
+      setNote("");
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetail", project.slug],
+      });
+    },
+    onError: (err: any) => {
+      const status = err.response?.status;
+      if (status === 403) {
+        toast.error("No tienes permiso para cambiar la versión.");
+      } else if (status === 400) {
+        toast.error(
+          err.response?.data?.message ||
+            "La versión no es válida. Usa el formato vX.Y o X.Y.Z."
+        );
+      } else {
+        toast.error(
+          err.response?.data?.message || "No se pudo actualizar la versión."
+        );
+      }
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = version.trim();
+
+    if (!trimmed) {
+      setError("Ingresa una versión.");
+      return;
+    }
+    if (trimmed.length > MAX_VERSION_LENGTH) {
+      setError(`Máximo ${MAX_VERSION_LENGTH} caracteres.`);
+      return;
+    }
+    if (!VERSION_PATTERN.test(trimmed)) {
+      setError("Formato inválido. Usa vX.Y o X.Y.Z (ej. v1.2 o 1.0.0).");
+      return;
+    }
+
+    setError(null);
+    mutation.mutate({
+      version: trimmed,
+      note: note.trim() ? note.trim() : undefined,
+    });
+  };
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-xl font-semibold border-b dark:border-text-light border-gray-200 pb-3 text-gray-800 dark:text-text-light">
+        Versión
+      </h3>
+
+      <p className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-200">
+        <Tag size={16} />
+        <span>
+          Actual:{" "}
+          <span className="font-medium text-gray-800 dark:text-text-light">
+            {project.currentVersion ?? "Sin versión"}
+          </span>
+        </span>
+      </p>
+
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <input
+          type="text"
+          value={version}
+          onChange={(e) => setVersion(e.target.value)}
+          maxLength={MAX_VERSION_LENGTH}
+          placeholder="v1.0.0"
+          aria-label="Nueva versión"
+          className="w-full text-sm rounded-md border border-divider dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light px-2 py-1"
+        />
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          maxLength={MAX_NOTE_LENGTH}
+          placeholder="Nota de la versión (opcional)"
+          aria-label="Nota de la versión"
+          rows={2}
+          className="w-full text-sm rounded-md border border-divider dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light px-2 py-1 resize-none"
+        />
+        {error && (
+          <p className="text-xs font-medium text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={mutation.isPending}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-cta-600 text-white rounded-md hover:bg-cta-700 transition duration-200 disabled:opacity-50"
+        >
+          <Tag size={16} />
+          <span>
+            {mutation.isPending ? "Guardando..." : "Actualizar versión"}
+          </span>
+        </button>
+      </form>
+    </div>
+  );
+};
 
 export const ProjectSidePanel = ({
   project,
@@ -86,6 +208,9 @@ export const ProjectSidePanel = ({
             value={project.developmentProgress + "%"}
           />
         </div>
+
+        {/* Editor de versión (solo dueño) */}
+        {isOwner && <VersionEditor project={project} />}
 
         {/* Botones de interacción (mentoría / colaboración) */}
         {(canOfferMentoring || canCollaborate) && (
