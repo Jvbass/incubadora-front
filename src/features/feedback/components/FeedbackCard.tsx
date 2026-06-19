@@ -4,7 +4,7 @@ import type { FeedbackResponse, CommentResponse } from "../../../types";
 import { CommentThread } from "./CommentThread";
 import { fetchCommentsForFeedback } from "../../../api/commentApi";
 import { upvoteFeedback, removeFeedbackUpvote } from "../../../api/feedbackApi";
-import { ChevronDown, ChevronUp, MessageSquareText, ThumbsUp, Check } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquareText, ThumbsUp, Check, Tag } from "lucide-react";
 import toast from "react-hot-toast";
 import ReportFlagButton from "../../reports/components/ReportFlagButton";
 
@@ -95,6 +95,14 @@ export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          {feedback.projectVersion && (
+            <span
+              title="Versión del proyecto cuando se escribió este feedback"
+              className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+            >
+              <Tag size={14} /> {feedback.projectVersion}
+            </span>
+          )}
           {feedback.markedByOwner && (
             <span
               title="El dueño del proyecto tomará en cuenta este feedback"
