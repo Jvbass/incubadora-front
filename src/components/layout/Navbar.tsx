@@ -33,7 +33,9 @@ const getSectionTitle = (pathname: string): string => {
 };
 
 // Barra superior full-width (rediseño v2, SDD §12.3 R2).
-// OJO contrato E2E: un solo img[alt] dentro de <nav> (el avatar), el primer
+// OJO contrato E2E: el trigger del dropdown de usuario lleva
+// data-testid="user-menu-trigger" (el avatar puede ser <img> o el fallback de
+// inicial sin <img>, así que NO se debe targetear por img[alt]). El primer
 // <button> del nav debe ser la campana de notificaciones, y los textos
 // "Crear", "Panel", "Mi Perfil" y "Cerrar Sesión" no deben cambiar.
 const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
@@ -136,6 +138,7 @@ const Navbar = ({ onToggleMenu, isMobileMenuOpen = false }: NavbarProps) => {
         {/* Perfil del usuario / Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <div
+            data-testid="user-menu-trigger"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex items-center gap-2 cursor-pointer p-1.5 rounded-md transition-colors duration-200 text-text-main dark:text-text-light hover:bg-gray-100 dark:hover:bg-bg-hoverdark"
           >

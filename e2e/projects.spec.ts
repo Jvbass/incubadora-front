@@ -74,6 +74,12 @@ test.describe('Proyectos', () => {
     await nextBtn.click();
 
     // ---- Wizard paso 4: revisión y envío ----
+    // Esperar a que el panel de revisión esté renderizado y estable antes de
+    // clickear: durante la transición de paso el footer cambia de "Siguiente"
+    // a "Publicar Proyecto" y el botón se desprende del DOM si se clickea antes.
+    await expect(
+      page.getByRole('heading', { name: /revisa antes de publicar/i })
+    ).toBeVisible({ timeout: 10000 });
     await page.getByRole('button', { name: /publicar proyecto|crear proyecto|guardar/i }).click();
 
     // Después de crear, redirige al dashboard
@@ -111,7 +117,9 @@ test.describe('Proyectos', () => {
     await injectAuth(page, authToken);
     await page.goto(`/project/${projectSlug}`);
 
-    await expect(page.getByText(project.title)).toBeVisible({ timeout: 10000 });
+    await expect(
+      page.getByRole('heading', { name: project.title })
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('should display empty state for user with no projects', async ({ page, request }) => {
