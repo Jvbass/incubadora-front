@@ -109,8 +109,10 @@ test.describe('Autenticación', () => {
     await page.goto('/');
     await page.waitForURL(/\/(home|dashboard|admin)/, { timeout: 15000 });
 
-    // Abrir dropdown del usuario (clic en el avatar del navbar)
-    await page.locator('nav img[alt]').click();
+    // Abrir dropdown del usuario (clic en el trigger del navbar).
+    // Se usa data-testid porque el avatar puede ser <img> o el fallback de
+    // inicial (<div>) cuando el usuario no tiene foto, como los usuarios E2E.
+    await page.getByTestId('user-menu-trigger').click();
     await page.getByText('Cerrar Sesión').click();
 
     await expect(page).toHaveURL('/login', { timeout: 10000 });
