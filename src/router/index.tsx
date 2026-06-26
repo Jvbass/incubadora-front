@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useParams } from "react-router-dom";
 // Importamos nuestros componentes de ayuda para el enrutamiento
 import ProtectedRoute from "./ProtectedRoute";
 import RoleBasedRedirect from "./RoleBasedRedirect";
+import RoleProtectedRoute from "./RoleProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import AuthenticatedLayout from "../components/layout/AuthenticatedLayout";
 import Loading from "../components/ux/Loading";
@@ -81,28 +82,121 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/dashboard" element={<DeveloperDashboard />} />
+          {/* DEV · MENTOR · ADMINISTRATOR */}
+          <Route
+            path="/dashboard"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <DeveloperDashboard />
+              </RoleProtectedRoute>
+            }
+          />
           {/* Fusión (F-16): el dashboard de mentor ahora es el unificado. */}
-          <Route path="/mentor-dashboard" element={<DeveloperDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route
+            path="/mentor-dashboard"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <DeveloperDashboard />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* ADMINISTRATOR solo */}
+          <Route
+            path="/admin"
+            element={
+              <RoleProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+                <AdminDashboard />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Compartidas: cualquier usuario autenticado (sin restricción de rol) */}
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<EditProfilePage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/projects/new" element={<CreateProjectPage />} />
-          <Route path="/projects/:slug/edit" element={<EditProjectPage />} />
+
+          {/* DEV · MENTOR · ADMINISTRATOR */}
+          <Route
+            path="/home"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <HomePage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/new"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <CreateProjectPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/:slug/edit"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <EditProjectPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Compartidas */}
           <Route path="/project/:slug" element={<ProjectDetailPage />} />
           {/* Redirección legacy: notificaciones antiguas guardadas en la BD
               apuntan a /proyect/{slug} (typo corregido el 2026-06-12) */}
           <Route path="/proyect/:slug" element={<LegacyProjectRedirect />} />
-          <Route path="/mentoring" element={<MentoringListPage />} />
-          <Route path="/mentoring/new" element={<CreateMentorshipPage />} />
+
+          {/* DEV · MENTOR · ADMINISTRATOR */}
+          <Route
+            path="/mentoring"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <MentoringListPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* MENTOR · ADMINISTRATOR (más específico antes que /mentoring/:slug) */}
+          <Route
+            path="/mentoring/new"
+            element={
+              <RoleProtectedRoute allowedRoles={['MENTOR', 'ADMINISTRATOR']}>
+                <CreateMentorshipPage />
+              </RoleProtectedRoute>
+            }
+          />
           <Route
             path="/mentoring/:slug/edit"
-            element={<EditMentorshipPage />}
+            element={
+              <RoleProtectedRoute allowedRoles={['MENTOR', 'ADMINISTRATOR']}>
+                <EditMentorshipPage />
+              </RoleProtectedRoute>
+            }
           />
-          <Route path="/mentoring/:slug" element={<MentoringDetailPage />} />
+
+          {/* DEV · MENTOR · ADMINISTRATOR */}
+          <Route
+            path="/mentoring/:slug"
+            element={
+              <RoleProtectedRoute allowedRoles={['DEV', 'MENTOR', 'ADMINISTRATOR']}>
+                <MentoringDetailPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Compartida */}
           <Route path="/jobs" element={<JobsListPage />} />
-          <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
+
+          {/* RECRUITER · ADMINISTRATOR */}
+          <Route
+            path="/recruiter-dashboard"
+            element={
+              <RoleProtectedRoute allowedRoles={['RECRUITER', 'ADMINISTRATOR']}>
+                <RecruiterDashboard />
+              </RoleProtectedRoute>
+            }
+          />
         </Route>
 
         {/* RUTA PARA PÁGINAS NO ENCONTRADAS (404) */}
