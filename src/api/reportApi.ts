@@ -1,5 +1,5 @@
 import apiService from "./apiService";
-import type { AdminReport, CreateReportRequest, ReportStatus } from "../types";
+import type { AdminReport, CreateReportRequest, ReportDetail, ReportStatus } from "../types";
 
 /**
  * Reporta un contenido (proyecto, feedback o comentario).
@@ -24,7 +24,90 @@ export const fetchAdminReports = async (
 };
 
 /**
- * [ADMIN] Marca un reporte como revisado o descartado, con mensaje opcional.
+ * [ADMIN] Detalle enriquecido de un reporte:
+ * reporte base + historial de infracciones del autor + reportes similares + audit trail.
+ */
+export const fetchReportDetail = async (reportId: number): Promise<ReportDetail> => {
+  const { data } = await apiService.get<ReportDetail>(`/admin/reports/${reportId}`);
+  return data;
+};
+
+/**
+ * [ADMIN] Reclama un reporte PENDING → lo pasa a IN_REVIEW.
+ */
+export const claimReport = async (reportId: number): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(`/admin/reports/${reportId}/claim`);
+  return data;
+};
+
+/**
+ * [ADMIN] Resuelve un reporte (PENDING / IN_REVIEW / ESCALATED → RESOLVED).
+ */
+export const resolveReport = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/resolve`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Rechaza un reporte → REJECTED.
+ */
+export const rejectReport = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/reject`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Escala un reporte → ESCALATED.
+ */
+export const escalateReport = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/escalate`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Envía una advertencia al autor del contenido reportado.
+ * La nota es OBLIGATORIA (el backend valida @NotBlank).
+ */
+export const warnContentOwner = async (
+  reportId: number,
+  note: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/warn`,
+    { note }
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Oculta el contenido reportado (soft-hide); marca como REVIEWED
+ * todos los reportes pendientes sobre ese contenido.
+ */
+export const hideReportedContent = async (reportId: number): Promise<void> => {
+  await apiService.patch(`/admin/reports/${reportId}/hide-content`);
+};
+
+/**
+ * [ADMIN] (Legacy) Marca un reporte como revisado o descartado, con mensaje opcional.
+ * @deprecated Usar las acciones específicas (resolveReport, rejectReport, etc.) en su lugar.
  */
 export const decideReport = async ({
   reportId,
@@ -40,14 +123,4 @@ export const decideReport = async ({
     { decision, adminMessage: adminMessage || undefined }
   );
   return data;
-};
-
-/**
- * [ADMIN] Oculta el contenido reportado (soft-hide); marca como REVIEWED
- * todos los reportes pendientes sobre ese contenido.
- */
-export const hideReportedContent = async (
-  reportId: number
-): Promise<void> => {
-  await apiService.patch(`/admin/reports/${reportId}/hide-content`);
 };

@@ -241,7 +241,12 @@ export interface CreateReportRequest {
   description: string;
 }
 
-export type ReportStatus = "PENDING" | "REVIEWED" | "DISMISSED";
+export type ReportStatus =
+  | "PENDING"
+  | "IN_REVIEW"
+  | "RESOLVED"
+  | "REJECTED"
+  | "ESCALATED";
 
 /** Vista admin de un reporte, con el contenido resuelto por el backend. */
 export interface AdminReport {
@@ -257,6 +262,23 @@ export interface AdminReport {
   contentLink: string | null;
   contentAuthorUsername: string | null;
   adminMessage?: string | null;
+}
+
+/** Entrada del registro de moderación (audit trail). */
+export interface ModerationAction {
+  id: number;
+  actionType: string;
+  adminUsername: string;
+  note?: string | null;
+  createdAt: string;
+}
+
+/** Detalle enriquecido de un reporte: reporte + historial + similares + audit trail. */
+export interface ReportDetail {
+  report: AdminReport;
+  infractionHistory: AdminReport[];
+  similarReports: AdminReport[];
+  auditTrail: ModerationAction[];
 }
 
 /*===================================================
