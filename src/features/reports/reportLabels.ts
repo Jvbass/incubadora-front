@@ -49,5 +49,6 @@ export const ACTION_TYPE_LABELS: Record<string, string> = {
   REJECT: "Rechazado",
   ESCALATE: "Escalado",
   WARN: "Advertencia al autor",
-  HIDE_CONTENT: "Contenido ocultado",
+  RESTRICT: "Restricción de cuenta",
+  HIDE: "Contenido ocultado",
 };

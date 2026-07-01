@@ -98,6 +98,23 @@ export const warnContentOwner = async (
 };
 
 /**
+ * [ADMIN] Restringe temporalmente al autor del contenido reportado:
+ * no podrá comentar ni publicar hasta que venza la restricción.
+ * Duración en horas (presets: 24 / 168 / 720). El backend valida durationHours >= 1.
+ */
+export const restrictUser = async (
+  reportId: number,
+  durationHours: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/restrict`,
+    note ? { durationHours, note } : { durationHours }
+  );
+  return data;
+};
+
+/**
  * [ADMIN] Oculta el contenido reportado (soft-hide); marca como REVIEWED
  * todos los reportes pendientes sobre ese contenido.
  */
