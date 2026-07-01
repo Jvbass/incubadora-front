@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   AlertCircle,
   EyeOff,
+  Ban,
 } from "lucide-react";
 import {
   fetchReportDetail,
@@ -20,6 +21,7 @@ import {
   rejectReport,
   escalateReport,
   warnContentOwner,
+  restrictUser,
   hideReportedContent,
 } from "../../../api/reportApi";
 import {
@@ -36,15 +38,25 @@ interface ReportDetailDrawerProps {
   onClose: () => void;
 }
 
-type ActiveAction = "resolve" | "reject" | "escalate" | "warn" | null;
+type ActiveAction = "resolve" | "reject" | "escalate" | "warn" | "restrict" | null;
 
 const TERMINAL_STATUSES: ReportStatus[] = ["RESOLVED", "REJECTED"];
 const ACTIVE_STATUSES: ReportStatus[] = ["PENDING", "IN_REVIEW", "ESCALATED"];
+
+/** Presets de duración de restricción (en horas). */
+const RESTRICTION_PRESETS: { label: string; hours: number }[] = [
+  { label: "24 horas", hours: 24 },
+  { label: "7 días", hours: 168 },
+  { label: "30 días", hours: 720 },
+];
 
 const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
   const queryClient = useQueryClient();
   const [activeAction, setActiveAction] = useState<ActiveAction>(null);
   const [note, setNote] = useState("");
+  const [restrictHours, setRestrictHours] = useState<number>(
+    RESTRICTION_PRESETS[0].hours
+  );
 
   // Cerrar el drawer con la tecla Escape (a11y).
   useEffect(() => {
@@ -113,6 +125,18 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
     onError: onActionError,
   });
 
+  const restrictMutation = useMutation({
+    mutationFn: ({ hours, n }: { hours: number; n?: string }) =>
+      restrictUser(reportId, hours, n),
+    onSuccess: () => {
+      invalidateAll();
+      setActiveAction(null);
+      setNote("");
+      toast.success("Autor restringido temporalmente.");
+    },
+    onError: onActionError,
+  });
+
   const hideMutation = useMutation({
     mutationFn: () => hideReportedContent(reportId),
     onSuccess: () => {
@@ -129,6 +153,7 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
     rejectMutation.isPending ||
     escalateMutation.isPending ||
     warnMutation.isPending ||
+    restrictMutation.isPending ||
     hideMutation.isPending;
 
   const handleConfirmAction = () => {
@@ -139,6 +164,8 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
         return;
       }
       warnMutation.mutate(note.trim());
+    } else if (activeAction === "restrict") {
+      restrictMutation.mutate({ hours: restrictHours, n: note.trim() || undefined });
     } else if (activeAction === "resolve") {
       resolveMutation.mutate(note.trim() || undefined);
     } else if (activeAction === "reject") {
@@ -151,6 +178,7 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
   const cancelAction = () => {
     setActiveAction(null);
     setNote("");
+    setRestrictHours(RESTRICTION_PRESETS[0].hours);
   };
 
   const report = detail?.report;
@@ -357,6 +385,29 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
                 {/* Formulario de nota inline (aparece al seleccionar acción) */}
                 {activeAction && (
                   <div className="space-y-2">
+                    {activeAction === "restrict" && (
+                      <div className="space-y-1.5">
+                        <span className="block text-sm font-medium dark:text-gray-300">
+                          Duración de la restricción
+                        </span>
+                        <div className="flex gap-2" data-testid="restrict-presets">
+                          {RESTRICTION_PRESETS.map((preset) => (
+                            <button
+                              key={preset.hours}
+                              type="button"
+                              onClick={() => setRestrictHours(preset.hours)}
+                              className={`flex-1 px-2 py-1.5 text-xs rounded-md border transition-colors ${
+                                restrictHours === preset.hours
+                                  ? "bg-red-600 text-white border-red-600"
+                                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+                              }`}
+                            >
+                              {preset.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <label className="block text-sm font-medium dark:text-gray-300">
                       {activeAction === "warn" ? (
                         <>
@@ -442,6 +493,13 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
                           className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-yellow-600 text-white hover:bg-yellow-700 disabled:opacity-50 transition-colors"
                         >
                           <AlertCircle size={12} /> Avisar al autor
+                        </button>
+                        <button
+                          onClick={() => setActiveAction("restrict")}
+                          disabled={isBusy}
+                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
+                        >
+                          <Ban size={12} /> Restringir autor
                         </button>
                         <button
                           onClick={() => hideMutation.mutate()}
