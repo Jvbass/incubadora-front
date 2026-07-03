@@ -13,6 +13,9 @@ import {
   AlertCircle,
   EyeOff,
   Ban,
+  UserX,
+  UserCheck,
+  Trash2,
 } from "lucide-react";
 import {
   fetchReportDetail,
@@ -23,6 +26,9 @@ import {
   warnContentOwner,
   restrictUser,
   hideReportedContent,
+  suspendUser,
+  reactivateUser,
+  deleteAccount,
 } from "../../../api/reportApi";
 import {
   REASON_LABELS,
@@ -30,6 +36,8 @@ import {
   STATUS_LABELS,
   STATUS_BADGE,
   ACTION_TYPE_LABELS,
+  ACCOUNT_STATUS_LABELS,
+  ACCOUNT_STATUS_BADGE,
 } from "../../reports/reportLabels";
 import type { AdminReport, ReportDetail, ReportStatus } from "../../../types";
 
@@ -38,7 +46,16 @@ interface ReportDetailDrawerProps {
   onClose: () => void;
 }
 
-type ActiveAction = "resolve" | "reject" | "escalate" | "warn" | "restrict" | null;
+type ActiveAction =
+  | "resolve"
+  | "reject"
+  | "escalate"
+  | "warn"
+  | "restrict"
+  | "suspend"
+  | "reactivate"
+  | "delete"
+  | null;
 
 const TERMINAL_STATUSES: ReportStatus[] = ["RESOLVED", "REJECTED"];
 const ACTIVE_STATUSES: ReportStatus[] = ["PENDING", "IN_REVIEW", "ESCALATED"];
@@ -57,6 +74,7 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
   const [restrictHours, setRestrictHours] = useState<number>(
     RESTRICTION_PRESETS[0].hours
   );
+  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
 
   // Cerrar el drawer con la tecla Escape (a11y).
   useEffect(() => {
@@ -147,6 +165,40 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
     onError: onActionError,
   });
 
+  const suspendMutation = useMutation({
+    mutationFn: (n?: string) => suspendUser(reportId, n),
+    onSuccess: () => {
+      invalidateAll();
+      setActiveAction(null);
+      setNote("");
+      toast.success("Cuenta suspendida.");
+    },
+    onError: onActionError,
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: (n?: string) => reactivateUser(reportId, n),
+    onSuccess: () => {
+      invalidateAll();
+      setActiveAction(null);
+      setNote("");
+      toast.success("Cuenta reactivada.");
+    },
+    onError: onActionError,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (n?: string) => deleteAccount(reportId, n),
+    onSuccess: () => {
+      invalidateAll();
+      setActiveAction(null);
+      setNote("");
+      setDeleteConfirmed(false);
+      toast.success("Cuenta eliminada.");
+    },
+    onError: onActionError,
+  });
+
   const isBusy =
     claimMutation.isPending ||
     resolveMutation.isPending ||
@@ -154,7 +206,10 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
     escalateMutation.isPending ||
     warnMutation.isPending ||
     restrictMutation.isPending ||
-    hideMutation.isPending;
+    hideMutation.isPending ||
+    suspendMutation.isPending ||
+    reactivateMutation.isPending ||
+    deleteMutation.isPending;
 
   const handleConfirmAction = () => {
     if (!activeAction) return;
@@ -172,6 +227,16 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
       rejectMutation.mutate(note.trim() || undefined);
     } else if (activeAction === "escalate") {
       escalateMutation.mutate(note.trim() || undefined);
+    } else if (activeAction === "suspend") {
+      suspendMutation.mutate(note.trim() || undefined);
+    } else if (activeAction === "reactivate") {
+      reactivateMutation.mutate(note.trim() || undefined);
+    } else if (activeAction === "delete") {
+      if (!deleteConfirmed) {
+        toast.error("Debés confirmar que entendés que esta acción es irreversible.");
+        return;
+      }
+      deleteMutation.mutate(note.trim() || undefined);
     }
   };
 
@@ -179,10 +244,12 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
     setActiveAction(null);
     setNote("");
     setRestrictHours(RESTRICTION_PRESETS[0].hours);
+    setDeleteConfirmed(false);
   };
 
   const report = detail?.report;
   const currentStatus = report?.status;
+  const accountStatus = report?.contentAuthorAccountStatus ?? null;
 
   return (
     <>
@@ -256,7 +323,21 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
                   )}
                 </InfoRow>
                 {report.contentAuthorUsername && (
-                  <InfoRow label="Autor" value={report.contentAuthorUsername} />
+                  <InfoRow label="Autor">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium dark:text-gray-200">
+                        {report.contentAuthorUsername}
+                      </span>
+                      {accountStatus && accountStatus !== "ACTIVE" && (
+                        <span
+                          data-testid="account-status-badge"
+                          className={`px-2 py-0.5 text-xs rounded-full font-medium ${ACCOUNT_STATUS_BADGE[accountStatus]}`}
+                        >
+                          {ACCOUNT_STATUS_LABELS[accountStatus]}
+                        </span>
+                      )}
+                    </div>
+                  </InfoRow>
                 )}
               </DrawerSection>
 
@@ -376,144 +457,219 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
         {/* Footer con acciones */}
         {report && (
           <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
-            {TERMINAL_STATUSES.includes(currentStatus!) ? (
-              <p className="text-sm text-center text-gray-500 dark:text-gray-400">
-                Este reporte está cerrado ({STATUS_LABELS[currentStatus!]}).
-              </p>
-            ) : (
-              <>
-                {/* Formulario de nota inline (aparece al seleccionar acción) */}
-                {activeAction && (
-                  <div className="space-y-2">
-                    {activeAction === "restrict" && (
-                      <div className="space-y-1.5">
-                        <span className="block text-sm font-medium dark:text-gray-300">
-                          Duración de la restricción
-                        </span>
-                        <div className="flex gap-2" data-testid="restrict-presets">
-                          {RESTRICTION_PRESETS.map((preset) => (
-                            <button
-                              key={preset.hours}
-                              type="button"
-                              onClick={() => setRestrictHours(preset.hours)}
-                              className={`flex-1 px-2 py-1.5 text-xs rounded-md border transition-colors ${
-                                restrictHours === preset.hours
-                                  ? "bg-red-600 text-white border-red-600"
-                                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
-                              }`}
-                            >
-                              {preset.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+            {/* Acciones de cuenta: SIEMPRE visibles, sin importar el estado del
+                reporte (reactivar debe poder usarse aunque el reporte esté
+                cerrado). Independientes del bloque de acciones sobre el reporte. */}
+            {accountStatus && (
+              <div
+                className="pb-3 border-b border-gray-200 dark:border-gray-700 space-y-2"
+                data-testid="account-actions"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Cuenta del autor
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 text-xs rounded-full font-medium ${ACCOUNT_STATUS_BADGE[accountStatus]}`}
+                  >
+                    {ACCOUNT_STATUS_LABELS[accountStatus]}
+                  </span>
+                </div>
+                {!activeAction && accountStatus === "DELETED" && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Esta cuenta fue eliminada. No hay más acciones disponibles.
+                  </p>
+                )}
+                {!activeAction && accountStatus !== "DELETED" && (
+                  <div className="flex flex-wrap gap-2">
+                    {accountStatus === "SUSPENDED" ? (
+                      <button
+                        onClick={() => setActiveAction("reactivate")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                      >
+                        <UserCheck size={12} /> Reactivar cuenta
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setActiveAction("suspend")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
+                      >
+                        <UserX size={12} /> Suspender cuenta
+                      </button>
                     )}
-                    <label className="block text-sm font-medium dark:text-gray-300">
-                      {activeAction === "warn" ? (
-                        <>
-                          Nota para el autor{" "}
-                          <span className="text-red-500">*</span>
-                        </>
-                      ) : (
-                        "Nota (opcional)"
-                      )}
-                    </label>
-                    <textarea
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      rows={2}
-                      maxLength={500}
-                      placeholder={
-                        activeAction === "warn"
-                          ? "Explica la advertencia al autor (requerido)..."
-                          : "Motivo de la acción (opcional)..."
-                      }
-                      className="w-full rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-cyan-500 resize-none"
-                    />
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={cancelAction}
-                        className="px-3 py-1.5 text-xs rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        onClick={handleConfirmAction}
-                        disabled={
-                          isBusy ||
-                          (activeAction === "warn" && !note.trim())
-                        }
-                        className="px-3 py-1.5 text-xs rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-                      >
-                        {isBusy ? "Procesando..." : "Confirmar"}
-                      </button>
+                    <button
+                      onClick={() => setActiveAction("delete")}
+                      disabled={isBusy}
+                      className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-red-800 text-white hover:bg-red-900 disabled:opacity-50 transition-colors"
+                    >
+                      <Trash2 size={12} /> Eliminar cuenta
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Formulario de nota inline (aparece al seleccionar acción, sea
+                de reporte o de cuenta) */}
+            {activeAction && (
+              <div className="space-y-2">
+                {activeAction === "restrict" && (
+                  <div className="space-y-1.5">
+                    <span className="block text-sm font-medium dark:text-gray-300">
+                      Duración de la restricción
+                    </span>
+                    <div className="flex gap-2" data-testid="restrict-presets">
+                      {RESTRICTION_PRESETS.map((preset) => (
+                        <button
+                          key={preset.hours}
+                          type="button"
+                          onClick={() => setRestrictHours(preset.hours)}
+                          className={`flex-1 px-2 py-1.5 text-xs rounded-md border transition-colors ${
+                            restrictHours === preset.hours
+                              ? "bg-red-600 text-white border-red-600"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
-
-                {/* Botones de acción (se ocultan cuando hay un activeAction) */}
-                {!activeAction && (
-                  <div className="flex flex-wrap gap-2">
-                    {currentStatus === "PENDING" && (
-                      <button
-                        onClick={() => claimMutation.mutate()}
-                        disabled={isBusy}
-                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                      >
-                        <Shield size={12} /> Reclamar
-                      </button>
-                    )}
-
-                    {ACTIVE_STATUSES.includes(currentStatus!) && (
-                      <>
-                        <button
-                          onClick={() => setActiveAction("resolve")}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors"
-                        >
-                          <CheckCircle size={12} /> Resolver
-                        </button>
-                        <button
-                          onClick={() => setActiveAction("reject")}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-50 transition-colors"
-                        >
-                          <XCircle size={12} /> Rechazar
-                        </button>
-                        <button
-                          onClick={() => setActiveAction("escalate")}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50 transition-colors"
-                        >
-                          <AlertTriangle size={12} /> Escalar
-                        </button>
-                        <button
-                          onClick={() => setActiveAction("warn")}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-yellow-600 text-white hover:bg-yellow-700 disabled:opacity-50 transition-colors"
-                        >
-                          <AlertCircle size={12} /> Avisar al autor
-                        </button>
-                        <button
-                          onClick={() => setActiveAction("restrict")}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
-                        >
-                          <Ban size={12} /> Restringir autor
-                        </button>
-                        <button
-                          onClick={() => hideMutation.mutate()}
-                          disabled={isBusy}
-                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
-                        >
-                          <EyeOff size={12} /> Ocultar contenido
-                        </button>
-                      </>
-                    )}
+                {activeAction === "delete" && (
+                  <div
+                    className="space-y-2 p-2 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                    data-testid="delete-account-warning"
+                  >
+                    <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+                      Esta acción es irreversible: la cuenta quedará
+                      eliminada, se bloqueará su inicio de sesión y todo su
+                      contenido (proyectos, feedback, comentarios, kudos,
+                      mentorías, ofertas laborales) dejará de ser visible.
+                    </p>
+                    <label className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={deleteConfirmed}
+                        onChange={(e) => setDeleteConfirmed(e.target.checked)}
+                      />
+                      Entiendo que esta acción es irreversible.
+                    </label>
                   </div>
                 )}
-              </>
+                <label className="block text-sm font-medium dark:text-gray-300">
+                  {activeAction === "warn" ? (
+                    <>
+                      Nota para el autor{" "}
+                      <span className="text-red-500">*</span>
+                    </>
+                  ) : (
+                    "Nota (opcional)"
+                  )}
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  rows={2}
+                  maxLength={500}
+                  placeholder={
+                    activeAction === "warn"
+                      ? "Explica la advertencia al autor (requerido)..."
+                      : "Motivo de la acción (opcional)..."
+                  }
+                  className="w-full rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-400 px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-cyan-500 resize-none"
+                />
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={cancelAction}
+                    className="px-3 py-1.5 text-xs rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleConfirmAction}
+                    disabled={
+                      isBusy ||
+                      (activeAction === "warn" && !note.trim()) ||
+                      (activeAction === "delete" && !deleteConfirmed)
+                    }
+                    className="px-3 py-1.5 text-xs rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+                  >
+                    {isBusy ? "Procesando..." : "Confirmar"}
+                  </button>
+                </div>
+              </div>
             )}
+
+            {/* Acciones sobre el reporte: gateadas por su estado (no aplica a
+                las acciones de cuenta, que viven arriba). */}
+            {!activeAction &&
+              (TERMINAL_STATUSES.includes(currentStatus!) ? (
+                <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                  Este reporte está cerrado ({STATUS_LABELS[currentStatus!]}).
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {currentStatus === "PENDING" && (
+                    <button
+                      onClick={() => claimMutation.mutate()}
+                      disabled={isBusy}
+                      className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    >
+                      <Shield size={12} /> Reclamar
+                    </button>
+                  )}
+
+                  {ACTIVE_STATUSES.includes(currentStatus!) && (
+                    <>
+                      <button
+                        onClick={() => setActiveAction("resolve")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                      >
+                        <CheckCircle size={12} /> Resolver
+                      </button>
+                      <button
+                        onClick={() => setActiveAction("reject")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-gray-600 text-white hover:bg-gray-700 disabled:opacity-50 transition-colors"
+                      >
+                        <XCircle size={12} /> Rechazar
+                      </button>
+                      <button
+                        onClick={() => setActiveAction("escalate")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                      >
+                        <AlertTriangle size={12} /> Escalar
+                      </button>
+                      <button
+                        onClick={() => setActiveAction("warn")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-yellow-600 text-white hover:bg-yellow-700 disabled:opacity-50 transition-colors"
+                      >
+                        <AlertCircle size={12} /> Avisar al autor
+                      </button>
+                      <button
+                        onClick={() => setActiveAction("restrict")}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
+                      >
+                        <Ban size={12} /> Restringir autor
+                      </button>
+                      <button
+                        onClick={() => hideMutation.mutate()}
+                        disabled={isBusy}
+                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
+                      >
+                        <EyeOff size={12} /> Ocultar contenido
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
           </div>
         )}
       </div>
