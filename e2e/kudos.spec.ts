@@ -50,7 +50,7 @@ test.describe('Kudos', () => {
         headline: 'E2E Test User',
         slug: knownSlug,
         bio: 'Usuario de prueba E2E.',
-        publicProfile: true,
+        profileVisibility: 'PUBLIC',
         socialLinks: [],
         techStackIds: [],
         workExperiences: [],
