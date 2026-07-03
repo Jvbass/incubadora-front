@@ -41,8 +41,9 @@ const PortfolioPage = () => {
     enabled: !!slug,
     staleTime: 1000 * 60 * 20,
     retry: (failureCount, err: any) => {
-      // No reintentar en 403 o 404
-      if (err?.response?.status === 403 || err?.response?.status === 404) {
+      // No reintentar en 404: el backend usa 404 uniforme para perfil
+      // inexistente y para acceso denegado por modo de visibilidad.
+      if (err?.response?.status === 404) {
         return false;
       }
       return failureCount < 2;
@@ -68,20 +69,17 @@ const PortfolioPage = () => {
 
   if (isError) {
     const status = (error as any)?.response?.status;
-    if (status === 403) {
-      return (
-        <div className="text-center p-8">
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Este perfil es privado.
-          </p>
-        </div>
-      );
-    }
+    // 404 uniforme: cubre tanto perfil inexistente/eliminado como acceso
+    // denegado por modo de visibilidad. Un único estado amable, sin
+    // distinguir el motivo (no revela si el perfil existe).
     if (status === 404) {
       return (
         <div className="text-center p-8">
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            No se encontró este portfolio.
+          <p
+            className="text-gray-600 dark:text-gray-400 text-lg"
+            data-testid="portfolio-not-available"
+          >
+            Este perfil no está disponible.
           </p>
         </div>
       );
