@@ -1,4 +1,4 @@
-import type { ReportContentType, ReportReason, ReportStatus } from "../../types";
+import type { AccountStatus, ReportContentType, ReportReason, ReportStatus } from "../../types";
 
 /** Etiquetas en español de los motivos de reporte (espejo del enum del back). */
 export const REASON_LABELS: Record<ReportReason, string> = {
@@ -51,4 +51,24 @@ export const ACTION_TYPE_LABELS: Record<string, string> = {
   WARN: "Advertencia al autor",
   RESTRICT: "Restricción de cuenta",
   HIDE: "Contenido ocultado",
+  SUSPEND: "Cuenta suspendida",
+  REACTIVATE: "Cuenta reactivada",
+  DELETE_ACCOUNT: "Cuenta eliminada",
+};
+
+/** Etiquetas en español del estado de cuenta del autor del contenido reportado. */
+export const ACCOUNT_STATUS_LABELS: Record<AccountStatus, string> = {
+  ACTIVE: "Activa",
+  SUSPENDED: "Suspendida",
+  DELETED: "Eliminada",
+};
+
+/** Clases Tailwind para el badge de estado de cuenta en modo claro y oscuro. */
+export const ACCOUNT_STATUS_BADGE: Record<AccountStatus, string> = {
+  ACTIVE:
+    "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  SUSPENDED:
+    "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300",
+  DELETED:
+    "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
 };
