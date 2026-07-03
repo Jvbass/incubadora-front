@@ -95,7 +95,7 @@ const ProfilePage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: isPublicProfileView ? ["publicProfile", slug] : ["userProfile"],
+    queryKey: isPublicProfileView ? ["profileBySlug", slug] : ["userProfile"],
     queryFn: isPublicProfileView //si hay slug, se busca el perfil público
       ? () => fetchPublicProfileBySlug(slug!)
       : fetchUserProfile, //si no hay slug, se busca el perfil propio
@@ -107,7 +107,7 @@ const ProfilePage = () => {
   const isOwnProfile = !isPublicProfileView || ownProfileData?.slug === slug;
 
   // Edición inline: el body del PUT se arma sobre el perfil autenticado
-  // (no sobre la vista pública) para no perder campos como publicProfile.
+  // (no sobre la vista pública) para no perder campos como profileVisibility.
   const { saveProfile, isSaving } = useInlineProfileEdit(
     isOwnProfile ? ownProfileData ?? profile : undefined
   );
@@ -146,10 +146,10 @@ const ProfilePage = () => {
     );
   }
 
-  if (!isOwnProfile && !profile.publicProfile) {
+  if (!isOwnProfile && profile.profileVisibility !== "PUBLIC") {
     return (
       <div className="text-center p-8">
-        <p>Este perfil es privado.</p>
+        <p>Este perfil no está disponible.</p>
       </div>
     );
   }

@@ -8,7 +8,7 @@ export const queryKeys = {
 
   // Perfil
   userProfile: () => ["userProfile"] as const,
-  publicProfile: (slug: string) => ["publicProfile", slug] as const,
+  profileBySlug: (slug: string) => ["profileBySlug", slug] as const,
   portfolio: (slug: string) => ["portfolio", slug] as const,
   profile: (slug: string | undefined) => ["profile", slug] as const,
 

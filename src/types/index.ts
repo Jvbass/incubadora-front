@@ -35,6 +35,46 @@ export interface LoginRequest {
 * Profile
 ===================================================*/
 
+/** Modos de visibilidad del perfil/portafolio (matriz de acceso). */
+export type ProfileVisibility =
+  | "PUBLIC"
+  | "INCUBADORA"
+  | "APPLICANT"
+  | "PRIVATE";
+
+export interface ProfileVisibilityOption {
+  value: ProfileVisibility;
+  label: string;
+  description: string;
+}
+
+/** Opciones del selector de visibilidad, con etiqueta y descripción corta. */
+export const PROFILE_VISIBILITY_OPTIONS: ProfileVisibilityOption[] = [
+  {
+    value: "PUBLIC",
+    label: "Público",
+    description:
+      "Cualquier persona en internet puede ver tu portafolio, incluso sin cuenta.",
+  },
+  {
+    value: "INCUBADORA",
+    label: "Solo Incubadora",
+    description:
+      "Solo usuarios logueados en la plataforma pueden ver tu portafolio.",
+  },
+  {
+    value: "APPLICANT",
+    label: "Postulante",
+    description:
+      "Solo reclutadores pueden ver tu portafolio al evaluar tu postulación.",
+  },
+  {
+    value: "PRIVATE",
+    label: "Privado",
+    description: "Nadie más puede ver tu portafolio; solo vos.",
+  },
+];
+
 export interface ProfileResponse {
   slug: string;
   firstName: string;
@@ -45,7 +85,7 @@ export interface ProfileResponse {
   avatarThumbnailUrl?: string;
   bioImageUrl?: string;
   email: string;
-  publicProfile: boolean;
+  profileVisibility: ProfileVisibility;
   techStack: Technology[];
   socialLinks: SocialLink[];
   workExperiences: WorkExperience[];
@@ -115,7 +155,7 @@ export interface ProfileUpdateRequest {
   headline: string;
   slug: string;
   bio: string;
-  publicProfile: boolean;
+  profileVisibility: ProfileVisibility;
   socialLinks: Omit<SocialLink, "id">[];
   techStackIds: number[];
   workExperiences: Omit<WorkExperience, "id">[];
