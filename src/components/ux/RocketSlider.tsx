@@ -21,7 +21,7 @@ export const RocketSlider = ({
   const currentValue = useWatch({ control, name: field.name }) || min;
 
   // Calculamos el porcentaje de la posición del cohete y la barra de progreso
-  const percentage = ((currentValue - min) / (max - min)) * 100;
+  const percentage = ((currentValue - (min ?? 0)) / ((max ?? 100) - (min ?? 0))) * 100;
 
   return (
     <div className="relative w-full py-4">

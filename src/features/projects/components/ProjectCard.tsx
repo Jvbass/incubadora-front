@@ -1,0 +1,202 @@
+import React from "react";
+import type { ProjectSummary } from "../../../types";
+import {
+  CircleCheck,
+  LoaderCircle,
+  MessageSquare,
+  Star,
+  User,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
+interface ProjectCardProps {
+  project: ProjectSummary;
+  variant: "full" | "compact";
+  onView?: (slug: string) => void;
+  onEdit?: (slug: string) => void;
+  onDelete?: (slug: string) => void;
+  /** Si se provee, el estado se vuelve editable inline (F-15). */
+  onStatusChange?: (slug: string, status: string) => void;
+}
+
+const getStatusStyles = (status: string): string => {
+  return status === "published" ? "text-red-500" : "text-gray-400";
+};
+
+export const ProjectCard = React.memo(
+  ({ project, variant, onView, onEdit, onDelete, onStatusChange }: ProjectCardProps) => {
+    // Vista Detallada para el HomePage ---
+    if (variant === "full") {
+      return (
+        <Link
+          to={`/project/${project.slug}`}
+          className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-between sm:items-center gap-4 p-4 rounded-lg border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-border hover:shadow-md hover:border-cta-300 dark:hover:border-cta-600/70
+        dark:hover:bg-bg-hoverdark"
+        >
+          {/* 1. Imagen del Proyecto */}
+          <img
+            src={
+              project.imageThumbnailUrl ??
+              `https://placehold.co/64x64/1e3a8a/f3f4f6?text=${encodeURIComponent(
+                project.title.charAt(0).toUpperCase()
+              )}`
+            }
+            alt={`Imagen de ${project.title}`}
+            className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+          />
+
+          {/* 2. Contenido Principal (Título, Descripción, Etiquetas) */}
+          <div className="flex-grow min-w-0">
+            <h3 className="text-lg  text-text-main dark:text-text-light truncate">
+              {project.title}
+            </h3>
+            <p className="text-sm text-bg-dark dark:text-brand-100 truncate">
+              {project.subtitle}
+            </p>
+
+            <p className="text-sm text-text-soft dark:text-gray-400 truncate flex items-center">
+              <User size={16} className="mr-1" /> {project.developerUsername}
+            </p>
+            {/* Tecnologias usadas  */}
+            <div className="flex flex-wrap gap-2 mt-2 justify-start">
+              {project.technologies.slice(0, 4).map((tech) => (
+                <div
+                  key={tech.id}
+                  style={{
+                    borderColor: tech.techColor,
+                    backgroundColor: tech.techColor + "2A",
+                  }}
+                  className="px-2 py-0.5 border-2 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
+                >
+                  <span>{tech.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. Calificaciones, Rating y Fecha */}
+          <div className="flex flex-col items-end align-baseline gap-2 flex-shrink-0 ml-4">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
+                <MessageSquare size={16} />
+                <span>{project.feedbackCount}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg border border-divider dark:border-gray-700 text-text-soft dark:text-text-light">
+                <Star size={16} className="text-cta-600" />
+                <span>{project.averageRating.toFixed(1)}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-text-soft dark:text-gray-500">
+              {project.developmentProgress === 100 ? (
+                <>
+                  <CircleCheck size={12} className="text-accent-600" />
+                  <span className="text-green-600">Completado</span>
+                </>
+              ) : (
+                <>
+                  <LoaderCircle size={12} />
+                  <span>{project.developmentProgress}%</span>
+                </>
+              )}
+            </div>
+          </div>
+        </Link>
+      );
+    }
+
+    // --- Vista Compacta para el Dashboard ---
+    if (variant === "compact") {
+      const statusStyles = getStatusStyles(project.status);
+
+      return (
+        <li className="bg-white text-text-main dark:bg-bg-dark dark:text-text-light p-4 rounded-lg  border border-gray-400 flex justify-between">
+          {/* Información del Proyecto */}
+          <div>
+            <h3 className="font-bold text-lg">{project.title}</h3>
+            <h2 className="font-bold text-md">Rendimiento:</h2>
+            <div className=" flex flex-col text-sm text-gray-700 dark:text-gray-200">
+              <span className="font-stretch-expanded">
+                Feedbacks: {project.feedbackCount}
+              </span>
+              <span className="font-stretch-expanded">
+                Rating promedio: {project.averageRating}
+              </span>
+              <span className="font-mono">
+                Progreso: {project.developmentProgress}%
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2 justify-start">
+              {project.technologies.slice(0, 4).map((tech) => (
+                <div
+                  key={tech.id}
+                  style={{
+                    borderColor: tech.techColor,
+                    backgroundColor: tech.techColor + "1A",
+                  }}
+                  className="px-2 py-0.5 border-1 text-xs font-small rounded-md flex items-center text-text-dark dark:text-text-light"
+                >
+                  <span>{tech.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Estado y Acciones */}
+          <div className="flex flex-col justify-between items-center">
+            <div className="flex items-center gap-1">
+              {onStatusChange ? (
+                <select
+                  value={project.status}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => onStatusChange(project.slug, e.target.value)}
+                  className="text-xs rounded-md border border-divider dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light px-1 py-0.5 cursor-pointer"
+                >
+                  <option value="published">published</option>
+                  <option value="pending">pending</option>
+                  <option value="archived">archived</option>
+                </select>
+              ) : (
+                <span className={`px-2 py-0 text-xs font-semibold ${statusStyles}`}>
+                  {project.status}
+                </span>
+              )}
+              {project.status === "published" && (
+                <span className="relative flex size-2">
+                  <span className="absolute h-full w-full animate-pulse rounded-full bg-red-600 opacity-100 "></span>
+                </span>
+              )}
+            </div>
+
+            <div className="mt-2 flex items-center gap-4">
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(project.slug)}
+                  className="text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:text-indigo-200 cursor-pointer"
+                >
+                  Editar
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => onDelete(project.slug)}
+                  className="text-sm font-medium text-red-700 dark:text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Borrar
+                </button>
+              )}
+              {onView && (
+                <button
+                  onClick={() => onView(project.slug)}
+                  className="text-sm font-medium text-red-700 dark:text-red-400 hover:text-red-300 cursor-pointer"
+                >
+                  Ver
+                </button>
+              )}
+            </div>
+          </div>
+        </li>
+      );
+    }
+    return null;
+  }
+);

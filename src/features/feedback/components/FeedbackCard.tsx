@@ -1,0 +1,177 @@
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { FeedbackResponse, CommentResponse } from "../../../types";
+import { CommentThread } from "./CommentThread";
+import { fetchCommentsForFeedback } from "../../../api/commentApi";
+import { upvoteFeedback, removeFeedbackUpvote } from "../../../api/feedbackApi";
+import { ChevronDown, ChevronUp, MessageSquareText, ThumbsUp, Check, Tag } from "lucide-react";
+import toast from "react-hot-toast";
+import ReportFlagButton from "../../reports/components/ReportFlagButton";
+
+// Un pequeño componente para mostrar la calificación de forma visual y numérica
+const RatingDisplay = ({ rating }: { rating: number }) => {
+  
+  return (
+    <div className="w-full ">
+
+      <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 mt-1 block text-right">
+        Calificación: {rating}/5
+      </span>
+    </div>
+  );
+};
+
+interface FeedbackCardProps {
+  feedback: FeedbackResponse;
+}
+
+export const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
+  // Estado local para manejar la visibilidad de los comentarios
+  const [commentsVisible, setCommentsVisible] = useState(false);
+
+  // Fetch comments to get the count
+  const {
+    data: comments,
+    isLoading: commentsLoading,
+    isError: commentsError,
+  } = useQuery<CommentResponse[]>({
+    queryKey: ["comments", feedback.id],
+    queryFn: () => fetchCommentsForFeedback(feedback.id),
+    enabled: commentsVisible, // Only fetch comments when commentsVisible is true
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
+  // Upvotes (G-03)
+  const queryClient = useQueryClient();
+  const upvoteMutation = useMutation({
+    mutationFn: () =>
+      feedback.upvotedByMe ? removeFeedbackUpvote(feedback.id) : upvoteFeedback(feedback.id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["feedback", feedback.relatedProjectSlug] }),
+    onError: (e: any) =>
+      toast.error(e.response?.data?.message || "No se pudo registrar el voto."),
+  });
+
+  // Calculate total comment count (including replies)
+  const getTotalCommentCount = (comments: CommentResponse[]): number => {
+    return comments.reduce((total, comment) => {
+      return total + 1 + getTotalCommentCount(comment.replies || []);
+    }, 0);
+  };
+
+  const commentCount = comments ? getTotalCommentCount(comments) : 0;
+
+  // Formateamos la fecha para que sea más legible
+  const formattedDate = new Date(feedback.createdAt).toLocaleDateString(
+    "es-ES",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
+  return (
+    <article
+      id={`feedback-${feedback.id}`}
+      className="bg-white dark:bg-bg-dark p-5 rounded-lg transition-all duration-300 "
+    >
+      {/* Encabezado de la tarjeta con autor y fecha */}
+      <header className="flex items-center justify-between mb-4 border-b border-gray-400  dark:border-gray-700 pb-3">
+        <div className="flex items-center gap-3">
+          {feedback.authorAvatarThumbnailUrl ? (
+            <img
+              src={feedback.authorAvatarThumbnailUrl}
+              alt={feedback.author}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
+              {feedback.author.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <span className="font-bold text-gray-800 dark:text-gray-200">
+            {feedback.author}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          {feedback.projectVersion && (
+            <span
+              title="Versión del proyecto cuando se escribió este feedback"
+              className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+            >
+              <Tag size={14} /> {feedback.projectVersion}
+            </span>
+          )}
+          {feedback.markedByOwner && (
+            <span
+              title="El dueño del proyecto tomará en cuenta este feedback"
+              className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400"
+            >
+              <Check size={14} /> Tomado en cuenta
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => upvoteMutation.mutate()}
+            disabled={upvoteMutation.isPending}
+            aria-label={feedback.upvotedByMe ? "Quitar upvote" : "Dar upvote"}
+            className={`flex items-center gap-1 text-sm transition-colors disabled:opacity-50 ${
+              feedback.upvotedByMe
+                ? "text-cta-600 dark:text-cta-300"
+                : "text-gray-500 dark:text-gray-400 hover:text-cta-600"
+            }`}
+          >
+            <ThumbsUp size={16} /> {feedback.upvoteCount}
+          </button>
+          <time className="text-sm text-gray-500 dark:text-gray-300">
+            {formattedDate}
+          </time>
+          <ReportFlagButton
+            contentType="FEEDBACK"
+            contentId={feedback.id}
+            contentLabel={`Feedback de ${feedback.author}`}
+            ownerUsername={feedback.author}
+          />
+        </div>
+      </header>
+
+      {/* Cuerpo de la tarjeta con la descripción y la calificación */}
+      <div className="space-y-4">
+        <p className="text-gray-700 dark:text-gray-200 leading-relaxed">
+          {feedback.feedbackDescription}
+        </p>
+        <RatingDisplay rating={feedback.rating} />
+      </div>
+
+      {/* Footer con acciones y sección de comentarios */}
+      <footer className="mt-6 pt-3 border-t border-gray-400  dark:border-gray-700 ">
+        <div className="flex justify-end">
+          <button
+            className="cursor-pointer flex items-center space-x-2 text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-indigo-700 transition-colors"
+            onClick={() => setCommentsVisible(!commentsVisible)}
+          >
+            <MessageSquareText size={16} />
+            <span>Comentarios ({commentCount})</span>
+            {/* Icono de flecha que rota 180 grados cuando está abierto */}
+            {commentsVisible ? (
+              <ChevronUp size={12} />
+            ) : (
+              <ChevronDown size={12} color="gray" />
+            )}
+          </button>
+        </div>
+
+        {/* Renderizado condicional del hilo de comentarios */}
+        {commentsVisible && (
+          <CommentThread
+            feedbackId={feedback.id}
+            comments={comments}
+            isLoading={commentsLoading}
+            isError={commentsError}
+          />
+        )}
+      </footer>
+    </article>
+  );
+};

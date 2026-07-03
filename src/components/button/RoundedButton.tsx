@@ -1,9 +1,9 @@
-import React, { type ReactNode, type MouseEventHandler } from "react";
+import React, { type ReactNode } from "react";
 
 // 1. Define la interfaz de las props con las mismas opciones que antes
 interface ButtonProps {
   children: ReactNode;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement & HTMLAnchorElement>;
   variant?: "primary" | "secondary" | "outline";
   size?: "small" | "medium" | "large";
   icon?: React.ElementType;

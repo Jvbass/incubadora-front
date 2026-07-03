@@ -1,0 +1,88 @@
+import type { ProjectDetailResponse, FeedbackResponse } from "../../../types";
+import { useProjectRating } from "../../../hooks/useProjectRating";
+import { StarRating } from "../../../components/ux/StarRating";
+import { Link } from "react-router-dom";
+import MDEditor from "@uiw/react-md-editor";
+import rehypeSanitize from "rehype-sanitize";
+import { useEffectiveTheme } from "../../../hooks/useEffectiveTheme";
+
+interface ProjectMainContentProps {
+  project: ProjectDetailResponse;
+  feedbackList?: FeedbackResponse[];
+}
+
+export const ProjectMainContent = ({
+  project,
+  feedbackList,
+}: ProjectMainContentProps) => {
+
+  const effectiveTheme = useEffectiveTheme();
+  const { starRating, feedbackCount, averageRatingFormatted } =
+    useProjectRating(feedbackList);
+
+  return (
+    <section>
+      {/* Project Header with Image and Title */}
+      <div className="flex flex-col sm:flex-row gap-6 items-start">
+        {/* Project Image */}
+        <div className="flex-shrink-0">
+          <img
+            src="https://placehold.co/120x120"
+            alt={`${project.title} logo`}
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover "
+          />
+        </div>
+
+        {/* Title and Info */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-text-light mb-2">
+            {project.title}
+          </h1>
+          <span className="text-md font-bold text-gray-600 dark:text-brand-100 ">
+            {project.subtitle}
+          </span>
+
+          <p className="text-lg text-gray-600 dark:text-text-light mb-4">
+            Creado por{" "}
+            {project.developerSlug ? (
+              <Link to={`/portfolio/${project.developerSlug}`}>
+                <span className="font-semibold text-gray-700 dark:text-brand-100 hover:text-blue-500 transition duration-200">
+                  {project.developerUsername}
+                </span>
+              </Link>
+            ) : (
+              <span className="font-semibold text-gray-700 dark:text-brand-100">
+                {project.developerUsername}
+              </span>
+            )}
+          </p>
+
+          {/* Rating and Reviews */}
+          {feedbackCount > 0 && (
+            <StarRating
+              rating={starRating}
+              showRating={true}
+              showCount={true}
+              ratingValue={averageRatingFormatted}
+              count={feedbackCount}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Project Description — las imágenes del markdown se adaptan al contenedor */}
+      <div className="mt-8 prose prose-lg max-w-none prose-p:text-gray-600 text-gray-800 dark:text-text-light [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_img]:mx-auto">
+        <MDEditor.Markdown
+          source={project.description}
+          style={{
+            backgroundColor: effectiveTheme === "dark" ? "#2B2E33" : "#f9fafb",
+            padding: "2rem",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            borderRadius: "0.5rem",
+          }}
+          rehypePlugins={[[rehypeSanitize]]}
+        />
+      </div>
+    </section>
+  );
+};

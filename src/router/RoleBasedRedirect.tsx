@@ -1,8 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuthZustand } from "../hooks/useAuthZustand";
 import Loading from "../components/ux/Loading";
+import { roleLandingPath } from "./roleLanding";
 
-// Redirigir al usuario segun su rol
 const RoleBasedRedirect = () => {
   const { user, isAuthenticated, isLoading } = useAuthZustand();
 
@@ -19,16 +19,8 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Redireccionar segun rol del usuario.
-  const roleToPathMap: { [key: string]: string } = {
-    DEV: "/home",
-    MENTOR: "/dashboard",
-    ADMINISTRATOR: "/admin",
-    // RECRUITER: "/recruiter",
-  };
-
-  // Si el rol no existe en nuestro mapa, lo mandamos al login por seguridad.
-  const path = user ? roleToPathMap[user.role] || "/login" : "/login";
+  // Redireccionar según rol del usuario (single source of truth en roleLanding.ts).
+  const path = user ? roleLandingPath(user.role) : "/login";
 
   // Usamos el componente Navigate de react-router-dom para hacer la redirección.
   return <Navigate to={path} replace />;

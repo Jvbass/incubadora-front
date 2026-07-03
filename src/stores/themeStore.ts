@@ -13,7 +13,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: "system", // El tema por defecto es el del sistema
+      theme: "dark", // Dark por defecto (D-17, rediseño v2); el usuario puede cambiarlo
       setTheme: (newTheme) => set({ theme: newTheme }),
     }),
     {

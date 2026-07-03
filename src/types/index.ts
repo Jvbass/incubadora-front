@@ -21,6 +21,11 @@ export interface RegisterRequest {
   lastName: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -36,6 +41,9 @@ export interface ProfileResponse {
   lastName: string;
   headline: string;
   bio: string;
+  avatarUrl?: string;
+  avatarThumbnailUrl?: string;
+  bioImageUrl?: string;
   email: string;
   publicProfile: boolean;
   techStack: Technology[];
@@ -46,6 +54,25 @@ export interface ProfileResponse {
   projects: ProjectSummary[];
   kudosReceived: KudoResponse[];
   feedbackGiven: FeedbackResponse[];
+  kudosGiven: KudoResponse[];
+  feedbackReceived: FeedbackResponse[];
+  stats?: ProfileStats;
+  role?: string;
+}
+
+export interface ProfileStats {
+  totalProjects: number;
+  totalFeedbacksGiven: number;
+  totalFeedbacksReceived: number;
+  totalKudosReceived: number;
+  totalKudosGiven: number;
+  avgProjectRating: number;
+  score: number;
+}
+
+export interface ImageUploadResponse {
+  imageUrl: string;
+  thumbnailUrl: string | null;
 }
 
 export interface UserResponse {
@@ -113,6 +140,7 @@ export interface ProjectSummary {
   developmentProgress: number;
   feedbackCount: number;
   averageRating: number;
+  imageThumbnailUrl?: string;
 }
 
 export type SortByType = "LATEST" | "MOST_FEEDBACK" | "TOP_RATED";
@@ -140,11 +168,15 @@ export interface ProjectDetailResponse {
   projectUrl: string;
   createdAt: string;
   developerUsername: string;
+  developerSlug?: string;
   technologies: Technology[];
   status: string;
   isCollaborative: boolean;
   needMentoring: boolean;
   developmentProgress: number;
+  imageUrl?: string;
+  imageThumbnailUrl?: string;
+  currentVersion?: string | null;
 }
 
 export interface Technology {
@@ -161,17 +193,125 @@ export interface FeedbackResponse {
   feedbackDescription: string;
   rating: number;
   author: string;
+  authorAvatarThumbnailUrl?: string;
   relatedProjectSlug: string;
   relatedProjectTitle: string;
   authorId: number;
   projectId: number;
   createdAt: string;
   updatedAt?: string;
+  upvoteCount: number;
+  upvotedByMe: boolean;
+  markedByOwner: boolean;
+  projectVersion?: string | null;
 }
 
 export interface FeedbackRequest {
   feedbackDescription: string;
   rating: number;
+  categoryIds?: number[];
+}
+
+export interface Category {
+  id: number;
+  name: string;
+}
+
+/*===================================================
+ * Reportes de contenido
+ *===================================================*/
+
+export type ReportContentType =
+  | "PROJECT"
+  | "FEEDBACK"
+  | "FEEDBACK_COMMENT"
+  | "KUDO_COMMENT";
+
+export type ReportReason =
+  | "SPAM"
+  | "CONTENIDO_INAPROPIADO"
+  | "PLAGIO"
+  | "INFORMACION_FALSA"
+  | "OTRO";
+
+export interface CreateReportRequest {
+  contentType: ReportContentType;
+  contentId: number;
+  reason: ReportReason;
+  description: string;
+}
+
+export type ReportStatus =
+  | "PENDING"
+  | "IN_REVIEW"
+  | "RESOLVED"
+  | "REJECTED"
+  | "ESCALATED";
+
+/** Estado de la cuenta del autor del contenido reportado. */
+export type AccountStatus = "ACTIVE" | "SUSPENDED" | "DELETED";
+
+/** Vista admin de un reporte, con el contenido resuelto por el backend. */
+export interface AdminReport {
+  id: number;
+  reporterUsername: string;
+  contentType: ReportContentType;
+  contentId: number;
+  reason: ReportReason;
+  description: string;
+  status: ReportStatus;
+  createdAt: string;
+  contentLabel: string;
+  contentLink: string | null;
+  contentAuthorUsername: string | null;
+  adminMessage?: string | null;
+  contentAuthorAccountStatus: AccountStatus | null;
+}
+
+/** Entrada del registro de moderación (audit trail). */
+export interface ModerationAction {
+  id: number;
+  actionType: string;
+  adminUsername: string;
+  note?: string | null;
+  createdAt: string;
+}
+
+/** Detalle enriquecido de un reporte: reporte + historial + similares + audit trail. */
+export interface ReportDetail {
+  report: AdminReport;
+  infractionHistory: AdminReport[];
+  similarReports: AdminReport[];
+  auditTrail: ModerationAction[];
+}
+
+/*===================================================
+ * Jobs / Recruiter
+ *===================================================*/
+
+export type JobOfferStatus = "DRAFT" | "PUBLISHED" | "CLOSED";
+
+export interface JobOffer {
+  id: number;
+  title: string;
+  description: string;
+  company: string;
+  location: string;
+  salaryRange: string | null;
+  requirements: string | null;
+  status: JobOfferStatus;
+  recruiterUsername: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateJobOfferRequest {
+  title: string;
+  description: string;
+  company: string;
+  location: string;
+  salaryRange?: string;
+  requirements?: string;
 }
 
 /*===================================================
@@ -184,6 +324,7 @@ export interface KudoResponse {
   isPublic: boolean;
   createdAt: string;
   senderUsername: string;
+  senderAvatarThumbnailUrl?: string;
   receiverUsername: string;
   relatedProjectSlug: string;
   relatedProjectTitle: string;
@@ -200,6 +341,8 @@ export interface KudoPost {
  *===================================================*/
 export interface CommentAuthor {
   username: string;
+  slug?: string;
+  avatarThumbnailUrl?: string;
 }
 
 export interface CommentResponse {
@@ -242,21 +385,13 @@ export interface PagedResponse<T> {
  *===================================================*/
 
 export interface MentorRequest {
-  notificationId: number;
-  type: string;
-  applicant: {
-    username: string;
-    slug: string;
-  };
-  message: string;
-  status: string;
-  approveLink: string;
-  rejectLink: string;
+  id: number;
+  userSlug: string;
+  username: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejectionReason: string | null;
+  publishedProjectCount: number;
   createdAt: string;
-}
-
-export interface RejectRequest {
-  reason: string;
 }
 
 /*===================================================
@@ -278,27 +413,69 @@ export interface CreateMentorshipRequest {
   timezone: string;
   price?: number;
   isFree: boolean;
+  tags?: string[];
   schedules: ScheduleSlotRequest[];
 }
 
-export interface MentorshipSummary {
+export interface MentorshipSummaryResponse {
   id: number;
+  slug: string;
+  mentorName: string;
   title: string;
+  mentorshipState: "PUBLISHED" | "ARCHIVED";
   specialty: string;
+  price?: number;
+  isFree?: boolean;
+  tags?: string[];
+  imageUrl?: string;
+  imageThumbnailUrl?: string;
+}
+
+export interface MentorshipDetailResponse extends MentorshipSummaryResponse {
+  mentorId?: number;
+  description: string;
   durationMinutes: number;
   platform: string;
+  timezone: string;
+  createdAt?: string;
+  updatedAt?: string;
+  schedules?: ScheduleSlotResponse[];
+}
+
+/*===================================================
+ * Mentoring Public (published list/detail)
+ *===================================================*/
+export interface MentoringListItemResponse {
+  id: number;
+  slug: string;
+  title: string;
+  specialty: string;
+  mentorName?: string;
+  durationMinutes?: number;
+  platform?: string;
   price?: number;
   isFree: boolean;
   mentorUsername: string;
-  createdAt: string;
-  status: "active" | "inactive" | "paused";
-  totalBookings: number;
+  mentorSlug?: string;
+  tags?: string[];
+  sessionType?: "SINGLE" | "PACKAGE";
+  createdAt?: string;
+  imageThumbnailUrl?: string;
 }
 
-export interface MentorshipDetailResponse extends MentorshipSummary {
+export interface MentoringPublicDetailResponse extends MentoringListItemResponse {
   description: string;
   timezone: string;
-  schedules: ScheduleSlotResponse[];
+  schedules?: ScheduleSlotResponse[];
+}
+
+export interface PagedMentoringResponse {
+  content: MentoringListItemResponse[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 }
 
 export interface ScheduleSlotResponse {

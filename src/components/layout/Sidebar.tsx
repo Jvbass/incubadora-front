@@ -1,86 +1,98 @@
-import { Package, ClipboardPen, Brain, Egg, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Package, ClipboardPen, Brain, Egg, Briefcase } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { routeImports } from "../../router/routeImports";
 
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
+// Sidebar-rail izquierda (rediseño v2, SDD §12.3 R2): iconos w-16 que expanden
+// a w-48 en hover (desktop); drawer overlay en móvil controlado desde la
+// hamburguesa de la barra superior. Acento rojo para hover/activo.
 export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+  const itemClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center w-full p-2 rounded-lg transition-colors cursor-pointer border-l-2 ${
+      isActive
+        ? "border-cta-600 text-cta-300 bg-bg-hoverdark/60"
+        : "border-transparent text-text-light hover:text-cta-300 hover:bg-bg-hoverdark"
+    }`;
+
   return (
     <>
-      {/* Mobile */}
+      {/* Overlay móvil */}
       {isOpen && (
         <div
-          className="absolute inset-0 bg-gray-950/60 z-40 md:hidden"
+          className="fixed inset-0 top-14 bg-gray-950/60 z-40 md:hidden"
           onClick={onClose}
-        >
-          <X className="text-white absolute top-20 right-4" />
-        </div>
+        />
       )}
 
-      {/* Sidebar */}
-      <div
+      {/* Sidebar (siempre dark: superficie carbón) */}
+      <aside
         className={`
-        fixed md:fixed top-0 left-0 h-full border-r border-gray-400/20 dar:border-border hover:border-gray-500
-        w-48 md:w-16 hover:w-48 bg-bg-dark flex flex-col py-4 z-50 
-        transition-all duration-300 ease-in-out group 
+        fixed top-14 bottom-0 left-0 border-r border-border
+        w-48 md:w-16 md:hover:w-48 bg-bg-dark dark:bg-bg-dark flex flex-col py-4 z-40
+        transition-all duration-300 ease-in-out group overflow-hidden
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}
       >
-        {/* Logo and company name at top */}
-        <Link
-          to="/home"
-          className="mb-8 flex items-center w-full px-2"
-          onClick={onClose}
-        >
-          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-            <img
-              className="w-10 h-10"
-              src="./images/logo-main.png"
-              alt="Logo"
-            />
-          </div>
-          <span className="ml-3 text-white font-semibold md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            Incubadora.dev
-          </span>
-        </Link>
-
         {/* Navigation icons */}
-        <nav className="flex flex-col space-y-6 items-start w-full px-2">
-          <div className="flex items-center w-full p-2 text-gray-400 cursor-not-allowed rounded-lg transition-colors">
+        <nav className="flex flex-col space-y-2 items-start w-full px-2">
+          <div className="flex items-center w-full p-2 text-text-soft cursor-not-allowed rounded-lg border-l-2 border-transparent">
             <Package size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Productos
             </span>
           </div>
 
-          <Link
+          <NavLink
             to="/home"
-            className="flex items-center w-full p-2 text-white hover:text-yellow-400 hover:bg-bg-hoverdark rounded-lg transition-colors cursor-pointer"
+            className={itemClass}
             onClick={onClose}
+            onMouseEnter={() => routeImports.home()}
+            onFocus={() => routeImports.home()}
           >
             <ClipboardPen size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Proyectos
             </span>
-          </Link>
+          </NavLink>
 
-          <div className="flex items-center w-full p-2 text-gray-400 cursor-not-allowed rounded-lg transition-colors">
+          <NavLink
+            to="/mentoring"
+            className={itemClass}
+            onClick={onClose}
+            onMouseEnter={() => routeImports.mentoringList()}
+            onFocus={() => routeImports.mentoringList()}
+          >
             <Brain size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Mentorías
             </span>
-          </div>
+          </NavLink>
 
-          <div className="flex items-center w-full p-2 text-gray-400 cursor-not-allowed rounded-lg transition-colors">
+          <NavLink
+            to="/jobs"
+            className={itemClass}
+            onClick={onClose}
+            onMouseEnter={() => routeImports.jobsList()}
+            onFocus={() => routeImports.jobsList()}
+          >
+            <Briefcase size={20} className="flex-shrink-0" />
+            <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Empleos
+            </span>
+          </NavLink>
+
+          <div className="flex items-center w-full p-2 text-text-soft cursor-not-allowed rounded-lg border-l-2 border-transparent">
             <Egg size={20} className="flex-shrink-0" />
             <span className="ml-3 md:opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
               Blog
             </span>
           </div>
         </nav>
-      </div>
+      </aside>
     </>
   );
 }

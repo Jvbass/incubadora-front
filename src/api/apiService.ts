@@ -3,7 +3,8 @@ import toast from "react-hot-toast";
 
 // Create axios instance with base configuration
 const apiService = axios.create({
-  baseURL: "http://localhost:8080/api",
+  // Configurable por entorno (build-time); default = backend local en Docker
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },

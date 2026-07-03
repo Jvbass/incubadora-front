@@ -109,42 +109,48 @@
 }
 
 @theme {
-  /* Textos */
+  /* ============================================================
+     Design system v2 — dark-first estilo Codewars (SDD §12.3 R1)
+     Los NOMBRES de token se conservan para no tocar componentes;
+     solo cambian los valores.
+     ============================================================ */
 
+  /* Textos */
   --color-text-dark-text: #f0f3f5;
-  /* Brand Primary - Azul profesional */
+
+  /* Brand Primary - Azul (links, info) */
   --color-brand-900: #1e3a8a; /* Fondo oscuro / texto principal en modo claro */
   --color-brand-600: #2563eb; /* Navegación, botones primarios */
-  --color-brand-300: #3b82f6; /* Hover, subrayado enlaces */
+  --color-brand-300: #60a5fa; /* Hover, subrayado enlaces (más legible en dark) */
   --color-brand-100: #dbeafe; /* Fondo claro, tarjetas suaves */
 
-  /* Acción - Verde vibrante */
+  /* Acción - Verde (éxito, confirmar) */
   --color-accent-900: #15803d; /* Hover oscuro */
   --color-accent-600: #22c55e; /* Botones de acción (OK, Confirmar) */
   --color-accent-300: #4ade80; /* Interactivos, enlaces secundarios */
   --color-accent-100: #dcfce7; /* Hover suave */
 
-  /* CTA - Naranja vibrante */
-  --color-cta-900: #c2410c; /* Hover oscuro fuerte (peligro, alta urgencia) */
-  --color-cta-600: #f97316; /* Botones CTA */
-  --color-cta-300: #fdba74; /* Hover sobre CTA */
-  --color-cta-100: #ffedd5; /* Fondos suaves de alerta */
+  /* CTA - Rojo Codewars (antes naranja) */
+  --color-cta-900: #8f2a18; /* Hover oscuro fuerte (peligro, alta urgencia) */
+  --color-cta-600: #c0392b; /* Botones CTA */
+  --color-cta-300: #e9806e; /* Hover sobre CTA */
+  --color-cta-100: #fadbd5; /* Fondos suaves de alerta */
 
   /* backgrounds */
   --color-bg-light: #f9fafb; /* Fondo claro principal */
   --color-bg-soft: #ecececff; /* Fondo de inputs, tarjetas secundarias */
 
-  --color-bg-dark: #2b2e33; /* Fondo oscuro para tarjetas en modo dark */
-  --color-bg-darker: #191b1f; /* Fondo principal en modo oscuro */
-  --color-bg-hoverdark: #42464d; /* Hover oscuro para tarjetas en modo dark */
+  --color-bg-dark: #1d2025; /* Superficie/cards en modo dark (carbón) */
+  --color-bg-darker: #131519; /* Fondo principal en modo oscuro */
+  --color-bg-hoverdark: #272b31; /* Hover de superficies en modo dark */
 
   --color-text-light: #f3f4f6; /* Texto claro en modo oscuro */
   --color-text-main: #111827; /* Texto principal en modo claro */
-  --color-text-soft: #6b7280; /* Texto secundario, menos importante */
+  --color-text-soft: #8a929e; /* Texto secundario, menos importante */
 
   /* Borders */
-  --color-border: #42464d; /* Bordes de inputs, cards (modo claro) */
-  --color-divider: #e5e7eb; /* Líneas separadoras, sutiles */
+  --color-border: #3a3f47; /* Bordes de inputs, cards (modo dark) */
+  --color-divider: #e5e7eb; /* Líneas separadoras, sutiles (modo claro) */
 }
 
 /*markdown editor**/
