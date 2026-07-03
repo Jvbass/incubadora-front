@@ -233,9 +233,10 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
       reactivateMutation.mutate(note.trim() || undefined);
     } else if (activeAction === "delete") {
       if (!deleteConfirmed) {
-        toast.error("Debés confirmar que entendés que esta acción es irreversible.");
+        toast.error("Debe confirmar que comprende que esta acción es irreversible.");
         return;
       }
+      if (deleteMutation.isPending) return;
       deleteMutation.mutate(note.trim() || undefined);
     }
   };
@@ -491,13 +492,15 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
                         <UserCheck size={12} /> Reactivar cuenta
                       </button>
                     ) : (
-                      <button
-                        onClick={() => setActiveAction("suspend")}
-                        disabled={isBusy}
-                        className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
-                      >
-                        <UserX size={12} /> Suspender cuenta
-                      </button>
+                      !TERMINAL_STATUSES.includes(currentStatus!) && (
+                        <button
+                          onClick={() => setActiveAction("suspend")}
+                          disabled={isBusy}
+                          className="flex-1 min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs rounded-md bg-rose-700 text-white hover:bg-rose-800 disabled:opacity-50 transition-colors"
+                        >
+                          <UserX size={12} /> Suspender cuenta
+                        </button>
+                      )
                     )}
                     <button
                       onClick={() => setActiveAction("delete")}
@@ -508,6 +511,14 @@ const ReportDetailDrawer = ({ reportId, onClose }: ReportDetailDrawerProps) => {
                     </button>
                   </div>
                 )}
+                {!activeAction &&
+                  accountStatus === "ACTIVE" &&
+                  TERMINAL_STATUSES.includes(currentStatus!) && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      La suspensión solo está disponible desde un reporte
+                      abierto.
+                    </p>
+                  )}
               </div>
             )}
 

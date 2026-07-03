@@ -132,6 +132,7 @@ const ReportsPanel = () => {
       {/* Drawer de detalle (overlay fijo) */}
       {selectedReportId !== null && (
         <ReportDetailDrawer
+          key={selectedReportId}
           reportId={selectedReportId}
           onClose={handleCloseDrawer}
         />

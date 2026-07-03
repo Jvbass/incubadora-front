@@ -251,4 +251,45 @@ test.describe('Admin — Suspender / reactivar / eliminar cuenta desde el drawer
     const loginBody = await loginRes.json();
     expect(String(loginBody.message ?? '')).toMatch(/eliminada/i);
   });
+
+  test('no se ofrece "Suspender cuenta" desde un reporte ya cerrado', async ({
+    page,
+    request,
+  }) => {
+    const setup = await setupReportedAccount(request, 'closed');
+
+    // Resolver el reporte por API para llegar directo al estado cerrado.
+    const resolveRes = await request.post(
+      `${BASE_API_URL}/admin/reports/${setup.reportId}/resolve`,
+      { headers: { Authorization: `Bearer ${setup.adminToken}` } }
+    );
+    if (!resolveRes.ok())
+      throw new Error(`No se pudo resolver el reporte en el setup: ${resolveRes.status()}`);
+
+    await injectAuth(page, setup.adminToken);
+    await page.goto('/admin');
+    await page.waitForURL('/admin', { timeout: 15000 });
+    await page.addStyleTag({
+      content: '.tsqd-parent-container { display: none !important; }',
+    });
+    await page.getByText('Reportes de contenido').waitFor({ timeout: 10000 });
+
+    // El reporte ya está resuelto: hay que cambiar a la pestaña "Resueltos".
+    await page.getByRole('button', { name: 'Resueltos' }).click();
+
+    const reportCard = page.locator(`[data-report-id="${setup.reportId}"]`);
+    await expect(reportCard).toBeVisible({ timeout: 10000 });
+    await reportCard.click();
+
+    const drawer = page.locator('[data-testid="report-detail-drawer"]');
+    await expect(drawer).toBeVisible({ timeout: 10000 });
+
+    await expect(drawer.locator('[data-testid="account-actions"]')).toBeVisible();
+    await expect(
+      drawer.getByRole('button', { name: /suspender cuenta/i })
+    ).toHaveCount(0);
+    await expect(
+      drawer.getByText(/la suspensión solo está disponible desde un reporte abierto/i)
+    ).toBeVisible();
+  });
 });
