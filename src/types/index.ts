@@ -248,6 +248,9 @@ export type ReportStatus =
   | "REJECTED"
   | "ESCALATED";
 
+/** Estado de la cuenta del autor del contenido reportado. */
+export type AccountStatus = "ACTIVE" | "SUSPENDED" | "DELETED";
+
 /** Vista admin de un reporte, con el contenido resuelto por el backend. */
 export interface AdminReport {
   id: number;
@@ -262,6 +265,7 @@ export interface AdminReport {
   contentLink: string | null;
   contentAuthorUsername: string | null;
   adminMessage?: string | null;
+  contentAuthorAccountStatus: AccountStatus | null;
 }
 
 /** Entrada del registro de moderación (audit trail). */

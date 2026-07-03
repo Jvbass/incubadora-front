@@ -123,6 +123,52 @@ export const hideReportedContent = async (reportId: number): Promise<void> => {
 };
 
 /**
+ * [ADMIN] Suspende la cuenta del autor del contenido reportado: bloquea el
+ * login de forma indefinida hasta que un admin la reactive. Reversible.
+ */
+export const suspendUser = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/suspend`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Reactiva una cuenta previamente suspendida (restaura el login).
+ * No revierte una cuenta eliminada.
+ */
+export const reactivateUser = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/reactivate`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
+ * [ADMIN] Elimina la cuenta del autor del contenido reportado: bloquea el
+ * login y oculta todo su contenido (proyectos, feedback, comentarios, kudos,
+ * mentorías, ofertas laborales). Efectivamente irreversible.
+ */
+export const deleteAccount = async (
+  reportId: number,
+  note?: string
+): Promise<AdminReport> => {
+  const { data } = await apiService.post<AdminReport>(
+    `/admin/reports/${reportId}/delete-account`,
+    note ? { note } : {}
+  );
+  return data;
+};
+
+/**
  * [ADMIN] (Legacy) Marca un reporte como revisado o descartado, con mensaje opcional.
  * @deprecated Usar las acciones específicas (resolveReport, rejectReport, etc.) en su lugar.
  */
