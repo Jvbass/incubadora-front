@@ -71,7 +71,8 @@ export const PROFILE_VISIBILITY_OPTIONS: ProfileVisibilityOption[] = [
   {
     value: "PRIVATE",
     label: "Privado",
-    description: "Nadie más puede ver tu portafolio; solo vos.",
+    description:
+      "Solo vos y los administradores de la plataforma pueden ver tu portafolio.",
   },
 ];
 
