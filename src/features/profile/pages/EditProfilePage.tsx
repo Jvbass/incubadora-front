@@ -9,12 +9,17 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fetchUserProfile, updateUserProfile } from "../../../api/profileApi";
 import { fetchTechnologies } from "../../../api/projectApi";
-import type { ImageUploadResponse, ProfileUpdateRequest, Technology } from "../../../types";
+import {
+  PROFILE_VISIBILITY_OPTIONS,
+  type ImageUploadResponse,
+  type ProfileUpdateRequest,
+  type Technology,
+} from "../../../types";
 import Loading from "../../../components/ux/Loading";
 import MultiSelect from "../../projects/components/MultiSelect";
 import ImageUpload from "../../../components/ui/ImageUpload";
 import { useEffect, useMemo } from "react";
-import { Trash2 } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
@@ -50,13 +55,14 @@ const EditProfilePage = () => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isSubmitting },
   } = useForm<ProfileUpdateRequest>({
     defaultValues: {
       headline: "",
       bio: "",
       slug: "",
-      publicProfile: true,
+      profileVisibility: "INCUBADORA",
       socialLinks: [],
       techStackIds: [],
       workExperiences: [],
@@ -109,7 +115,7 @@ const EditProfilePage = () => {
         headline: profileData.headline,
         slug: profileData.slug,
         bio: profileData.bio,
-        publicProfile: profileData.publicProfile,
+        profileVisibility: profileData.profileVisibility,
         socialLinks: profileData.socialLinks.map(({ ...rest }) => rest), // Omitir 'id'
         techStackIds: profileData.techStack.map((tech) => tech.id),
         workExperiences: profileData.workExperiences.map(({ ...rest }) => rest),
@@ -118,6 +124,9 @@ const EditProfilePage = () => {
       });
     }
   }, [profileData, reset]);
+
+  // Modo de visibilidad seleccionado actualmente (para mostrar advertencias)
+  const visibility = watch("profileVisibility");
 
   // 5. Mutación para enviar los datos actualizados
   const mutation = useMutation({
@@ -222,14 +231,58 @@ const EditProfilePage = () => {
               className="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md shadow-sm"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <input
-              id="publicProfile"
-              type="checkbox"
-              {...register("publicProfile")}
-              className="rounded"
-            />
-            <label htmlFor="publicProfile">Hacer perfil público</label>
+          <div>
+            <label htmlFor="profileVisibility">Visibilidad del perfil</label>
+            <select
+              id="profileVisibility"
+              {...register("profileVisibility")}
+              className="mt-1 block w-full border-gray-300 dark:border-gray-700 bg-bg-light dark:bg-bg-dark text-text-main dark:text-text-light rounded-md shadow-sm"
+            >
+              {PROFILE_VISIBILITY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-text-soft dark:text-gray-400">
+              {
+                PROFILE_VISIBILITY_OPTIONS.find(
+                  (option) => option.value === visibility
+                )?.description
+              }
+            </p>
+            {visibility === "PUBLIC" && (
+              <div
+                data-testid="visibility-public-warning"
+                className="mt-2 flex items-start gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800"
+              >
+                <AlertTriangle
+                  size={16}
+                  className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"
+                />
+                <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                  Con visibilidad Pública, cualquier persona en internet podrá
+                  ver tus datos personales y proyectos, incluso sin tener una
+                  cuenta.
+                </p>
+              </div>
+            )}
+            {visibility === "PRIVATE" && (
+              <div
+                data-testid="visibility-private-warning"
+                className="mt-2 flex items-start gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800"
+              >
+                <AlertTriangle
+                  size={16}
+                  className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"
+                />
+                <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+                  Con visibilidad Privada, otros devs no podrán darte
+                  reconocimientos (kudos) y los reclutadores no verán tu
+                  portafolio.
+                </p>
+              </div>
+            )}
           </div>
         </section>
 

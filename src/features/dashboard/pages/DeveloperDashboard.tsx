@@ -15,6 +15,7 @@ import { ProjectCard } from "../../projects/components/ProjectCard";
 import { MentorshipCard } from "../../mentoring/components/MentorshipCard";
 import MentorshipForm from "../../mentoring/components/MentorshipForm";
 import type { ProjectSummary, MentorshipDetailResponse } from "../../../types";
+import { PROFILE_VISIBILITY_OPTIONS } from "../../../types";
 import { useState } from "react";
 import Modal from "../../../components/ui/modal/Modal";
 import ProjectForm from "../../projects/components/ProjectForm";
@@ -234,7 +235,10 @@ const DeveloperDashboard = () => {
               {user?.role}
             </span>
             <span className="text-text-soft dark:text-gray-400">
-              {data.publicProfile ? "Perfil público" : "Perfil privado"}
+              Visibilidad:{" "}
+              {PROFILE_VISIBILITY_OPTIONS.find(
+                (opt) => opt.value === data.profileVisibility
+              )?.label ?? data.profileVisibility}
             </span>
             {stats && (
               <span className="text-text-soft dark:text-gray-400">

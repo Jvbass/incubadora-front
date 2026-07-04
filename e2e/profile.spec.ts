@@ -43,41 +43,31 @@ test.describe('Perfil y Portfolio', () => {
   });
 
   test('should display public portfolio without auth', async ({ page }) => {
-    // Sin autenticación, navegar al portfolio público
+    // Sin autenticación, navegar al portfolio público.
+    // Desde portfolio-visibility (P2) el default tras el registro es
+    // INCUBADORA (opt-in estricto a PUBLIC vía V12), por lo que un
+    // visitante anónimo debe ver el estado "no disponible" uniforme,
+    // no el contenido del perfil.
     await page.goto(`/portfolio/${userSlug}`);
-    // Esperar a que el spinner de carga desaparezca (la API debe resolver la petición)
     await page.waitForFunction(
       () => !document.body.innerText.toLowerCase().includes('cargando'),
       { timeout: 20000 }
     ).catch(() => {});
 
-    // El portfolio puede mostrar el nombre o un mensaje de "perfil privado" si
-    // el usuario no ha habilitado su perfil público
-    const hasContent = await page.getByText(
-      new RegExp(`${USER.firstName}|${USER.lastName}|${USER.username}`, 'i')
-    ).count() > 0;
-    const isPrivate = await page.getByText(/perfil es privado|no se encontró/i).count() > 0;
-    const hasError = await page.getByText(/error al cargar/i).count() > 0;
-    // Si el backend requiere auth para el portfolio, el interceptor de axios redirige a /login
-    const isRedirectedToLogin = page.url().includes('/login');
-
-    // Al menos una condición debe cumplirse (la página carga algo)
-    expect(hasContent || isPrivate || hasError || isRedirectedToLogin).toBeTruthy();
+    await expect(page.locator('[data-testid="portfolio-not-available"]')).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test('should return 404 or error for non-existent slug', async ({ page }) => {
     await page.goto('/portfolio/slug-que-no-existe-xyz-e2e-12345');
     await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
 
-    // El PortfolioPage muestra uno de estos mensajes para errores:
-    // 404 → "No se encontró este portfolio."
-    // 403 → "Este perfil es privado."
-    // Genérico → "Error al cargar el portfolio: ..."
-    // O el router → "Página No Encontrada"
-    const bodyText = await page.locator('body').innerText();
-    const hasError = /portfolio|privado|encontr|error|404/i.test(bodyText);
-
-    expect(hasError).toBeTruthy();
+    // El backend responde 404 uniforme tanto para slugs inexistentes como
+    // para accesos denegados por modo de visibilidad (portfolio-visibility, P2).
+    await expect(page.locator('[data-testid="portfolio-not-available"]')).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('should edit profile settings', async ({ page }) => {

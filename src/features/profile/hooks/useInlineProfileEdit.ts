@@ -14,7 +14,7 @@ export const buildUpdateRequest = (
   headline: profile.headline ?? "",
   slug: profile.slug,
   bio: profile.bio ?? "",
-  publicProfile: profile.publicProfile,
+  profileVisibility: profile.profileVisibility,
   socialLinks: (profile.socialLinks ?? []).map(({ platform, url }) => ({
     platform,
     url,
@@ -51,7 +51,8 @@ export const useInlineProfileEdit = (profile: ProfileResponse | undefined) => {
     onSuccess: (updated) => {
       toast.success("Perfil actualizado");
       queryClient.setQueryData(["userProfile"], updated);
-      queryClient.invalidateQueries({ queryKey: ["publicProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["profileBySlug"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolio"] });
     },
     onError: (error) => {
       toast.error(`Error al guardar: ${error.message}`);
