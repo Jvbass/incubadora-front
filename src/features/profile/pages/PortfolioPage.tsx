@@ -263,6 +263,11 @@ const PortfolioPage = () => {
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {kudosReceived.length}
               </span>
+              {profile.stats && (
+                <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
+                  ({profile.stats.totalKudosReceived} en total)
+                </span>
+              )}
               {/* Botón "Dar Kudo" solo para usuarios autenticados */}
               {isAuthenticated && (
                 <div className="flex w-auto justify-center ms-auto text-sm text-gray-500">
