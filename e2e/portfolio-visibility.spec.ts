@@ -149,6 +149,18 @@ test.describe('Matriz de visibilidad de portafolio', () => {
     await expect(page.locator(NOT_AVAILABLE_TESTID)).toBeVisible({ timeout: 10000 });
   });
 
+  test('INCUBADORA: un DEV no-owner logueado puede ver el portafolio', async ({ page, request }) => {
+    await setOwnerVisibility(request, 'INCUBADORA');
+    await injectAuth(page, otherDevToken);
+    await page.goto(`/portfolio/${ownerSlug}`);
+    await waitForPortfolioSettled(page);
+
+    await expect(page.locator(NOT_AVAILABLE_TESTID)).toHaveCount(0);
+    await expect(
+      page.getByText(new RegExp(`${OWNER.firstName}|${OWNER.lastName}`, 'i')).first()
+    ).toBeVisible({ timeout: 10000 });
+  });
+
   test('APPLICANT: un DEV no-owner es denegado (404 amable)', async ({ page, request }) => {
     await setOwnerVisibility(request, 'APPLICANT');
     await injectAuth(page, otherDevToken);

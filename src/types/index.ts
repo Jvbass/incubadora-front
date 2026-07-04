@@ -66,7 +66,7 @@ export const PROFILE_VISIBILITY_OPTIONS: ProfileVisibilityOption[] = [
     value: "APPLICANT",
     label: "Postulante",
     description:
-      "Solo reclutadores pueden ver tu portafolio al evaluar tu postulación.",
+      "Cualquier reclutador de la plataforma puede ver tu portafolio (además de administradores).",
   },
   {
     value: "PRIVATE",
