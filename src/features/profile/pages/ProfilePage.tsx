@@ -1,6 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import type { AxiosError } from "axios";
 import { fetchPublicProfileBySlug, fetchUserProfile } from "../../../api/profileApi";
+import { toggleKudoVisibility } from "../../../api/kudoApi";
 import Loading from "../../../components/ux/Loading";
 import { ProjectCard } from "../../projects/components/ProjectCard";
 import {
@@ -123,6 +125,31 @@ const ProfilePage = () => {
       toast.error("Error al copiar" + err);
     }
   };
+
+  // Publicar/despublicar un kudo recibido (solo el receptor, en su propio perfil).
+  // Sin actualización optimista: el servidor es la fuente de verdad y se
+  // invalidan todas las claves que sirven el mismo payload de perfil,
+  // incluida la del portfolio público (["portfolio", slug]) para que un
+  // visitante con esa página ya cacheada no siga viendo el kudo en el
+  // estado de visibilidad anterior al toggle.
+  const toggleKudoVisibilityMutation = useMutation({
+    mutationFn: ({ kudoId, isPublic }: { kudoId: number; isPublic: boolean }) =>
+      toggleKudoVisibility(kudoId, isPublic),
+    onSuccess: () => {
+      toast.success("Visibilidad del kudo actualizada.");
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      const ownSlug = ownProfileData?.slug;
+      if (ownSlug) {
+        queryClient.invalidateQueries({ queryKey: ["portfolio", ownSlug] });
+      }
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(
+        err.response?.data?.message || "No se pudo cambiar la visibilidad del kudo."
+      );
+    },
+  });
 
   if (isLoading) {
     return <Loading message="Cargando perfil..." />;
@@ -394,6 +421,7 @@ const ProfilePage = () => {
             {kudosReceived.map((kudo) => (
               <div
                 key={kudo.id}
+                data-testid={`kudo-${kudo.id}`}
                 className="flex justify-between mt-4 p-4 rounded-md dark:text-gray-300 border transition-all duration-200 bg-bg-light dark:bg-bg-dark border-divider dark:border-gray-700 hover:shadow-md hover:border-border dark:hover:border-gray-600"
               >
                 <div className="flex items-start gap-3">
@@ -423,11 +451,29 @@ const ProfilePage = () => {
                     )}
                   </div>
                 </div>
-                {!kudo.isPublic && (
-                  <div className="text-gray-700 dark:text-gray-200 text-sm">
-                    {kudo.isPublic ? "Publico" : "Privado"}
+                <div className="flex flex-col items-end gap-2">
+                  <div
+                    data-testid={`kudo-visibility-${kudo.id}`}
+                    className="text-gray-700 dark:text-gray-200 text-sm"
+                  >
+                    {kudo.isPublic ? "Público" : "Privado"}
                   </div>
-                )}
+                  {isOwnProfile && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toggleKudoVisibilityMutation.mutate({
+                          kudoId: kudo.id,
+                          isPublic: !kudo.isPublic,
+                        })
+                      }
+                      disabled={toggleKudoVisibilityMutation.isPending}
+                      className="text-xs font-medium text-cta-600 border border-cta-600 rounded-full px-3 py-1 hover:bg-cta-600 hover:text-white transition-colors disabled:opacity-50"
+                    >
+                      {kudo.isPublic ? "Hacer privado" : "Publicar"}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
 
