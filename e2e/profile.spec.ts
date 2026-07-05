@@ -94,6 +94,49 @@ test.describe('Perfil y Portfolio', () => {
     }
   });
 
+  test('should upload and delete avatar image', async ({ page }) => {
+    await injectAuth(page, authToken);
+    await page.goto('/settings');
+    await page.waitForURL('/settings', { timeout: 15000 });
+
+    // La sección "Avatar" y la de "Imagen de banner" comparten la misma
+    // estructura (ImageUpload en variante rectangle); se distinguen por el
+    // texto del label, ya que el componente no expone data-testid.
+    const avatarSection = page.locator('div.space-y-2').filter({ hasText: 'Avatar' }).first();
+    const fileInput = avatarSection.locator('input[type="file"]');
+
+    // PNG 1x1 válido embebido como buffer (no hay fixtures de imágenes en el repo).
+    const tinyPng = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+      'base64'
+    );
+    await fileInput.setInputFiles({
+      name: 'avatar.png',
+      mimeType: 'image/png',
+      buffer: tinyPng,
+    });
+
+    // Confirmar la subida (toast + invalidación de la query userProfile).
+    await expect(page.getByText('Avatar actualizado correctamente.')).toBeVisible({ timeout: 15000 });
+
+    // El botón "Eliminar imagen" solo se muestra cuando hay currentImageUrl
+    // Y no hay preview local activo; tras subir, el preview local del blob
+    // sigue seteado, así que se recarga la página para reflejar el
+    // avatarUrl persistido y limpiar el preview.
+    await page.reload();
+    await expect(page.getByText('Imágenes del perfil')).toBeVisible({ timeout: 15000 });
+
+    const deleteBtn = avatarSection.getByRole('button', { name: 'Eliminar imagen' });
+    await expect(deleteBtn).toBeVisible({ timeout: 15000 });
+
+    // handleDelete usa confirm() nativo — aceptar el diálogo ANTES de hacer clic.
+    page.once('dialog', (dialog) => dialog.accept());
+    await deleteBtn.click();
+
+    await expect(page.getByText('Avatar eliminado.')).toBeVisible({ timeout: 15000 });
+    await expect(deleteBtn).toBeHidden({ timeout: 15000 });
+  });
+
   test('should display own dashboard with projects', async ({ page }) => {
     await injectAuth(page, authToken);
     await page.goto('/dashboard');
