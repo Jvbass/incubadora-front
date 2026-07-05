@@ -195,4 +195,88 @@ test.describe('Kudos', () => {
     await page.goto(`/portfolio/${user1Slug}`);
     await expect(page.getByText(uniqueMessage)).not.toBeVisible();
   });
+
+  test('should let the receiver publish a kudo from the dashboard kudos tab and see it reflected on /profile via client-side navigation', async ({
+    page,
+    request,
+  }) => {
+    const uniqueMessage = `Kudo dashboard toggle test ${Date.now()}`;
+
+    // Sembrar el kudo via API (nace privado por defecto).
+    const createResponse = await request.post(`${BASE_API_URL}/kudos`, {
+      data: {
+        receiverSlug: user1Slug,
+        message: uniqueMessage,
+      },
+      headers: { Authorization: `Bearer ${token2}` },
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const createdKudo: { id: number } = await createResponse.json();
+    const kudoId = createdKudo.id;
+
+    const getReceiverKudo = async () => {
+      const response = await request.get(`${BASE_API_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token1}` },
+      });
+      const body: { kudosReceived: { id: number; isPublic: boolean }[] } = await response.json();
+      return body.kudosReceived.find((k) => k.id === kudoId);
+    };
+
+    // Único page.goto() del test: establece la sesión y cachea /profile
+    // (queryKey ["userProfile"], staleTime 1h) mostrando el kudo privado.
+    await injectAuth(page, token1);
+    await page.goto('/profile');
+    const kudoCardOnProfile = page.getByTestId(`kudo-${kudoId}`);
+    await expect(kudoCardOnProfile).toBeVisible({ timeout: 10000 });
+    await expect(kudoCardOnProfile.getByTestId(`kudo-visibility-${kudoId}`)).toHaveText('Privado');
+
+    // Navegación 100% cliente (dropdown del Navbar, contrato E2E
+    // data-testid="user-menu-trigger" + link "Panel") hacia /dashboard.
+    // Sin page.goto: la SPA no se reinicia y el queryClient conserva el
+    // caché recién poblado de ["userProfile"].
+    await page.getByTestId('user-menu-trigger').click();
+    await page.getByRole('link', { name: 'Panel' }).click();
+    await expect(page).toHaveURL(/\/dashboard$/);
+
+    await page.getByRole('button', { name: 'Kudos' }).click();
+    const kudoRowOnDashboard = page.getByTestId(`kudo-${kudoId}`);
+    await expect(kudoRowOnDashboard).toBeVisible({ timeout: 10000 });
+    await expect(
+      kudoRowOnDashboard.getByTestId(`kudo-visibility-${kudoId}`)
+    ).toHaveText('Privado');
+
+    // Publicar desde la pestaña Kudos del dashboard (cachea bajo ["userData"]).
+    await kudoRowOnDashboard.getByRole('button', { name: 'Publicar' }).click();
+    await expect(
+      kudoRowOnDashboard.getByTestId(`kudo-visibility-${kudoId}`)
+    ).toHaveText('Público', { timeout: 10000 });
+    expect((await getReceiverKudo())?.isPublic).toBe(true);
+
+    // Volver a /profile por navegación cliente (mismo dropdown, link "Mi
+    // Perfil"), SIN goto entre el toggle y esta verificación. Esto ejercita
+    // la invalidación real de ["userProfile"]: esa query ya estaba cacheada
+    // (fresca según su staleTime de 1h) desde el primer goto de este test
+    // mostrando "Privado"; si el toggle del dashboard no invalidara esa
+    // clave, esta vista mostraría el estado obsoleto. Como sí la invalida
+    // (ver DeveloperDashboard.tsx toggleKudoVisibilityMutation), el remount
+    // de ProfilePage refetchea y muestra el estado real del servidor.
+    await page.getByTestId('user-menu-trigger').click();
+    await page.getByRole('link', { name: 'Mi Perfil' }).click();
+    await expect(page).toHaveURL('/profile');
+
+    const kudoCardAfterDashboardToggle = page.getByTestId(`kudo-${kudoId}`);
+    await expect(kudoCardAfterDashboardToggle).toBeVisible({ timeout: 10000 });
+    await expect(
+      kudoCardAfterDashboardToggle.getByTestId(`kudo-visibility-${kudoId}`)
+    ).toHaveText('Público', { timeout: 10000 });
+
+    // Nota / limitación conocida: no existe hoy, para el propio usuario
+    // logueado, un link de navegación cliente hacia su portfolio público
+    // (/portfolio/:slug) — esa ruta solo se linkea desde listados de OTROS
+    // usuarios (seguidos, solicitudes de mentor, mentorías). Por eso la
+    // invalidación de ["portfolio", slug] se cubre en el test anterior
+    // mediante goto (recarga dura), y esta superficie (["userProfile"] /
+    // ["userData"] compartida entre /dashboard y /profile) es la más fuerte
+    // disponible para probar la invalidación real vía navegación cliente.
+  });
 });

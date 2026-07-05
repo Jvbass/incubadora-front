@@ -152,13 +152,19 @@ const DeveloperDashboard = () => {
 
   // Publicar/despublicar un kudo recibido desde el dashboard. Mismo payload
   // de perfil que ProfilePage, pero cacheado bajo la clave "userData" acá:
-  // hay que invalidar AMBAS claves o una de las dos superficies queda obsoleta.
+  // hay que invalidar TODAS las claves que sirven el mismo payload de
+  // perfil (symmetric con ProfilePage), incluida la del portfolio público
+  // (["portfolio", slug]) para que no quede desactualizada.
   const toggleKudoVisibilityMutation = useMutation({
     mutationFn: ({ kudoId, isPublic }: { kudoId: number; isPublic: boolean }) =>
       toggleKudoVisibility(kudoId, isPublic),
     onSuccess: () => {
+      toast.success("Visibilidad del kudo actualizada.");
       queryClient.invalidateQueries({ queryKey: ["userData"] });
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      if (data?.slug) {
+        queryClient.invalidateQueries({ queryKey: ["portfolio", data.slug] });
+      }
     },
     onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(

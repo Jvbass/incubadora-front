@@ -128,15 +128,20 @@ const ProfilePage = () => {
 
   // Publicar/despublicar un kudo recibido (solo el receptor, en su propio perfil).
   // Sin actualización optimista: el servidor es la fuente de verdad y se
-  // invalidan ambas claves que sirven el mismo payload de perfil.
+  // invalidan todas las claves que sirven el mismo payload de perfil,
+  // incluida la del portfolio público (["portfolio", slug]) para que un
+  // visitante con esa página ya cacheada no siga viendo el kudo en el
+  // estado de visibilidad anterior al toggle.
   const toggleKudoVisibilityMutation = useMutation({
     mutationFn: ({ kudoId, isPublic }: { kudoId: number; isPublic: boolean }) =>
       toggleKudoVisibility(kudoId, isPublic),
     onSuccess: () => {
+      toast.success("Visibilidad del kudo actualizada.");
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
       queryClient.invalidateQueries({ queryKey: ["userData"] });
-      if (slug) {
-        queryClient.invalidateQueries({ queryKey: ["profileBySlug", slug] });
+      const ownSlug = ownProfileData?.slug;
+      if (ownSlug) {
+        queryClient.invalidateQueries({ queryKey: ["portfolio", ownSlug] });
       }
     },
     onError: (err: AxiosError<{ message?: string }>) => {
