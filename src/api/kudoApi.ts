@@ -24,3 +24,28 @@ export const toggleKudoVisibility = async (
   );
   return data;
 };
+
+/**
+ * Edita el mensaje de un kudo enviado. Solo el emisor puede hacerlo.
+ * El backend espera `@RequestBody String message`: se manda el string
+ * crudo con Content-Type text/plain, no un objeto JSON. Cualquier edición
+ * resetea el kudo a privado en el servidor, sin importar su estado previo.
+ */
+export const updateKudoMessage = async (
+  kudoId: number,
+  message: string
+): Promise<KudoResponse> => {
+  const { data } = await apiService.put<KudoResponse>(
+    `/kudos/${kudoId}`,
+    message,
+    { headers: { "Content-Type": "text/plain" } }
+  );
+  return data;
+};
+
+/**
+ * Elimina un kudo enviado. Solo el emisor puede hacerlo.
+ */
+export const deleteKudo = async (kudoId: number): Promise<void> => {
+  await apiService.delete(`/kudos/${kudoId}`);
+};
