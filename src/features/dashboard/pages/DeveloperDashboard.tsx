@@ -25,6 +25,8 @@ import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import toast from "react-hot-toast";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 import { getFollowedUsers, getFollowedProjects, type FollowedUser } from "../../../api/followApi";
+import { toggleKudoVisibility } from "../../../api/kudoApi";
+import type { AxiosError } from "axios";
 
 type TabKey = "resumen" | "proyectos" | "mentorias" | "feedback" | "kudos" | "social";
 
@@ -146,6 +148,23 @@ const DeveloperDashboard = () => {
     },
     onError: (err: any) =>
       toast.error(err.response?.data?.message || "No se pudo cambiar el estado."),
+  });
+
+  // Publicar/despublicar un kudo recibido desde el dashboard. Mismo payload
+  // de perfil que ProfilePage, pero cacheado bajo la clave "userData" acá:
+  // hay que invalidar AMBAS claves o una de las dos superficies queda obsoleta.
+  const toggleKudoVisibilityMutation = useMutation({
+    mutationFn: ({ kudoId, isPublic }: { kudoId: number; isPublic: boolean }) =>
+      toggleKudoVisibility(kudoId, isPublic),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(
+        err.response?.data?.message || "No se pudo cambiar la visibilidad del kudo."
+      );
+    },
   });
 
   const archiveMentorshipMutation = useMutation({
@@ -443,9 +462,36 @@ const DeveloperDashboard = () => {
             ) : (
               <ul className="space-y-2 text-sm">
                 {data.kudosReceived.map((k) => (
-                  <li key={k.id} className="border-b border-divider dark:border-border pb-2 last:border-0">
-                    <span className="font-medium">{k.senderUsername}</span>
-                    <span className="text-text-soft dark:text-gray-400"> — {k.message}</span>
+                  <li
+                    key={k.id}
+                    data-testid={`kudo-${k.id}`}
+                    className="flex flex-wrap items-center justify-between gap-2 border-b border-divider dark:border-border pb-2 last:border-0"
+                  >
+                    <div>
+                      <span className="font-medium">{k.senderUsername}</span>
+                      <span className="text-text-soft dark:text-gray-400"> — {k.message}</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span
+                        data-testid={`kudo-visibility-${k.id}`}
+                        className="text-xs text-text-soft dark:text-gray-400"
+                      >
+                        {k.isPublic ? "Público" : "Privado"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toggleKudoVisibilityMutation.mutate({
+                            kudoId: k.id,
+                            isPublic: !k.isPublic,
+                          })
+                        }
+                        disabled={toggleKudoVisibilityMutation.isPending}
+                        className="text-xs font-medium text-cta-600 border border-cta-600 rounded-full px-3 py-1 hover:bg-cta-600 hover:text-white transition-colors disabled:opacity-50"
+                      >
+                        {k.isPublic ? "Hacer privado" : "Publicar"}
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

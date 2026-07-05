@@ -44,8 +44,9 @@ test.describe('Kudos', () => {
 
     // Establecer el slug y hacer público el perfil de user1
     // para que sea accesible en /portfolio/:slug
+    // Nota: el endpoint real es PUT /api/profile (no /api/me/profile).
     const knownSlug = `${PREFIX}-recipient-e2e`;
-    await request.put(`${BASE_API_URL}/me/profile`, {
+    const profileUpdateResponse = await request.put(`${BASE_API_URL}/profile`, {
       data: {
         headline: 'E2E Test User',
         slug: knownSlug,
@@ -59,6 +60,10 @@ test.describe('Kudos', () => {
       },
       headers: { Authorization: `Bearer ${token1}` },
     });
+    if (!profileUpdateResponse.ok()) {
+      const body = await profileUpdateResponse.text();
+      throw new Error(`Profile setup failed (${profileUpdateResponse.status()}): ${body}`);
+    }
     user1Slug = knownSlug;
   });
 
@@ -116,7 +121,7 @@ test.describe('Kudos', () => {
     expect(hasKudos || isPrivate || notFound || true).toBeTruthy();
   });
 
-  test('should not allow giving a kudo to yourself', async ({ page, request }) => {
+  test('should not allow giving a kudo to yourself', async ({ request }) => {
     // Intentar dar kudo a sí mismo via API (debe fallar)
     const response = await request.post(`${BASE_API_URL}/kudos`, {
       data: {
@@ -128,5 +133,66 @@ test.describe('Kudos', () => {
 
     // RN-06: debería retornar 4xx (409 según la documentación)
     expect(response.status()).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should let the receiver publish and unpublish a received kudo, reflected on the public portfolio', async ({
+    page,
+    request,
+  }) => {
+    const uniqueMessage = `Kudo toggle visibility test ${Date.now()}`;
+
+    // Sembrar el kudo via API (nace privado por defecto).
+    // Nota: el backend espera `receiverSlug` (KudoRequestDto), no `recipientUsername`.
+    const createResponse = await request.post(`${BASE_API_URL}/kudos`, {
+      data: {
+        receiverSlug: user1Slug,
+        message: uniqueMessage,
+      },
+      headers: { Authorization: `Bearer ${token2}` },
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const createdKudo: { id: number } = await createResponse.json();
+    const kudoId = createdKudo.id;
+
+    const getReceiverKudo = async () => {
+      const response = await request.get(`${BASE_API_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token1}` },
+      });
+      const body: { kudosReceived: { id: number; isPublic: boolean }[] } = await response.json();
+      return body.kudosReceived.find((k) => k.id === kudoId);
+    };
+
+    // El receptor entra a su propio perfil y ve el kudo recién creado como privado.
+    await injectAuth(page, token1);
+    await page.goto('/profile');
+    const kudoCard = page.getByTestId(`kudo-${kudoId}`);
+    await expect(kudoCard).toBeVisible({ timeout: 10000 });
+    await expect(kudoCard.getByTestId(`kudo-visibility-${kudoId}`)).toHaveText('Privado');
+
+    // Publicar el kudo desde la UI.
+    await kudoCard.getByRole('button', { name: 'Publicar' }).click();
+    await expect(kudoCard.getByTestId(`kudo-visibility-${kudoId}`)).toHaveText('Público', {
+      timeout: 10000,
+    });
+    expect((await getReceiverKudo())?.isPublic).toBe(true);
+
+    // El kudo publicado debe aparecer en el portfolio público del receptor.
+    await page.goto(`/portfolio/${user1Slug}`);
+    await expect(page.getByText(uniqueMessage)).toBeVisible({ timeout: 10000 });
+
+    // Despublicar el kudo desde el propio perfil.
+    await page.goto('/profile');
+    const kudoCardAfterPublish = page.getByTestId(`kudo-${kudoId}`);
+    await expect(kudoCardAfterPublish).toBeVisible({ timeout: 10000 });
+    await kudoCardAfterPublish.getByRole('button', { name: 'Hacer privado' }).click();
+    await expect(kudoCardAfterPublish.getByTestId(`kudo-visibility-${kudoId}`)).toHaveText(
+      'Privado',
+      { timeout: 10000 }
+    );
+    expect((await getReceiverKudo())?.isPublic).toBe(false);
+
+    // Ya no debe aparecer en el portfolio público.
+    await page.goto(`/portfolio/${user1Slug}`);
+    await expect(page.getByText(uniqueMessage)).not.toBeVisible();
   });
 });
