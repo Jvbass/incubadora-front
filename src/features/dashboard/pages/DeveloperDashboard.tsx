@@ -584,6 +584,7 @@ const DeveloperDashboard = () => {
                         value={editedKudoMessage}
                         onChange={(e) => setEditedKudoMessage(e.target.value)}
                         rows={2}
+                        maxLength={500}
                         className="w-full text-sm rounded-md border border-divider dark:border-border bg-bg-light dark:bg-bg-dark p-2 text-text-main dark:text-text-light"
                       />
                       <p className="text-xs text-amber-600 dark:text-amber-400">
