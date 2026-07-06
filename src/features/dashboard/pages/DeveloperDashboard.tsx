@@ -25,7 +25,7 @@ import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import toast from "react-hot-toast";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 import { getFollowedUsers, getFollowedProjects, type FollowedUser } from "../../../api/followApi";
-import { toggleKudoVisibility } from "../../../api/kudoApi";
+import { toggleKudoVisibility, updateKudoMessage, deleteKudo } from "../../../api/kudoApi";
 import type { AxiosError } from "axios";
 
 type TabKey = "resumen" | "proyectos" | "mentorias" | "feedback" | "kudos" | "social";
@@ -39,6 +39,8 @@ const DeveloperDashboard = () => {
   const [editingMentorshipSlug, setEditingMentorshipSlug] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tab, setTab] = useState<TabKey>("resumen");
+  const [editingKudoId, setEditingKudoId] = useState<number | null>(null);
+  const [editedKudoMessage, setEditedKudoMessage] = useState("");
 
   const queryClient = useQueryClient();
   const { user } = useAuthZustand();
@@ -172,6 +174,62 @@ const DeveloperDashboard = () => {
       );
     },
   });
+
+  // Editar el mensaje de un kudo enviado. El backend resetea isPublic=false
+  // en cualquier edición, así que solo hace falta invalidar las claves que
+  // sirven la lista "kudos realizados" (["userData"]) y, por simetría con
+  // el resto de mutaciones de este archivo, ["userProfile"].
+  const updateKudoMessageMutation = useMutation({
+    mutationFn: ({ kudoId, message }: { kudoId: number; message: string }) =>
+      updateKudoMessage(kudoId, message),
+    onSuccess: () => {
+      toast.success("Kudo actualizado. El receptor deberá volver a publicarlo.");
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      setEditingKudoId(null);
+      setEditedKudoMessage("");
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(err.response?.data?.message || "No se pudo editar el kudo.");
+    },
+  });
+
+  // Eliminar un kudo enviado. Solo afecta la propia lista "kudos
+  // realizados" del emisor (["userData"]); no existe un slug del receptor
+  // en KudoResponse para invalidar su portfolio, y el receptor refresca
+  // su propia caché en su próximo fetch.
+  const deleteKudoMutation = useMutation({
+    mutationFn: (kudoId: number) => deleteKudo(kudoId),
+    onSuccess: () => {
+      toast.success("Kudo eliminado.");
+      queryClient.invalidateQueries({ queryKey: ["userData"] });
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(err.response?.data?.message || "No se pudo eliminar el kudo.");
+    },
+  });
+
+  const handleStartEditKudo = (kudoId: number, currentMessage: string) => {
+    setEditingKudoId(kudoId);
+    setEditedKudoMessage(currentMessage);
+  };
+
+  const handleCancelEditKudo = () => {
+    setEditingKudoId(null);
+    setEditedKudoMessage("");
+  };
+
+  const handleSaveEditKudo = (kudoId: number) => {
+    const trimmedMessage = editedKudoMessage.trim();
+    if (!trimmedMessage) return;
+    updateKudoMessageMutation.mutate({ kudoId, message: trimmedMessage });
+  };
+
+  const handleDeleteKudo = (kudoId: number) => {
+    if (window.confirm("¿Eliminar este kudo? Esta acción no se puede deshacer.")) {
+      deleteKudoMutation.mutate(kudoId);
+    }
+  };
 
   const archiveMentorshipMutation = useMutation({
     mutationFn: archiveMentorship,
@@ -511,12 +569,82 @@ const DeveloperDashboard = () => {
               <p className="text-sm text-text-soft dark:text-gray-400">Todavía no diste kudos.</p>
             ) : (
               <ul className="space-y-2 text-sm">
-                {data.kudosGiven.map((k) => (
-                  <li key={k.id} className="border-b border-divider dark:border-border pb-2 last:border-0">
-                    Para <span className="font-medium">{k.receiverUsername}</span>
-                    <span className="text-text-soft dark:text-gray-400"> — {k.message}</span>
-                  </li>
-                ))}
+                {data.kudosGiven.map((k) =>
+                  editingKudoId === k.id ? (
+                    <li
+                      key={k.id}
+                      data-testid={`kudo-given-${k.id}`}
+                      className="flex flex-col gap-2 border-b border-divider dark:border-border pb-2 last:border-0"
+                    >
+                      <p className="text-xs text-text-soft dark:text-gray-400">
+                        Para <span className="font-medium">{k.receiverUsername}</span>
+                      </p>
+                      <textarea
+                        data-testid={`kudo-edit-textarea-${k.id}`}
+                        value={editedKudoMessage}
+                        onChange={(e) => setEditedKudoMessage(e.target.value)}
+                        rows={2}
+                        maxLength={500}
+                        className="w-full text-sm rounded-md border border-divider dark:border-border bg-bg-light dark:bg-bg-dark p-2 text-text-main dark:text-text-light"
+                      />
+                      <p className="text-xs text-amber-600 dark:text-amber-400">
+                        Al guardar, este kudo volverá a ser privado y el receptor deberá
+                        aprobarlo de nuevo para que sea público.
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          data-testid={`kudo-save-${k.id}`}
+                          onClick={() => handleSaveEditKudo(k.id)}
+                          disabled={
+                            updateKudoMessageMutation.isPending || !editedKudoMessage.trim()
+                          }
+                          className="text-xs font-medium text-white bg-cta-600 rounded-full px-3 py-1 hover:bg-cta-700 transition-colors disabled:opacity-50"
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelEditKudo}
+                          disabled={updateKudoMessageMutation.isPending}
+                          className="text-xs font-medium text-text-soft dark:text-gray-400 border border-divider dark:border-border rounded-full px-3 py-1 hover:bg-bg-light dark:hover:bg-bg-dark transition-colors disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </li>
+                  ) : (
+                    <li
+                      key={k.id}
+                      data-testid={`kudo-given-${k.id}`}
+                      className="flex flex-wrap items-center justify-between gap-2 border-b border-divider dark:border-border pb-2 last:border-0"
+                    >
+                      <div>
+                        Para <span className="font-medium">{k.receiverUsername}</span>
+                        <span className="text-text-soft dark:text-gray-400"> — {k.message}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          data-testid={`kudo-edit-${k.id}`}
+                          onClick={() => handleStartEditKudo(k.id, k.message)}
+                          className="text-xs font-medium text-cta-600 border border-cta-600 rounded-full px-3 py-1 hover:bg-cta-600 hover:text-white transition-colors"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          data-testid={`kudo-delete-${k.id}`}
+                          onClick={() => handleDeleteKudo(k.id)}
+                          disabled={deleteKudoMutation.isPending}
+                          className="text-xs font-medium text-red-600 border border-red-600 rounded-full px-3 py-1 hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </li>
+                  )
+                )}
               </ul>
             )}
           </section>

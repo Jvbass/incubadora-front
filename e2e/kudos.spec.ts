@@ -279,4 +279,105 @@ test.describe('Kudos', () => {
     // ["userData"] compartida entre /dashboard y /profile) es la más fuerte
     // disponible para probar la invalidación real vía navegación cliente.
   });
+
+  test('should let the sender edit a published kudo message and reset its visibility to private', async ({
+    page,
+    request,
+  }) => {
+    const originalMessage = `Kudo sender-edit test ${Date.now()}`;
+    const editedMessage = `${originalMessage} (editado)`;
+
+    // Sembrar el kudo (token2 es el emisor, user1/token1 es el receptor).
+    const createResponse = await request.post(`${BASE_API_URL}/kudos`, {
+      data: { receiverSlug: user1Slug, message: originalMessage },
+      headers: { Authorization: `Bearer ${token2}` },
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const createdKudo: { id: number } = await createResponse.json();
+    const kudoId = createdKudo.id;
+
+    // El receptor lo publica via API para partir de un estado público:
+    // así la aserción de "vuelve a ser privado tras la edición" es real.
+    const publishResponse = await request.patch(
+      `${BASE_API_URL}/kudos/${kudoId}/toggle-visibility?isPublic=true`,
+      { headers: { Authorization: `Bearer ${token1}` } }
+    );
+    expect(publishResponse.ok()).toBeTruthy();
+
+    const getSenderKudo = async () => {
+      const response = await request.get(`${BASE_API_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token2}` },
+      });
+      const body: { kudosGiven: { id: number; isPublic: boolean; message: string }[] } =
+        await response.json();
+      return body.kudosGiven.find((k) => k.id === kudoId);
+    };
+
+    expect((await getSenderKudo())?.isPublic).toBe(true);
+
+    // El emisor entra al dashboard y edita el kudo desde "Kudos realizados".
+    await injectAuth(page, token2);
+    await page.goto('/dashboard');
+    await page.getByRole('button', { name: 'Kudos' }).click();
+
+    const kudoRow = page.getByTestId(`kudo-given-${kudoId}`);
+    await expect(kudoRow).toBeVisible({ timeout: 10000 });
+    await expect(kudoRow.getByText(originalMessage)).toBeVisible();
+
+    await kudoRow.getByTestId(`kudo-edit-${kudoId}`).click();
+    const textarea = page.getByTestId(`kudo-edit-textarea-${kudoId}`);
+    await expect(textarea).toBeVisible();
+    await textarea.fill(editedMessage);
+    await page.getByTestId(`kudo-save-${kudoId}`).click();
+
+    // OJO: `getByText` puede matchear el valor "en vivo" de un <textarea>
+    // montado, así que no sirve como señal de que el guardado ya terminó
+    // (podría matchear el texto tipeado ANTES de que la mutación async
+    // resuelva). La señal confiable de que `onSuccess` ya corrió y la fila
+    // volvió a modo lectura es que el propio textarea deje de existir.
+    await expect(textarea).not.toBeVisible({ timeout: 10000 });
+
+    // Ahora sí, en modo lectura, el mensaje mostrado debe ser el editado.
+    const kudoRowAfterEdit = page.getByTestId(`kudo-given-${kudoId}`);
+    await expect(kudoRowAfterEdit.getByText(editedMessage)).toBeVisible();
+
+    const updatedKudo = await getSenderKudo();
+    expect(updatedKudo?.message).toBe(editedMessage);
+    expect(updatedKudo?.isPublic).toBe(false);
+  });
+
+  test('should let the sender delete a sent kudo after confirming', async ({ page, request }) => {
+    const uniqueMessage = `Kudo sender-delete test ${Date.now()}`;
+
+    const createResponse = await request.post(`${BASE_API_URL}/kudos`, {
+      data: { receiverSlug: user1Slug, message: uniqueMessage },
+      headers: { Authorization: `Bearer ${token2}` },
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const createdKudo: { id: number } = await createResponse.json();
+    const kudoId = createdKudo.id;
+
+    await injectAuth(page, token2);
+    await page.goto('/dashboard');
+    await page.getByRole('button', { name: 'Kudos' }).click();
+
+    const kudoRow = page.getByTestId(`kudo-given-${kudoId}`);
+    await expect(kudoRow).toBeVisible({ timeout: 10000 });
+
+    // Registrar el manejo del confirm() nativo ANTES de disparar el click
+    // que lo abre; se acepta para que la eliminación continúe.
+    page.once('dialog', (dialog) => dialog.accept());
+    await kudoRow.getByTestId(`kudo-delete-${kudoId}`).click();
+
+    await expect(page.getByTestId(`kudo-given-${kudoId}`)).not.toBeVisible({ timeout: 10000 });
+
+    const getSenderKudo = async () => {
+      const response = await request.get(`${BASE_API_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token2}` },
+      });
+      const body: { kudosGiven: { id: number }[] } = await response.json();
+      return body.kudosGiven.find((k) => k.id === kudoId);
+    };
+    expect(await getSenderKudo()).toBeUndefined();
+  });
 });
