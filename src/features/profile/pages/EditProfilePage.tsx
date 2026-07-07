@@ -150,8 +150,13 @@ const EditProfilePage = () => {
     return <Loading message="Cargando formulario de edición..." />;
   }
 
-  const invalidateProfile = () =>
+  // D2/D8 (profile-wizard SDD): invalida ambas claves de caché del perfil —
+  // "userProfile" (esta página, /profile, Navbar) y "userData" (dashboard) —
+  // para que el dashboard no quede mostrando un avatar/banner desactualizado.
+  const invalidateProfile = () => {
     queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+    queryClient.invalidateQueries({ queryKey: ["userData"] });
+  };
 
   const handleAvatarUpload = (_urls: ImageUploadResponse) => {
     toast.success("Avatar actualizado correctamente.");
