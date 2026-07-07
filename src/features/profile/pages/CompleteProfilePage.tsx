@@ -2,11 +2,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchUserProfile } from "../../../api/profileApi";
 import Loading from "../../../components/ux/Loading";
 import ImageUpload from "../../../components/ui/ImageUpload";
+import ProfileWizard from "../components/ProfileWizard";
 import toast from "react-hot-toast";
 
-// Página de onboarding de perfil (profile-wizard SDD, WU1): aloja la sección
-// persistente de avatar/imagen de banner (D8) y, a partir de WU2, el
-// ProfileWizard de 4 pasos. Espeja el layout de imágenes de EditProfilePage.
+// Página de onboarding de perfil (profile-wizard SDD, WU1+WU2): aloja la
+// sección persistente de avatar/imagen de banner (D8) y el ProfileWizard de
+// 4 pasos. Espeja el layout de imágenes de EditProfilePage.
 const CompleteProfilePage = () => {
   const queryClient = useQueryClient();
 
@@ -46,6 +47,10 @@ const CompleteProfilePage = () => {
 
   if (isLoadingProfile) {
     return <Loading message="Cargando tu perfil..." />;
+  }
+
+  if (!profileData) {
+    return null;
   }
 
   return (
@@ -91,8 +96,7 @@ const CompleteProfilePage = () => {
         </div>
       </div>
 
-      {/* TODO (WU2 — profile-wizard): montar <ProfileWizard profile={profileData} />
-          acá debajo, reemplazando este placeholder. */}
+      <ProfileWizard profile={profileData} />
     </div>
   );
 };
