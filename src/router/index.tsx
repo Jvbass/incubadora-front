@@ -23,6 +23,7 @@ const EditProjectPage = lazy(routeImports.editProject);
 const ProjectDetailPage = lazy(routeImports.projectDetail);
 const ProfilePage = lazy(routeImports.profile);
 const EditProfilePage = lazy(routeImports.editProfile);
+const CompleteProfilePage = lazy(routeImports.completeProfile);
 const PortfolioPage = lazy(routeImports.portfolio);
 const AdminDashboard = lazy(routeImports.adminDashboard);
 const CreateMentorshipPage = lazy(routeImports.createMentorship);
@@ -114,6 +115,10 @@ const AppRouter = () => {
           {/* Compartidas: cualquier usuario autenticado (sin restricción de rol) */}
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<EditProfilePage />} />
+          {/* Wizard de onboarding de perfil (profile-wizard SDD): cualquier
+              usuario autenticado puede completar su propio perfil, sin
+              restricción de rol. */}
+          <Route path="/complete-profile" element={<CompleteProfilePage />} />
 
           {/* DEV · MENTOR · ADMINISTRATOR */}
           <Route

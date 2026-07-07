@@ -15,6 +15,8 @@ export const routeImports = {
   projectDetail: () => import("../features/projects/pages/ProjectDetailPage"),
   profile: () => import("../features/profile/pages/ProfilePage"),
   editProfile: () => import("../features/profile/pages/EditProfilePage"),
+  completeProfile: () =>
+    import("../features/profile/pages/CompleteProfilePage"),
   portfolio: () => import("../features/profile/pages/PortfolioPage"),
   adminDashboard: () => import("../features/admin/pages/AdminDashboard"),
   createMentorship: () =>
