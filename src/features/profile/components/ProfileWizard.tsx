@@ -84,15 +84,21 @@ const ProfileWizard = ({ profile }: ProfileWizardProps) => {
     reset,
     watch,
     trigger,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileUpdateRequest>({
     defaultValues: buildUpdateRequest(profile),
   });
 
-  // D4/T2.6: re-sembrar el form si el perfil base cambia (mirror EditProfilePage:112-126)
+  // D4/T2.6: re-sembrar el form si el perfil base cambia (mirror EditProfilePage:112-126).
+  // Guardado por isDirty (R6 fix): la sección persistente de avatar/bio-image invalida
+  // ["userProfile"] al subir una imagen, lo que refetchea y cambia la referencia de `profile`
+  // MIENTRAS el wizard sigue abierto. Sin este guard, el reset() de abajo borraría todo lo
+  // tipeado en cualquier paso. Solo re-sembramos si el usuario todavía no tocó el form.
   useEffect(() => {
-    reset(buildUpdateRequest(profile));
-  }, [profile, reset]);
+    if (!isDirty) {
+      reset(buildUpdateRequest(profile));
+    }
+  }, [profile, reset, isDirty]);
 
   const {
     fields: workFields,
