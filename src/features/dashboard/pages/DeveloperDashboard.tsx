@@ -22,6 +22,7 @@ import ProjectForm from "../../projects/components/ProjectForm";
 import ProjectDetailPage from "../../projects/pages/ProjectDetailPage";
 import { Button } from "../../../components/button/RoundedButton";
 import { useAuthZustand } from "../../../hooks/useAuthZustand";
+import ProfileCompletionBanner from "../../profile/components/onboarding/ProfileCompletionBanner";
 import toast from "react-hot-toast";
 import AvatarUsuario from "../../../components/ui/AvatarUsuario";
 import { getFollowedUsers, getFollowedProjects, type FollowedUser } from "../../../api/followApi";
@@ -359,6 +360,9 @@ const DeveloperDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* ── Onboarding banner (profile-wizard SDD, WU3, R1) ────────────── */}
+      <ProfileCompletionBanner username={user?.username} />
 
       {/* ── Tabs (F-14 / F-16) ─────────────────────────────────────────── */}
       <div className="flex gap-1 border-b border-divider dark:border-border overflow-x-auto">
