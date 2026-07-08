@@ -13,6 +13,8 @@ import { updateUserProfile } from "../../../api/profileApi";
 import { fetchTechnologies } from "../../../api/projectApi";
 import MultiSelect from "../../projects/components/MultiSelect";
 import { buildUpdateRequest } from "../hooks/useInlineProfileEdit";
+import { useOnboardingBanner } from "../hooks/useOnboardingBanner";
+import { useAuthZustand } from "../../../hooks/useAuthZustand";
 import type {
   ProfileResponse,
   ProfileUpdateRequest,
@@ -60,6 +62,11 @@ const ProfileWizard = ({ profile }: ProfileWizardProps) => {
   // R5: guarda sincrónica contra doble submit (un doble click real dispara
   // dos eventos "submit" antes de que el re-render con `disabled` aplique).
   const hasSubmittedRef = useRef(false);
+
+  // T3.3: el marcador de onboarding se setea a "completed" al guardar y al
+  // equivalente de "dismissed" al omitir (useOnboardingBanner, D3).
+  const { user } = useAuthZustand();
+  const { dismiss, markCompleted } = useOnboardingBanner(user?.username);
 
   const { data: technologies, isLoading: isLoadingTechs } = useQuery({
     queryKey: ["technologies"],
@@ -135,6 +142,7 @@ const ProfileWizard = ({ profile }: ProfileWizardProps) => {
       queryClient.setQueryData(["userData"], updated);
       queryClient.invalidateQueries({ queryKey: ["profileBySlug"] });
       queryClient.invalidateQueries({ queryKey: ["portfolio"] });
+      markCompleted();
       toast.success("Perfil actualizado");
       navigate("/dashboard");
     },
@@ -158,9 +166,10 @@ const ProfileWizard = ({ profile }: ProfileWizardProps) => {
 
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  // R4: omitir no dispara mutate() nunca; el marcador de onboarding se
-  // conecta en WU3 (T3.3) una vez exista useOnboardingBanner().
+  // R4: omitir no dispara mutate() nunca; solo setea el marcador de
+  // onboarding (equivalente a "dismissed", T3.3) y navega.
   const handleSkip = () => {
+    dismiss();
     navigate("/dashboard");
   };
 
